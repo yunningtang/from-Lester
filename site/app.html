@@ -3,26 +3,26 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&display=swap">
 <style>
 /* Layout: one calm reading column on a plain ground; typography carries the page.
-   Glass is reserved for the single floating control: the tab bar. The release orb is the one signature visual. */
+   Glass only on the floating tab bar. The release orb is the one signature visual. */
 :root{
   --ground:#f4f6f4; --surface:#ffffff; --ink:#151a17; --ink-2:#5b645f; --ink-3:#8b938e; --line:rgba(21,26,23,.09); --wash:rgba(21,26,23,.05);
   --accent:#16685a; --accent-ink:#ffffff; --accent-wash:rgba(22,104,90,.09);
-  --orb-1:#d9efe8; --orb-2:#5fae9c; --orb-3:#16685a;
-  --ok:#16685a; --bad:#b4392f; --mark:rgba(232,190,60,.35);
+  --orb-2:#5fae9c; --orb-3:#16685a; --ok:#16685a; --bad:#b4392f; --mark:rgba(232,190,60,.35); --flame:#c2581d;
   --glass:rgba(255,255,255,.66); --glass-edge:rgba(255,255,255,.9); --glass-shade:rgba(21,26,23,.10);
   --serif:"Noto Serif SC","Songti SC","STSong",serif;
   --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
-  --s-display:44px; --s-h1:34px; --s-h2:23px; --s-lead:19px; --s-body:17px; --s-small:14.5px; --s-cap:13px;
+  --s-display:42px; --s-h1:34px; --s-h2:23px; --s-lead:19px; --s-body:17px; --s-small:14.5px; --s-cap:13px;
+  --ease:cubic-bezier(.22,1,.36,1);
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --ground:#0f1211; --surface:#181c1b; --ink:#e9eeeb; --ink-2:#a3aca7; --ink-3:#737c77; --line:rgba(233,238,235,.10); --wash:rgba(233,238,235,.06);
   --accent:#63c2ab; --accent-ink:#0b1311; --accent-wash:rgba(99,194,171,.12);
-  --orb-1:#1d3a33; --orb-2:#3f8d7b; --orb-3:#8fd8c5; --ok:#63c2ab; --bad:#f08a80; --mark:rgba(232,190,60,.28);
+  --orb-2:#3f8d7b; --orb-3:#8fd8c5; --ok:#63c2ab; --bad:#f08a80; --mark:rgba(232,190,60,.28); --flame:#f0955a;
   --glass:rgba(30,35,33,.62); --glass-edge:rgba(255,255,255,.10); --glass-shade:rgba(0,0,0,.35); color-scheme:dark}}
 :root[data-theme="dark"]{
   --ground:#0f1211; --surface:#181c1b; --ink:#e9eeeb; --ink-2:#a3aca7; --ink-3:#737c77; --line:rgba(233,238,235,.10); --wash:rgba(233,238,235,.06);
   --accent:#63c2ab; --accent-ink:#0b1311; --accent-wash:rgba(99,194,171,.12);
-  --orb-1:#1d3a33; --orb-2:#3f8d7b; --orb-3:#8fd8c5; --ok:#63c2ab; --bad:#f08a80; --mark:rgba(232,190,60,.28);
+  --orb-2:#3f8d7b; --orb-3:#8fd8c5; --ok:#63c2ab; --bad:#f08a80; --mark:rgba(232,190,60,.28); --flame:#f0955a;
   --glass:rgba(30,35,33,.62); --glass-edge:rgba(255,255,255,.10); --glass-shade:rgba(0,0,0,.35); color-scheme:dark}
 
 *{box-sizing:border-box}
@@ -36,12 +36,15 @@ h1,h2,h3,p{margin:0}
 h1,h2,h3{font-family:var(--serif);font-weight:700;text-wrap:balance;letter-spacing:.01em}
 h1{font-size:var(--s-h1);line-height:1.3}
 h2{font-size:var(--s-h2);line-height:1.4}
+h3{font-size:var(--s-lead);line-height:1.45}
 p{text-wrap:pretty}
 .serif{font-family:var(--serif)}
 
 /* frame */
 .top{max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:18px 0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .brand{font-family:var(--serif);font-weight:900;font-size:18px;letter-spacing:.06em}
+.streak{display:inline-flex;align-items:center;gap:6px;font-size:var(--s-small);font-weight:700;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.streak svg{width:16px;height:16px;color:var(--flame)}
 .dock{position:sticky;top:calc(14px + env(safe-area-inset-top,0px));z-index:10;display:flex;justify-content:center;pointer-events:none;margin-top:-44px}
 .tabs{pointer-events:auto;display:flex;gap:2px;padding:5px;border-radius:999px;background:var(--glass);
   -webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:inset 0 1px 0 var(--glass-edge),inset 0 0 0 .5px var(--line),0 6px 14px var(--glass-shade)}
@@ -49,21 +52,26 @@ p{text-wrap:pretty}
 .tabs a svg{width:18px;height:18px;flex:none}
 .tabs a.on{background:var(--ink);color:var(--ground)}
 main{padding-block:64px 140px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.page{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+.page{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:52px}
 .page>section{display:flex;flex-direction:column;gap:18px}
 .head{display:flex;flex-direction:column;gap:10px}
 .meta{font-size:var(--s-small);color:var(--ink-2)}
 .cap{font-size:var(--s-cap);color:var(--ink-3)}
-.lead{font-size:var(--s-lead);line-height:1.8;color:var(--ink)}
+.lead{font-size:var(--s-lead);line-height:1.8}
 .more{font-size:var(--s-small);font-weight:600;color:var(--accent)}
 .row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 .split{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+.crumb{font-size:var(--s-small);font-weight:600;color:var(--ink-2);display:inline-flex;gap:6px;align-items:center;align-self:flex-start}
+.crumb::before{content:"";width:7px;height:7px;border-left:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:rotate(45deg)}
+.crumb:hover{color:var(--accent)}
+.kick{font-family:var(--serif);font-size:var(--s-small);font-weight:700;color:var(--accent)}
 
 /* controls */
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 24px;border-radius:999px;font-size:var(--s-small);font-weight:600;background:var(--wash);color:var(--ink);transition:transform .2s,background .2s}
 .btn:hover{background:var(--line)}
 .btn.solid{background:var(--ink);color:var(--ground)}
 .btn.solid:hover{background:var(--ink)}
+.btn.wide{width:100%}
 .btn:active{transform:scale(.97)}
 .btn:disabled{opacity:.35;cursor:default;transform:none}
 .seg{display:inline-grid;grid-auto-flow:column;gap:2px;padding:3px;border-radius:999px;background:var(--wash);align-self:flex-start}
@@ -72,10 +80,13 @@ main{padding-block:64px 140px;padding-left:max(16px,env(safe-area-inset-left,0px
 textarea,input[type=text],input[type=search]{width:100%;font:inherit;font-size:var(--s-body);color:var(--ink);background:var(--surface);border:0;border-radius:16px;padding:14px 18px;box-shadow:inset 0 0 0 1px var(--line)}
 textarea{min-height:120px;resize:vertical;line-height:1.7}
 textarea::placeholder,input::placeholder{color:var(--ink-3)}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+.links a{padding:7px 14px;border-radius:999px;background:var(--wash);font-size:var(--s-small);font-weight:600;cursor:pointer}
+.links a:hover{background:var(--line)}
 
-/* grouped rows: the only container */
+/* grouped rows */
 .group{background:var(--surface);border-radius:18px;overflow:hidden}
-.group>*{display:flex;gap:14px;align-items:center;padding:15px 18px;position:relative;width:100%;text-align:left;min-height:54px}
+.group>*{display:flex;gap:14px;align-items:center;padding:15px 18px;position:relative;width:100%;text-align:left;min-height:56px}
 .group>*+*::before{content:"";position:absolute;top:0;left:18px;right:0;border-top:1px solid var(--line)}
 .group>a:hover,.group>button:hover:not(:disabled){background:var(--wash)}
 .grow{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
@@ -85,68 +96,78 @@ textarea::placeholder,input::placeholder{color:var(--ink-3)}
 .tick{width:22px;height:22px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 1.5px var(--ink-3);display:grid;place-items:center;transition:background .2s}
 .tick.on{background:var(--accent);box-shadow:none}
 .tick.on::after{content:"";width:5px;height:10px;border:solid var(--accent-ink);border-width:0 2px 2px 0;transform:translateY(-1px) rotate(45deg)}
+.bar{height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:2px;transition:width .8s var(--ease)}
 
-/* home */
-.page>.today{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:center}
-.today h1{font-size:var(--s-display);line-height:1.2}
-.dayno{font-family:var(--serif);font-size:var(--s-small);font-weight:700;color:var(--accent)}
-.orbbtn{width:148px;height:148px;border-radius:50%;display:grid;place-items:center;position:relative;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+/* today */
+.page>.hello{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:center}
+.hello h1{font-size:var(--s-display);line-height:1.2}
+.orbbtn{width:132px;height:132px;border-radius:50%;display:grid;place-items:center;position:relative;transition:transform .5s var(--ease)}
 .orbbtn:hover{transform:scale(1.04)}
 .orbbtn .lbl{position:relative;font-family:var(--serif);font-weight:700;font-size:16px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.18)}
 .orb{position:absolute;inset:0;border-radius:50%;
   background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.85),rgba(255,255,255,0) 38%),radial-gradient(circle at 50% 60%,var(--orb-2),var(--orb-3) 72%);
   box-shadow:inset 0 -14px 28px rgba(0,0,0,.18),inset 0 2px 0 rgba(255,255,255,.4),0 10px 14px rgba(21,26,23,.12)}
-.quote{font-family:var(--serif);font-weight:500;font-size:26px;line-height:1.75}
-.figs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.figs div{display:flex;flex-direction:column;gap:2px}
-.figs b{font-family:var(--serif);font-size:38px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
-.figs span{font-size:var(--s-cap);color:var(--ink-2)}
-.bar{height:3px;border-radius:2px;background:var(--line);overflow:hidden}
-.bar i{display:block;height:100%;background:var(--accent);border-radius:2px;transition:width .8s cubic-bezier(.22,1,.36,1)}
-.ladder>*{gap:16px}
-.ladder .w{font-family:var(--serif);font-weight:700;min-width:5em}
-.ladder .lv{flex:1;display:flex;gap:3px}
-.ladder .lv i{flex:1;height:6px;border-radius:3px;background:var(--line)}
-.ladder .lv i.f{background:var(--ink-3)}
-.ladder .cap-row .w{color:var(--accent)}
-.ladder .cap-row .lv i.f{background:var(--accent)}
+.daily>a{min-height:72px}
+.daily .ic{width:40px;height:40px;border-radius:12px;background:var(--accent-wash);color:var(--accent);display:grid;place-items:center;flex:none}
+.daily .ic svg{width:20px;height:20px}
+.daily .done .ic{background:var(--accent);color:var(--accent-ink)}
+.daily .done .grow>span{color:var(--ink-2)}
+.quote{font-family:var(--serif);font-weight:500;font-size:25px;line-height:1.75}
 
-/* course */
-.coll{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 20px;padding:26px 0;border-top:1px solid var(--line)}
-.coll:last-child{border-bottom:1px solid var(--line)}
-.coll h2{transition:color .2s}
-.coll:hover h2{color:var(--accent)}
-.coll p{grid-column:1;font-size:var(--s-small);color:var(--ink-2);line-height:1.7}
-.coll .num{grid-row:1;grid-column:2;align-self:center;font-family:var(--serif);font-size:var(--s-small)}
-.links{display:flex;flex-wrap:wrap;gap:8px}
-.links a{padding:7px 14px;border-radius:999px;background:var(--wash);font-size:var(--s-small);font-weight:600}
-.links a:hover{background:var(--line)}
+/* learn */
+.page>.resume{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 20px;align-items:center;background:var(--surface);border-radius:22px;padding:24px}
+.resume h2{font-size:var(--s-h2)}
+.resume .btn{grid-row:1/4;grid-column:2}
+.unit{display:grid;grid-template-columns:56px minmax(0,1fr);gap:4px 18px;padding:24px 0;border-top:1px solid var(--line)}
+.unit:last-child{border-bottom:1px solid var(--line)}
+.unit .no{grid-row:1/5;width:56px;height:56px;border-radius:18px;display:grid;place-items:center;font-family:var(--serif);font-weight:700;font-size:22px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);color:var(--ink-2)}
+.unit.full .no{background:var(--accent);color:var(--accent-ink);box-shadow:none}
+.unit.cur .no{box-shadow:inset 0 0 0 2px var(--accent);color:var(--accent)}
+.unit h2{font-size:21px;transition:color .2s}
+.unit:hover h2{color:var(--accent)}
+.unit p{font-size:var(--s-small);color:var(--ink-2)}
+.unit .bar{margin-top:8px}
+/* lesson path inside a unit */
+.lessons{display:flex;flex-direction:column}
+.les{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:16px;align-items:center;padding:14px 0;position:relative}
+.les::before{content:"";position:absolute;left:17px;top:0;bottom:0;width:2px;background:var(--line)}
+.les:first-child::before{top:50%}.les:last-child::before{bottom:50%}
+.les .dot{position:relative;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-weight:700;font-size:var(--s-small);background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);color:var(--ink-2)}
+.les.done .dot{background:var(--accent);color:var(--accent-ink);box-shadow:none}
+.les.now .dot{box-shadow:inset 0 0 0 2px var(--accent);color:var(--accent)}
+.les b{font-weight:600;display:block}
+.les small{font-size:var(--s-cap);color:var(--ink-2)}
+.les:hover b{color:var(--accent)}
 
-/* section */
-.back{font-size:var(--s-small);font-weight:600;color:var(--ink-2);display:inline-flex;gap:6px;align-items:center;align-self:flex-start}
-.back::before{content:"";width:7px;height:7px;border-left:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:rotate(45deg)}
-.back:hover{color:var(--accent)}
-.points{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
-.points li{display:grid;grid-template-columns:14px minmax(0,1fr);gap:10px;line-height:1.75}
-.points li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:.72em}
+/* lesson flow */
+.steps-top{display:flex;flex-direction:column;gap:14px}
+.segs{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:5px}
+.segs i{height:4px;border-radius:2px;background:var(--line);transition:background .4s}
+.segs i.on{background:var(--accent)}
+.card{display:flex;flex-direction:column;gap:22px;min-height:44vh}
+.stepname{font-family:var(--serif);font-weight:700;font-size:var(--s-small);color:var(--accent)}
+.points{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:16px}
+.points li{display:grid;grid-template-columns:14px minmax(0,1fr);gap:10px;line-height:1.75;font-size:var(--s-lead)}
+.points li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:.75em}
 .pull{font-family:var(--serif);font-weight:500;font-size:21px;line-height:1.85;padding-left:22px;position:relative}
 .pull::before{content:"“";position:absolute;left:-2px;top:-6px;font-size:40px;line-height:1;color:var(--accent);font-family:var(--serif)}
-.pulls{display:flex;flex-direction:column;gap:22px}
+.pulls{display:flex;flex-direction:column;gap:24px}
 .steps{list-style:none;margin:0;padding:0;counter-reset:s;display:flex;flex-direction:column;gap:16px}
 .steps li{counter-increment:s;display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;line-height:1.75}
 .steps li::before{content:counter(s);font-family:var(--serif);font-weight:700;font-size:20px;line-height:1.5;color:var(--accent)}
 .opt.right{color:var(--ok);font-weight:600}
 .opt.wrong{color:var(--bad)}
+.feedback{border-radius:16px;padding:16px 18px;background:var(--accent-wash);font-size:var(--s-small);line-height:1.75}
+.feedback.no{background:rgba(180,57,47,.08)}
+.flowbar{display:flex;justify-content:space-between;gap:12px;align-items:center;padding-top:20px;border-top:1px solid var(--line)}
+.flowbar.stick{position:sticky;bottom:0;background:var(--ground);padding-bottom:16px;z-index:5}
+.finish{display:flex;flex-direction:column;align-items:center;text-align:center;gap:18px;padding:30px 0}
+.finish .orbbtn{width:96px;height:96px;pointer-events:none}
 .reader{font-family:var(--serif);font-size:19px;line-height:2.05;font-weight:500}
 .reader p+p{margin-top:.9em}
 .reader b{font-family:var(--sans);font-size:var(--s-cap);font-weight:700;color:var(--accent);margin-right:6px;letter-spacing:.04em}
 mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
-.pager{display:grid;grid-template-columns:1fr 1fr;gap:16px;border-top:1px solid var(--line);padding-top:22px}
-.pager a{display:flex;flex-direction:column;gap:2px;min-width:0}
-.pager a small{font-size:var(--s-cap);color:var(--ink-3)}
-.pager a span{font-family:var(--serif);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pager a:hover span{color:var(--accent)}
-.pager .nx{text-align:right}
 
 /* plan */
 .phase{display:flex;flex-direction:column;gap:14px;padding-top:28px;border-top:1px solid var(--line)}
@@ -158,9 +179,6 @@ mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
 .task.on .txt{color:var(--ink-3);text-decoration:line-through}
 
 /* release */
-.steps4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.steps4 i{height:3px;border-radius:2px;background:var(--line);transition:background .4s}
-.steps4 i.on{background:var(--accent)}
 .choices{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .choice{background:var(--surface);border-radius:16px;padding:16px 18px;text-align:left;display:flex;flex-direction:column;gap:4px;box-shadow:inset 0 0 0 1px var(--line);transition:box-shadow .2s,transform .2s}
 .choice:active{transform:scale(.98)}
@@ -169,40 +187,66 @@ mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
 .choice.on{box-shadow:inset 0 0 0 2px var(--accent)}
 .choice.on b{color:var(--accent)}
 .stage{display:flex;flex-direction:column;align-items:center;gap:28px;padding:20px 0}
-.stage .ball{width:var(--s,240px);height:var(--s,240px);position:relative;opacity:var(--o,1);transition:width 1.2s cubic-bezier(.22,1,.36,1),height 1.2s cubic-bezier(.22,1,.36,1),opacity 1.2s}
+.stage .ball{width:var(--s,240px);height:var(--s,240px);position:relative;opacity:var(--o,1);transition:width 1.2s var(--ease),height 1.2s var(--ease),opacity 1.2s}
 .stage .words{font-family:var(--serif);font-weight:500;font-size:22px;line-height:1.8;text-align:center;max-width:24em}
+.ladder>*{gap:16px}
+.ladder .w{font-family:var(--serif);font-weight:700;min-width:5em}
+.ladder .lv{flex:1;display:flex;gap:3px}
+.ladder .lv i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.ladder .lv i.f{background:var(--ink-3)}
+.ladder .up .w{color:var(--accent)}
+.ladder .up .lv i.f{background:var(--accent)}
+
+/* me */
+.figs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.figs div{display:flex;flex-direction:column;gap:2px}
+.figs b{font-family:var(--serif);font-size:34px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.figs span{font-size:var(--s-cap);color:var(--ink-2)}
 .cal{display:grid;grid-template-columns:repeat(14,1fr);gap:5px}
 .cal i{aspect-ratio:1;border-radius:4px;background:var(--line)}
 .cal i.l1{background:var(--accent-wash);box-shadow:inset 0 0 0 1px var(--accent)} .cal i.l2{background:var(--accent)}
 .tag{font-size:var(--s-cap);padding:2px 10px;border-radius:999px;background:var(--wash);color:var(--ink-2);font-weight:600}
 .tag.a{background:var(--accent-wash);color:var(--accent)}
+.coll{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 20px;padding:22px 0;border-top:1px solid var(--line)}
+.coll:last-child{border-bottom:1px solid var(--line)}
+.coll:hover h3{color:var(--accent)}
+.coll p{grid-column:1;font-size:var(--s-small);color:var(--ink-2)}
+.coll .num{grid-row:1;grid-column:2}
 
 @media (max-width:760px){
-  :root{--s-display:34px;--s-h1:29px;--s-h2:21px;--s-lead:18px}
+  :root{--s-display:32px;--s-h1:28px;--s-h2:21px;--s-lead:18px}
   .top{display:none}
   .dock{position:fixed;top:auto;margin:0;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom,0px));padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
   .tabs{width:100%;justify-content:space-between}
   .tabs a{flex:1;flex-direction:column;gap:2px;padding:7px 2px;font-size:11.5px}
   .tabs a svg{width:21px;height:21px}
-  main{padding-block:28px 130px}
-  .page{gap:44px}
-  .page>.today{grid-template-columns:1fr;gap:24px}
-  .orbbtn{justify-self:start}
-  .orbbtn{width:124px;height:124px}
-  .quote{font-size:22px}
+  main{padding-block:24px 130px}
+  .page{gap:40px}
+  .page>.hello{grid-template-columns:minmax(0,1fr) 92px;gap:16px}
+  .orbbtn{width:92px;height:92px}
+  .orbbtn .lbl{font-size:14px}
+  .quote{font-size:21px}
   .reader{font-size:18px}
   .pull{font-size:19px}
-  .figs b{font-size:32px}
+  .page>.resume{grid-template-columns:1fr}
+  .card{min-height:30vh}
+  .flowbar.stick{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  .resume .btn{grid-row:auto;grid-column:auto;margin-top:10px}
+  .figs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .unit{grid-template-columns:44px minmax(0,1fr);gap:4px 14px}
+  .unit .no{width:44px;height:44px;font-size:18px;border-radius:14px}
+  .mstreak{display:inline-flex}
 }
+.mstreak{display:none}
 @media (prefers-reduced-motion:no-preference){
-  .page>*{animation:rise .6s cubic-bezier(.22,1,.36,1) both}
-  .page>*:nth-child(2){animation-delay:.05s}.page>*:nth-child(3){animation-delay:.1s}.page>*:nth-child(n+4){animation-delay:.15s}
+  .page>*{animation:rise .55s var(--ease) both}
+  .page>*:nth-child(2){animation-delay:.04s}.page>*:nth-child(3){animation-delay:.08s}.page>*:nth-child(n+4){animation-delay:.12s}
   @keyframes rise{from{opacity:.4;transform:translateY(8px)}to{opacity:1;transform:none}}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
-<header class="top"><span class="brand">莱斯特释放学堂</span><span class="cap" id="topstat"></span></header>
+<header class="top"><span class="brand">莱斯特释放学堂</span><span class="streak" id="topstreak"></span></header>
 <div class="dock"><nav class="tabs" id="tabs" aria-label="主导航"></nav></div>
 <main id="main"><div class="page"><p class="meta">正在载入全书……</p></div></main>
 
@@ -216,9 +260,17 @@ const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;',
 const store={get(k,d){try{const v=localStorage.getItem('lester:'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('lester:'+k,JSON.stringify(v))}catch(e){}}};
 let done=store.get('done',{}),journal=store.get('journal',[]),notes=store.get('notes',{}),quizlog=store.get('quiz',{});
 let planDone=store.get('plan',{}),planTasks=store.get('planTasks',{}),planNotes=store.get('planNotes',{});
+let reviews=store.get('reviews',{}),active=store.get('active',{});
 const SECS=[];BOOK.forEach(c=>c.sections.forEach(s=>{s.coll=c;SECS.push(s)}));
 const byId=Object.fromEntries(SECS.map(s=>[s.id,s])),collById=Object.fromEntries(BOOK.map(c=>[c.id,c]));
 const chars=s=>s.paras.reduce((a,p)=>a+p.length,0),TOTAL=SECS.reduce((a,s)=>a+chars(s),0);
+const mins=s=>Math.max(1,Math.round(chars(s)/450));
+
+// curriculum: thematic units; falls back to book order
+const UNITS=(NOTES.curriculum&&NOTES.curriculum.units||BOOK.map((c,i)=>({id:'u'+(i+1),title:c.title,goal:'',intro:(NOTES.collections||{})[c.id]||'',core:c.sections.map(s=>s.id),extra:[]})))
+  .map(u=>({...u,core:u.core.filter(id=>byId[id]),extra:u.extra.filter(id=>byId[id])}));
+const unitOf={};UNITS.forEach((u,i)=>{u.idx=i;[...u.core,...u.extra].forEach(id=>unitOf[id]=u)});
+const COREPATH=UNITS.flatMap(u=>u.core);
 
 const FEEL=[{k:'万念俱灰',en:'Apathy',d:'无力、麻木，觉得没有用'},{k:'悲苦',en:'Grief',d:'伤心、失落、自怜'},{k:'恐惧',en:'Fear',d:'担心、焦虑、不安'},
   {k:'贪求',en:'Lust',d:'渴求，非要不可'},{k:'愤怒',en:'Anger',d:'恼火、怨恨、想反击'},{k:'自尊自傲',en:'Pride',d:'优越、评判、不肯动'}];
@@ -226,109 +278,160 @@ const CAP=[{k:'无畏',en:'Courageousness',d:'有能量，敢于去做'},{k:'接
 const WANTS=[{k:'想要被认同',d:'想被喜欢、被认可、被爱、被理解'},{k:'想要控制',d:'想改变它，想让事情按我的方式来'},{k:'想要安全/生存',d:'担心失去、受伤、活不下去'}];
 const ICON={
   home:'<path d="M4 10.5 12 4l8 6.5V20h-5v-6H9v6H4z"/>',
-  plan:'<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>',
   learn:'<path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/>',
+  plan:'<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>',
   release:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/>',
-  journal:'<path d="M6 4h10l3 3v13H6z"/><path d="M9 10h7M9 14h7M9 18h4"/>'};
-const TABS=[['home','今天'],['plan','30 天'],['learn','课程'],['release','释放'],['journal','记录']];
-const icon=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${ICON[k]}</svg>`;
+  me:'<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c1.2-3.6 4-5.5 7-5.5s5.8 1.9 7 5.5"/>',
+  review:'<path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v4.5h-4.5"/>',
+  flame:'<path d="M12 21c-3.9 0-6.5-2.6-6.5-6.1 0-3.2 2.3-5 3.6-7.4.4 1.7 1.3 2.7 2.4 3.2C11.3 7.6 12.6 4.6 15 3c-.2 3 2.2 4.8 3.2 7 .9 1.9 1.3 3.2 1.3 4.8C19.5 18.4 16 21 12 21z"/>'};
+const icon=(k,fill)=>`<svg viewBox="0 0 24 24" fill="${fill?'currentColor':'none'}" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${ICON[k]}</svg>`;
+const TABS=[['home','今天'],['learn','学习'],['plan','30 天'],['release','释放'],['me','我的']];
 
-const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
-const daysAgo=n=>{const d=new Date();d.setDate(d.getDate()-n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today=()=>ymd(new Date());
+const addDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return ymd(d)};
 const daySeed=()=>today().split('-').reduce((a,b)=>a*31+ +b,7),pick=(a,n)=>a[Math.abs(n)%a.length];
 const ALLQ=[];SECS.forEach(s=>{const n=SN[s.id];if(n&&n.quotes)n.quotes.forEach(q=>ALLQ.push({q,s}))});
 const ALLP=SECS.filter(s=>SN[s.id]&&SN[s.id].practice).map(s=>({s,p:SN[s.id].practice}));
-const ALLZ=SECS.filter(s=>SN[s.id]&&SN[s.id].quiz).map(s=>({s,z:SN[s.id].quiz}));
-const START=(NOTES.start||[]).filter(id=>byId[id]);
 const src=s=>`${esc(s.coll.title)}《${esc(s.title)}》，第 ${s.page} 页`;
 const curDay=()=>PLAN?(PLAN.days.find(x=>!planDone[x.day])||PLAN.days[PLAN.days.length-1]):null;
 const phaseOf=n=>PLAN.phases.findIndex(p=>n>=p.days[0]&&n<=p.days[1]);
+const relToday=()=>journal.some(j=>j.type==='release'&&j.date===today());
 const nRel=()=>journal.filter(j=>j.type==='release').length;
+const nextLesson=()=>COREPATH.find(id=>!done[id])||SECS.find(s=>!done[s.id])?.id;
+function touch(){active[today()]=1;store.set('active',active)}
+function streak(){let n=0;const d=new Date();if(!active[ymd(d)])d.setDate(d.getDate()-1);while(active[ymd(d)]){n++;d.setDate(d.getDate()-1)}return n}
+// spaced review: 1, 3, 7, 14, 30 days
+const GAPS=[1,3,7,14,30];
+function schedule(id,correct){const r=reviews[id]||{stage:-1};r.stage=correct?Math.min(r.stage+1,GAPS.length-1):0;r.due=addDays(GAPS[Math.max(0,r.stage)]);reviews[id]=r;store.set('reviews',reviews)}
+const dueList=()=>Object.entries(reviews).filter(([id,r])=>r.due<=today()&&SN[id]&&SN[id].quiz).map(([id])=>id);
 
 const V={};
+/* ---------- 今天 ---------- */
 V.home=()=>{
-  const seed=daySeed(),q=ALLQ.length?pick(ALLQ,seed):null,d=curDay(),next=SECS.find(s=>!done[s.id]),now=new Date();
-  const wk=journal.filter(j=>j.type==='release'&&j.date>=daysAgo(6)).length,learned=Object.keys(done).length,pd=Object.keys(planDone).length;
+  const now=new Date(),h=now.getHours(),hi=h<11?'早上好':h<14?'中午好':h<18?'下午好':'晚上好';
+  const d=curDay(),nl=nextLesson(),due=dueList(),st=streak(),q=ALLQ.length?pick(ALLQ,daySeed()):null;
+  const items=[];
+  if(d)items.push({on:planDone[d.day]===today(),ic:'plan',t:`30 天实践 · 第 ${d.day} 天`,s:d.title,href:`#d-${d.day}`});
+  if(nl){const s=byId[nl],u=unitOf[nl],did=Object.values(done).filter(x=>x===today()).length;items.push(did?{on:true,ic:'learn',t:`今天已学 ${did} 课`,s:`还想学，可以继续：${s.title}`,href:`#s-${nl}`}:{on:false,ic:'learn',t:`下一课 · ${esc(s.title)}`,s:`${u?esc(u.title)+' · ':''}导读 3 分钟`,href:`#s-${nl}`})}
+  items.push({on:due.length===0&&Object.keys(reviews).length>0,ic:'review',t:due.length?`复习 ${due.length} 题`:'复习',s:due.length?'间隔复习，巩固学过的课':(Object.keys(reviews).length?'今天没有到期的复习':'学完一课后，题目会按时回来'),href:'#review'});
+  items.push({on:relToday(),ic:'release',t:'释放一次',s:'有感受升起时，一步一步放下',href:'#release'});
+  const left=items.filter(x=>!x.on).length;
   return `<div class="page">
-  <section class="today">
-    <div class="head">
-      <p class="meta">${now.getMonth()+1} 月 ${now.getDate()} 日${d?` · <span class="dayno">30 天实践 第 ${d.day} 天</span>`:''}</p>
-      <h1>${d?esc(d.title):'今天'}</h1>
-      ${d?`<p class="lead">${esc(d.story)}</p>`:''}
-      <div class="row" style="margin-top:8px">${d?`<a class="btn solid" href="#d-${d.day}">开始今天的练习</a>`:''}${next?`<a class="btn" href="#s-${next.id}">继续读 ${esc(next.title)}</a>`:''}</div>
-    </div>
-    <a class="orbbtn" href="#release" aria-label="开始一次释放"><span class="orb"></span><span class="lbl">释放</span></a>
-  </section>
+  <section class="hello"><div class="head"><p class="meta">${now.getMonth()+1} 月 ${now.getDate()} 日 · ${hi}</p><h1>${left?`今天还有 ${left} 件事`:'今天都完成了'}</h1>
+    <p class="meta">${st?`已连续练习 ${st} 天。`:'从第一件开始，每天一点点。'}</p></div>
+    <a class="orbbtn" href="#release" aria-label="开始一次释放"><span class="orb"></span><span class="lbl">释放</span></a></section>
+  <section><div class="group daily">${items.map(x=>`<a href="${x.href}" class="${x.on?'done':''}"><span class="ic">${x.on?'<span class="tick on" style="box-shadow:none;background:none"></span>':icon(x.ic)}</span><span class="grow"><span>${x.t}</span><small>${esc(x.s)}</small></span><span class="chev"></span></a>`).join('')}</div></section>
   ${q?`<section><p class="quote">${esc(q.q)}</p><p class="cap">${src(q.s)}</p></section>`:''}
-  <section>
-    <div class="figs"><div><b>${pd}</b><span>实践天数 / 30</span></div><div><b>${wk}</b><span>本周释放次数</span></div><div><b>${learned}</b><span>已读小节 / ${SECS.length}</span></div></div>
-    <div class="bar" aria-label="30 天进度"><i style="width:${pd/30*100}%"></i></div>
-  </section>
-  <section>
-    <div class="head"><h2>你现在在哪一层</h2><p class="meta">莱斯特的情绪图表。下面六种合称 AGFLAP，放下它们，就上升到无畏、接纳与平和。点一层，从那里开始释放。</p></div>
+  <section><div class="head"><h2>你现在在哪一层</h2><p class="meta">莱斯特的情绪图表。下面六种合称 AGFLAP，放下它们，就上升到无畏、接纳与平和。点一层，从那里开始释放。</p></div>
     <div class="group ladder">
-      ${CAP.slice().reverse().map((f,i)=>`<div class="cap-row"><span class="w">${f.k}</span><span class="lv">${Array.from({length:9},(_,k)=>`<i class="${k<9-i?'f':''}"></i>`).join('')}</span><span class="num">${f.en}</span></div>`).join('')}
+      ${CAP.slice().reverse().map((f,i)=>`<div class="up"><span class="w">${f.k}</span><span class="lv">${Array.from({length:9},(_,k)=>`<i class="${k<9-i?'f':''}"></i>`).join('')}</span><span class="num">${f.en}</span></div>`).join('')}
       ${FEEL.slice().reverse().map((f,i)=>`<button data-start="${5-i}"><span class="w">${f.k}</span><span class="lv">${Array.from({length:9},(_,k)=>`<i class="${k<6-i?'f':''}"></i>`).join('')}</span><span class="num">${f.en}</span></button>`).join('')}
-    </div>
-  </section>
-  ${START.length?`<section><div class="head"><h2>第一次来，先读这六节</h2><p class="meta">先听莱斯特讲他的发现，再学方法本身。</p></div>
-  <div class="group">${START.map(id=>{const s=byId[id];return `<a href="#s-${id}"><span class="tick ${done[id]?'on':''}"></span><span class="grow"><span>${esc(s.title)}</span><small>${esc(s.coll.title)}</small></span><span class="chev"></span></a>`}).join('')}</div></section>`:''}
-  <p class="cap">进度、笔记和释放记录只保存在这台设备的浏览器里。</p></div>`;
+    </div></section>
+  <p class="cap">学习进度和记录只保存在这台设备的浏览器里。</p></div>`;
 };
 
+/* ---------- 学习 ---------- */
+V.learn=()=>{
+  const nl=nextLesson(),s=nl&&byId[nl],u=nl&&unitOf[nl],coreDone=COREPATH.filter(id=>done[id]).length;
+  return `<div class="page">
+  <section class="head"><h1>学习</h1><p class="lead">全书 ${SECS.length} 节按主题重新编排成 ${UNITS.length} 个单元，由浅入深。每单元先学必读课，选读课用来加深。</p></section>
+  ${s?`<section class="resume"><span class="kick">${u?`第 ${u.idx+1} 单元 · ${esc(u.title)}`:'继续'}</span><h2>${esc(s.title)}</h2><span class="meta">${esc((SN[nl]||{}).summary||'').slice(0,60)}…</span><a class="btn solid" href="#s-${nl}">${coreDone?'继续学习':'开始第一课'}</a></section>`:''}
+  <section style="gap:0">${UNITS.map((u,i)=>{const all=[...u.core,...u.extra],cd=u.core.filter(id=>done[id]).length,full=cd===u.core.length,cur=u===unitOf[nl];
+    return `<a class="unit ${full?'full':''} ${cur?'cur':''}" href="#u-${u.id}"><span class="no">${i+1}</span><h2>${esc(u.title)}</h2><p>${esc(u.goal||u.intro)}</p><p class="cap">必读 ${cd} / ${u.core.length} · 共 ${all.length} 节</p><div class="bar"><i style="width:${cd/u.core.length*100}%"></i></div></a>`}).join('')}</section>
+  <section><h2>工具</h2><div class="group">
+    <a href="#review"><span class="grow"><span>间隔复习</span><small>学过的题按 1、3、7、14、30 天回来</small></span><span class="num">${dueList().length||''}</span><span class="chev"></span></a>
+    <a href="#read"><span class="grow"><span>搜索全文</span><small>在约 ${Math.round(TOTAL/10000)} 万字里找任何一句话</small></span><span class="chev"></span></a>
+    <a href="#practice"><span class="grow"><span>练习库</span><small>书中给出的 ${ALLP.length} 个具体方法</small></span><span class="chev"></span></a>
+    <a href="#glossary"><span class="grow"><span>概念与原话</span><small>术语、故事与比喻、莱斯特原话</small></span><span class="chev"></span></a>
+    <a href="#library"><span class="grow"><span>原书目录</span><small>按原书 ${BOOK.length} 个合集的顺序阅读</small></span><span class="chev"></span></a>
+  </div></section></div>`};
+
+V.unit=id=>{const u=UNITS.find(x=>x.id===id);if(!u)return V.learn();const nl=nextLesson();
+  const row=(sid,i)=>{const s=byId[sid],st=done[sid]?'done':(sid===nl?'now':'');return `<a class="les ${st}" href="#s-${sid}"><span class="dot">${done[sid]?'':i}</span><span><b>${esc(s.title)}</b><small>${esc(((SN[sid]||{}).summary||'').slice(0,40))}…</small></span><span class="num">${mins(s)} 分钟</span></a>`};
+  const prev=UNITS[u.idx-1],next=UNITS[u.idx+1];
+  return `<div class="page">
+  <section class="head"><a class="crumb" href="#learn">学习</a><p class="kick" style="margin-top:12px">第 ${u.idx+1} 单元</p><h1>${esc(u.title)}</h1><p class="lead">${esc(u.intro)}</p>${u.goal?`<p class="meta">学完你能：${esc(u.goal.replace(/^学完你能/,''))}</p>`:''}</section>
+  <section><div class="split"><h2>必读</h2><span class="cap">${u.core.filter(x=>done[x]).length} / ${u.core.length}</span></div><div class="lessons">${u.core.map((sid,i)=>row(sid,i+1)).join('')}</div></section>
+  ${u.extra.length?`<section><div class="split"><h2>选读</h2><span class="cap">${u.extra.filter(x=>done[x]).length} / ${u.extra.length}</span></div><p class="meta">学完必读后，用这些课把同一主题读深。</p>
+    <div class="group">${u.extra.map(sid=>{const s=byId[sid];return `<a href="#s-${sid}"><span class="tick ${done[sid]?'on':''}"></span><span class="grow"><span>${esc(s.title)}</span><small>${esc(s.coll.title)} · ${mins(s)} 分钟</small></span><span class="chev"></span></a>`}).join('')}</div></section>`:''}
+  <nav class="flowbar">${prev?`<a class="more" href="#u-${prev.id}">上一单元</a>`:'<span></span>'}${next?`<a class="more" href="#u-${next.id}">下一单元：${esc(next.title)}</a>`:''}</nav></div>`};
+
+/* lesson flow: 概述 → 要点 → 原话 → 自测 → 练习 → 写下 → 完成 */
+let L={id:null,i:0,mode:'flow'};
+function lessonSteps(id){const n=SN[id]||{},a=[];
+  a.push('intro');if(n.points&&n.points.length)a.push('points');if(n.quotes&&n.quotes.length)a.push('quotes');
+  if(n.quiz)a.push('quiz');if(n.practice)a.push('practice');a.push('note');a.push('end');return a}
+const STEPNAME={intro:'概述',points:'要点',quotes:'莱斯特原话',quiz:'检验一下',practice:'练习',note:'写下来',end:'完成'};
+V.sec=id=>{
+  const s=byId[id];if(!s)return V.learn();
+  if(L.id!==id)L={id,i:0,mode:L.mode==='text'&&L.keep?'text':'flow'};
+  const n=SN[id]||{},u=unitOf[id],steps=lessonSteps(id),k=steps[Math.min(L.i,steps.length-1)],a=quizlog[id];
+  const pos=u?(u.core.includes(id)?`必读 ${u.core.indexOf(id)+1} / ${u.core.length}`:'选读'):'';
+  const head=`<section class="head"><a class="crumb" href="${u?'#u-'+u.id:'#library'}">${u?`第 ${u.idx+1} 单元 · ${esc(u.title)}`:'原书目录'}</a>
+    <h1 style="margin-top:10px">${esc(s.title)}</h1><p class="meta">${pos?pos+' · ':''}导读约 3 分钟 · 原文 ${mins(s)} 分钟 · ${esc(s.coll.title)} 第 ${s.page} 页</p>
+    <div class="seg" style="margin-top:8px"><button data-m="flow" class="${L.mode==='flow'?'on':''}">导读</button><button data-m="text" class="${L.mode==='text'?'on':''}">原文</button></div></section>`;
+  if(L.mode==='text')return `<div class="page">${head}<div class="reader">${s.paras.map(p=>{const m=p.match(/^([^，。：:]{1,8})[：:](.*)$/);return m?`<p><b>${esc(m[1])}</b>${esc(m[2])}</p>`:`<p>${esc(p)}</p>`}).join('')}</div>
+    <div class="flowbar"><span class="cap">读完原文，可以回到导读完成本课</span><button class="btn solid" data-m="flow">回到导读</button></div></div>`;
+  let body='';
+  if(k==='intro')body=`<p class="lead" style="font-size:21px">${esc(n.summary||'这一节暂无提炼，请读原文。')}</p>`;
+  if(k==='points')body=`<ul class="points">${n.points.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`;
+  if(k==='quotes')body=`<div class="pulls">${n.quotes.map(q=>`<p class="pull">${esc(q)}</p>`).join('')}</div><p class="cap">都摘自本节原文，可切到“原文”查看上下文。</p>`;
+  if(k==='quiz'){const z=n.quiz;body=`<p class="lead">${esc(z.q)}</p><div class="group">${z.options.map((o,j)=>`<button class="opt ${a!=null?(j===z.answer?'right':(j===a?'wrong':'')):''}" data-k="${j}" ${a!=null?'disabled':''}><span class="grow">${esc(o)}</span>${a!=null&&j===z.answer?'<span class="tick on"></span>':''}</button>`).join('')}</div>
+    ${a!=null?`<div class="feedback ${a===z.answer?'':'no'}">${a===z.answer?'答对了。':'再想想。正确答案已标出。'}${esc(z.explain||'')}</div>`:'<p class="cap">选一个答案后继续。这道题之后会出现在复习里。</p>'}`}
+  if(k==='practice')body=`<h2>${esc(n.practice.title)}</h2><ol class="steps">${n.practice.steps.map(x=>`<li><span>${esc(x)}</span></li>`).join('')}</ol>${n.practice.note?`<p class="cap">${esc(n.practice.note)}</p>`:''}<p class="meta">做的过程中有感受升起，可以打开<a class="more" href="#release">释放</a>。</p>`;
+  if(k==='note')body=`<p class="lead">用一两句话写下：这一课里，哪句话对你最有触动？你打算今天怎么用？</p><textarea id="note" aria-label="笔记">${esc(notes[id]||'')}</textarea>`;
+  if(k==='end'){const nx=nextAfter(id);body=`<div class="finish"><span class="orbbtn"><span class="orb"></span></span><h2>${done[id]?'这一课已完成':'完成这一课'}</h2>
+    <p class="meta">${n.quiz?'这道题会在 1 天后回到复习里。':''}${u?`本单元必读 ${u.core.filter(x=>done[x]||x===id).length} / ${u.core.length}`:''}</p>
+    ${done[id]?'':`<button class="btn solid" id="finish">完成本课</button>`}
+    ${nx?`<a class="btn ${done[id]?'solid':''}" href="#s-${nx}">下一课：${esc(byId[nx].title)}</a>`:''}</div>`}
+  const blocked=k==='quiz'&&a==null;
+  return `<div class="page" style="gap:34px">${head}
+  <div class="steps-top"><div class="segs">${steps.map((x,j)=>`<i class="${j<=L.i?'on':''}"></i>`).join('')}</div><span class="stepname">${STEPNAME[k]}</span></div>
+  <div class="card">${body}</div>
+  ${k!=='end'?`<div class="flowbar stick">${L.i>0?`<button class="btn" id="prev">上一步</button>`:'<span></span>'}<button class="btn solid" id="nextstep" ${blocked?'disabled':''}>${steps[L.i+1]==='end'?'完成':'继续'}</button></div>`:''}</div>`;
+};
+function nextAfter(id){const i=COREPATH.indexOf(id);if(i>=0)return COREPATH.slice(i+1).find(x=>!done[x])||COREPATH.find(x=>!done[x]&&x!==id);const u=unitOf[id];if(u){const e=u.extra.indexOf(id);if(e>=0&&u.extra[e+1])return u.extra[e+1]}return nextLesson()}
+function completeLesson(id){if(!done[id]){done[id]=today();store.set('done',done);touch();const n=SN[id];if(n&&n.quiz&&!reviews[id]){reviews[id]={stage:-1};schedule(id,true)}}}
+
+/* ---------- review ---------- */
+let RV=null;
+V.review=()=>{
+  if(!RV){RV={list:dueList().slice(0,10),i:0,ans:null,right:0}}
+  if(!RV.list.length){const upcoming=Object.values(reviews).map(r=>r.due).sort()[0];
+    return `<div class="page"><section class="head"><a class="crumb" href="#learn">学习</a><h1 style="margin-top:12px">复习</h1><p class="lead">${Object.keys(reviews).length?`今天没有到期的题。下一次复习在 ${upcoming}。`:'学完一课后，那一课的题会在 1 天后回来，答对就间隔得更久，答错就回到第一天。'}</p></section>
+    <div class="row"><a class="btn solid" href="#learn">去学习</a></div></div>`}
+  if(RV.i>=RV.list.length){const r=RV.right,t=RV.list.length;RV=null;return `<div class="page"><section class="finish"><span class="orbbtn" style="width:96px;height:96px"><span class="orb"></span></span><h1>复习完成</h1><p class="lead">${t} 题里答对 ${r} 题。</p><a class="btn solid" href="#home">回到今天</a></section></div>`}
+  const id=RV.list[RV.i],z=SN[id].quiz,s=byId[id],a=RV.ans;
+  return `<div class="page" style="gap:30px"><section class="head"><a class="crumb" href="#learn">学习</a></section>
+  <div class="steps-top"><div class="segs">${RV.list.map((_,j)=>`<i class="${j<=RV.i?'on':''}"></i>`).join('')}</div><span class="stepname">复习 ${RV.i+1} / ${RV.list.length}</span></div>
+  <div class="card"><p class="lead" style="font-size:21px">${esc(z.q)}</p><div class="group">${z.options.map((o,j)=>`<button class="opt rvo ${a!=null?(j===z.answer?'right':(j===a?'wrong':'')):''}" data-k="${j}" ${a!=null?'disabled':''}><span class="grow">${esc(o)}</span>${a!=null&&j===z.answer?'<span class="tick on"></span>':''}</button>`).join('')}</div>
+  ${a!=null?`<div class="feedback ${a===z.answer?'':'no'}">${a===z.answer?'答对了，下次间隔更久。':'没关系，明天它会再回来。'}${esc(z.explain||'')} <a class="more" href="#s-${id}">《${esc(s.title)}》</a></div>`:''}</div>
+  ${a!=null?`<div class="flowbar"><span></span><button class="btn solid" id="rvnext">继续</button></div>`:''}</div>`};
+
+/* ---------- 30 天 ---------- */
 V.plan=()=>{if(!PLAN)return `<div class="page"><h1>30 天实践</h1></div>`;
   const n=Object.keys(planDone).length,cd=curDay();
   return `<div class="page">
   <section class="head"><h1>30 天实践</h1><p class="lead">${esc(PLAN.intro)}</p></section>
-  <section><div class="split"><span class="meta">已完成 ${n} / 30 天</span><a class="more" href="#d-${cd.day}">继续第 ${cd.day} 天</a></div><div class="bar"><i style="width:${n/30*100}%"></i></div></section>
+  <section class="resume"><span class="kick">第 ${cd.day} 天 · ${esc(PLAN.phases[phaseOf(cd.day)].title)}</span><h2>${esc(cd.title)}</h2><span class="meta">已完成 ${n} / 30 天</span><a class="btn solid" href="#d-${cd.day}">${n?'继续':'开始第 1 天'}</a></section>
   ${PLAN.phases.map(p=>`<section class="phase">
     <div class="head"><h2>${esc(p.title)}</h2><p class="cap">第 ${p.days[0]}–${p.days[1]} 天</p><p class="meta">${esc(p.story)}${byId[p.section]?` <a class="more" href="#s-${p.section}">读原文</a>`:''}</p></div>
     <div class="path">${PLAN.days.filter(d=>d.day>=p.days[0]&&d.day<=p.days[1]).map(d=>`<a class="node ${planDone[d.day]?'done':(cd.day===d.day?'now':'')}" href="#d-${d.day}" aria-label="第 ${d.day} 天：${esc(d.title)}" title="${esc(d.title)}">${d.day}</a>`).join('')}</div>
   </section>`).join('')}</div>`};
-
 V.day=n=>{if(!PLAN)return V.plan();const d=PLAN.days.find(x=>x.day===+n);if(!d)return V.plan();
   const p=PLAN.phases[phaseOf(d.day)],tk=planTasks[d.day]||{},qs=byId[d.quoteSection],rd=byId[d.read],prev=PLAN.days.find(x=>x.day===d.day-1),next=PLAN.days.find(x=>x.day===d.day+1);
   return `<div class="page">
-  <section class="head"><a class="back" href="#plan">30 天实践</a><p class="dayno" style="margin-top:12px">第 ${d.day} 天 · ${esc(p.title)}</p><h1>${esc(d.title)}</h1><p class="lead">${esc(d.story)}</p></section>
+  <section class="head"><a class="crumb" href="#plan">30 天实践</a><p class="kick" style="margin-top:12px">第 ${d.day} 天 · ${esc(p.title)}</p><h1>${esc(d.title)}</h1><p class="lead">${esc(d.story)}</p></section>
   ${d.quote?`<section><p class="pull">${esc(d.quote)}</p>${qs?`<p class="cap" style="padding-left:22px">${src(qs)}</p>`:''}</section>`:''}
   <section><h2>今天要做的</h2><div class="group">${d.tasks.map((t,i)=>`<button class="task ${tk[i]?'on':''}" data-task="${i}"><span class="tick ${tk[i]?'on':''}"></span><span class="txt">${esc(t)}</span></button>`).join('')}</div>
     <p class="meta">感受升起来的时候，打开<a class="more" href="#release">释放</a>，一步一步放下。</p></section>
   <section><div class="head"><h2>晚上回看</h2><p class="meta">${esc(d.reflect)}</p></div><textarea id="pnote" aria-label="晚上回看">${esc(planNotes[d.day]||'')}</textarea></section>
-  ${rd?`<section><h2>今天读</h2><div class="group"><a href="#s-${rd.id}"><span class="grow"><span>${esc(rd.title)}</span><small>${esc(rd.coll.title)} · 第 ${rd.page} 页</small></span><span class="chev"></span></a></div></section>`:''}
+  ${rd?`<section><h2>今天读</h2><div class="group"><a href="#s-${rd.id}"><span class="grow"><span>${esc(rd.title)}</span><small>${esc(rd.coll.title)} · ${mins(rd)} 分钟</small></span><span class="chev"></span></a></div></section>`:''}
   <div class="row"><button class="btn ${planDone[d.day]?'':'solid'}" id="pdone">${planDone[d.day]?'取消完成':'完成第 '+d.day+' 天'}</button></div>
-  <nav class="pager">${prev?`<a href="#d-${prev.day}"><small>第 ${prev.day} 天</small><span>${esc(prev.title)}</span></a>`:'<span></span>'}${next?`<a class="nx" href="#d-${next.day}"><small>第 ${next.day} 天</small><span>${esc(next.title)}</span></a>`:''}</nav></div>`};
+  <nav class="flowbar">${prev?`<a class="more" href="#d-${prev.day}">第 ${prev.day} 天</a>`:'<span></span>'}${next?`<a class="more" href="#d-${next.day}">第 ${next.day} 天：${esc(next.title)}</a>`:''}</nav></div>`};
 
-V.learn=()=>`<div class="page">
-  <section class="head"><h1>课程</h1><p class="lead">《莱斯特合集》全书，${BOOK.length} 个合集、${SECS.length} 节，约 ${Math.round(TOTAL/10000)} 万字，按原书顺序。</p>
-  <div class="links" style="margin-top:6px"><a href="#read">搜索全文</a><a href="#practice">练习库</a><a href="#quiz">自测</a><a href="#glossary">概念与原话</a></div></section>
-  <section style="gap:0">${BOOK.map(c=>{const n=c.sections.filter(s=>done[s.id]).length;return `<a class="coll" href="#c-${c.id}"><h2>${esc(c.title)}</h2><span class="num">${n?`${n} / `:''}${c.sections.length} 节</span><p>${esc((NOTES.collections||{})[c.id]||'')}</p></a>`}).join('')}</section></div>`;
-
-V.coll=id=>{const c=collById[id];if(!c)return V.learn();
-  return `<div class="page"><section class="head"><a class="back" href="#learn">课程</a><h1 style="margin-top:12px">${esc(c.title)}</h1><p class="lead">${esc((NOTES.collections||{})[c.id]||'')}</p></section>
-  <section><div class="group">${c.sections.map(s=>`<a href="#s-${s.id}"><span class="tick ${done[s.id]?'on':''}"></span><span class="grow"><span>${esc(s.title)}</span>${SN[s.id]&&SN[s.id].summary?`<small>${esc(SN[s.id].summary.slice(0,44))}…</small>`:''}</span><span class="num">${s.page}</span></a>`).join('')}</div></section></div>`};
-
-let tab='learn';
-V.sec=id=>{
-  const s=byId[id];if(!s)return V.learn();
-  const n=SN[id]||{},i=SECS.indexOf(s),prev=SECS[i-1],next=SECS[i+1],z=n.quiz,a=quizlog[id];
-  const learn=`
-    ${n.summary?`<p class="lead">${esc(n.summary)}</p>`:'<p class="meta">这一节暂无提炼，请直接读原文。</p>'}
-    ${n.points&&n.points.length?`<section><h2>要点</h2><ul class="points">${n.points.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></section>`:''}
-    ${n.quotes&&n.quotes.length?`<section><h2>莱斯特原话</h2><div class="pulls">${n.quotes.map(q=>`<p class="pull">${esc(q)}</p>`).join('')}</div></section>`:''}
-    ${n.practice?`<section><div class="head"><h2>练习</h2><p class="meta">${esc(n.practice.title)}</p></div><ol class="steps">${n.practice.steps.map(x=>`<li><span>${esc(x)}</span></li>`).join('')}</ol>${n.practice.note?`<p class="cap">${esc(n.practice.note)}</p>`:''}</section>`:''}
-    ${z?`<section id="qz"><div class="head"><h2>自测</h2><p>${esc(z.q)}</p></div>
-      <div class="group">${z.options.map((o,k)=>`<button class="opt ${a!=null?(k===z.answer?'right':(k===a?'wrong':'')):''}" data-k="${k}" ${a!=null?'disabled':''}><span class="grow">${esc(o)}</span>${a!=null&&k===z.answer?'<span class="tick on"></span>':''}</button>`).join('')}</div>
-      ${a!=null?`<p class="meta">${esc(z.explain||'')}</p>`:''}</section>`:''}
-    <section><h2>笔记</h2><textarea id="note" aria-label="笔记" placeholder="读完这一节，你看到了什么？">${esc(notes[id]||'')}</textarea></section>`;
-  const text=`<div class="reader">${s.paras.map(p=>{const m=p.match(/^([^，。：:]{1,8})[：:](.*)$/);return m?`<p><b>${esc(m[1])}</b>${esc(m[2])}</p>`:`<p>${esc(p)}</p>`}).join('')}</div>`;
-  return `<div class="page">
-    <section class="head"><a class="back" href="#c-${s.coll.id}">${esc(s.coll.title)}</a><h1 style="margin-top:12px">${esc(s.title)}</h1><p class="meta">第 ${s.page} 页 · ${chars(s).toLocaleString()} 字${done[id]?' · 已读':''}</p>
-    <div class="seg" role="tablist" style="margin-top:10px"><button data-t="learn" class="${tab==='learn'?'on':''}">导读</button><button data-t="text" class="${tab==='text'?'on':''}">原文</button></div></section>
-    ${tab==='learn'?learn:text}
-    <div class="row"><button class="btn ${done[id]?'':'solid'}" id="mark">${done[id]?'标为未读':'读完了'}</button></div>
-    <nav class="pager">${prev?`<a href="#s-${prev.id}"><small>上一节</small><span>${esc(prev.title)}</span></a>`:'<span></span>'}${next?`<a class="nx" href="#s-${next.id}"><small>下一节</small><span>${esc(next.title)}</span></a>`:''}</nav></div>`;
-};
-
+/* ---------- 释放 ---------- */
 let R=null;const resetR=()=>R={step:0,feel:null,topic:'',want:null,rounds:0,after:null};
 V.release=()=>{
   if(!R)resetR();
@@ -351,36 +454,40 @@ V.release=()=>{
     <div class="choices">${[...CAP.slice().reverse(),...FEEL.slice().reverse()].map(f=>`<button class="choice ${R.after===f.k?'on':''}" data-after="${f.k}"><b>${f.k}</b><small>${f.d}</small></button>`).join('')}</div>
     <textarea id="rnote" aria-label="记录" placeholder="放下了什么？有什么新的看见？"></textarea>
     <div class="row"><button class="btn solid" id="rsave" ${R.after?'':'disabled'}>保存这次释放</button><button class="btn" id="ragain">再来一轮</button></div>`;
-  const recent=journal.filter(j=>j.type==='release').slice(-3).reverse();
-  return `<div class="page" style="gap:32px"><div class="steps4" aria-label="第 ${R.step+1} 步，共 4 步">${[0,1,2,3].map(k=>`<i class="${k<=R.step?'on':''}"></i>`).join('')}</div>
-  <h1>${T[R.step]}</h1>${b}
-  ${recent.length?`<section style="margin-top:24px"><h2>最近的释放</h2><div class="group">${recent.map(logRow).join('')}</div></section>`:''}</div>`;
+  return `<div class="page" style="gap:32px"><div class="segs" aria-label="第 ${R.step+1} 步，共 4 步">${[0,1,2,3].map(k=>`<i class="${k<=R.step?'on':''}"></i>`).join('')}</div>
+  <h1>${T[R.step]}</h1>${b}</div>`;
 };
 function logRow(j){
   if(j.type==='release')return `<div><span class="grow"><span class="row" style="gap:6px"><span class="tag">${esc(j.feel)}</span><span class="tag">${esc(j.want)}</span><span class="tag a">${esc(j.after)}</span></span>${j.topic?`<span>${esc(j.topic)}</span>`:''}${j.note?`<small>${esc(j.note)}</small>`:''}</span><span class="num">${j.date.slice(5)}</span></div>`;
   return `<div><span class="grow"><span>${esc(j.note)}</span></span><span class="num">${j.date.slice(5)}</span></div>`;
 }
 
-V.practice=()=>`<div class="page"><section class="head"><a class="back" href="#learn">课程</a><h1 style="margin-top:12px">练习库</h1><p class="lead">书中给出的 ${ALLP.length} 个具体方法，按原书顺序。</p></section>
-  ${BOOK.map(c=>{const ps=ALLP.filter(x=>x.s.coll===c);if(!ps.length)return'';return `<section><h2>${esc(c.title)}</h2><div class="group">
-  ${ps.map(({s,p})=>`<details style="display:block"><summary style="cursor:pointer;font-weight:600">${esc(p.title)}</summary><ol class="steps" style="margin:16px 0 8px">${p.steps.map(x=>`<li><span>${esc(x)}</span></li>`).join('')}</ol>${p.note?`<p class="cap">${esc(p.note)}</p>`:''}<p class="cap" style="margin-top:8px">出自<a class="more" href="#s-${s.id}">《${esc(s.title)}》</a></p></details>`).join('')}</div></section>`}).join('')}</div>`;
-
-let QZ=null;
-V.quiz=()=>{
-  if(!QZ)QZ={pool:[...ALLZ].sort(()=>Math.random()-.5).slice(0,10),i:0,score:0,ans:null};
-  if(!QZ.pool.length)return `<div class="page"><h1>自测</h1></div>`;
-  if(QZ.i>=QZ.pool.length)return `<div class="page"><section class="head"><a class="back" href="#learn">课程</a><h1 style="margin-top:12px;font-size:64px">${QZ.score} / ${QZ.pool.length}</h1><p class="lead">答错的题，回到那一节再读一遍原文。</p></section><div class="row"><button class="btn solid" id="qnew">再来 10 题</button></div></div>`;
-  const {s,z}=QZ.pool[QZ.i],a=QZ.ans;
-  return `<div class="page" style="gap:32px"><div class="steps4" style="grid-template-columns:repeat(${QZ.pool.length},1fr)">${QZ.pool.map((_,k)=>`<i class="${k<=QZ.i?'on':''}"></i>`).join('')}</div>
-  <section class="head"><h1 style="font-size:var(--s-h2)">${esc(z.q)}</h1><p class="cap">出自${src(s)}</p></section>
-  <div class="group">${z.options.map((o,k)=>`<button class="opt qopt ${a!=null?(k===z.answer?'right':(k===a?'wrong':'')):''}" data-k="${k}" ${a!=null?'disabled':''}><span class="grow">${esc(o)}</span>${a!=null&&k===z.answer?'<span class="tick on"></span>':''}</button>`).join('')}</div>
-  ${a!=null?`<p class="meta">${esc(z.explain||'')} <a class="more" href="#s-${s.id}">读这一节</a></p><div class="row"><button class="btn solid" id="qnext">下一题</button></div>`:`<p class="cap">第 ${QZ.i+1} 题，答对 ${QZ.score} 题</p>`}</div>`;
+/* ---------- 我的 ---------- */
+V.me=()=>{
+  const cells=[];for(let i=55;i>=0;i--){const k=addDays(-i),v=journal.filter(j=>j.date===k).length+(active[k]?1:0);cells.push(`<i class="${v>=3?'l2':v?'l1':''}" title="${k}"></i>`)}
+  const nl=Object.entries(notes).filter(([k,v])=>v&&byId[k]);
+  return `<div class="page"><section class="head"><h1>我的</h1><p class="meta">所有记录只保存在这台设备上。</p></section>
+  <section class="figs"><div><b>${streak()}</b><span>连续天数</span></div><div><b>${Object.keys(done).length}</b><span>已学课 / ${SECS.length}</span></div><div><b>${Object.keys(planDone).length}</b><span>实践天数 / 30</span></div><div><b>${nRel()}</b><span>释放次数</span></div></section>
+  <section><h2>最近 8 周</h2><div class="cal">${cells.join('')}</div></section>
+  <section><h2>今日反思</h2><textarea id="jtext" aria-label="今日反思" placeholder="今天哪个时刻你抓住了一个感受？放下了吗？"></textarea><div class="row"><button class="btn solid" id="jsave">保存</button></div></section>
+  <section><h2>记录</h2>${journal.length?`<div class="group">${journal.slice().reverse().slice(0,50).map(logRow).join('')}</div>`:'<p class="meta">还没有记录。</p>'}</section>
+  ${nl.length?`<section><h2>课程笔记</h2><div class="group">${nl.map(([k,v])=>`<a href="#s-${k}"><span class="grow"><span>${esc(byId[k].title)}</span><small>${esc(v)}</small></span><span class="chev"></span></a>`).join('')}</div></section>`:''}
+  <div class="row"><button class="btn" id="jexport">复制全部记录</button><span class="cap" id="jmsg"></span></div></div>`;
 };
 
+/* ---------- 工具页 ---------- */
+V.library=()=>`<div class="page"><section class="head"><a class="crumb" href="#learn">学习</a><h1 style="margin-top:12px">原书目录</h1><p class="lead">按《莱斯特合集》原书 ${BOOK.length} 个合集的顺序。</p></section>
+  <section style="gap:0">${BOOK.map(c=>`<a class="coll" href="#c-${c.id}"><h3>${esc(c.title)}</h3><span class="num">${c.sections.filter(s=>done[s.id]).length?c.sections.filter(s=>done[s.id]).length+' / ':''}${c.sections.length} 节</span><p>${esc((NOTES.collections||{})[c.id]||'')}</p></a>`).join('')}</section></div>`;
+V.coll=id=>{const c=collById[id];if(!c)return V.library();
+  return `<div class="page"><section class="head"><a class="crumb" href="#library">原书目录</a><h1 style="margin-top:12px">${esc(c.title)}</h1><p class="lead">${esc((NOTES.collections||{})[c.id]||'')}</p></section>
+  <section><div class="group">${c.sections.map(s=>`<a href="#s-${s.id}"><span class="tick ${done[s.id]?'on':''}"></span><span class="grow"><span>${esc(s.title)}</span><small>${unitOf[s.id]?`第 ${unitOf[s.id].idx+1} 单元 · `:''}${mins(s)} 分钟</small></span><span class="num">${s.page}</span></a>`).join('')}</div></section></div>`};
+V.practice=()=>`<div class="page"><section class="head"><a class="crumb" href="#learn">学习</a><h1 style="margin-top:12px">练习库</h1><p class="lead">书中给出的 ${ALLP.length} 个具体方法，按单元排列。</p></section>
+  ${UNITS.map(u=>{const ps=ALLP.filter(x=>unitOf[x.s.id]===u);if(!ps.length)return'';return `<section><h2>${esc(u.title)}</h2><div class="group">
+  ${ps.map(({s,p})=>`<details style="display:block"><summary style="cursor:pointer;font-weight:600">${esc(p.title)}</summary><ol class="steps" style="margin:16px 0 8px">${p.steps.map(x=>`<li><span>${esc(x)}</span></li>`).join('')}</ol>${p.note?`<p class="cap">${esc(p.note)}</p>`:''}<p class="cap" style="margin-top:8px">出自<a class="more" href="#s-${s.id}">《${esc(s.title)}》</a></p></details>`).join('')}</div></section>`}).join('')}</div>`;
 let RQ=store.get('rq','');
-V.read=()=>`<div class="page" style="gap:28px"><section class="head"><a class="back" href="#learn">课程</a><h1 style="margin-top:12px">搜索全文</h1></section>
+V.read=()=>`<div class="page" style="gap:28px"><section class="head"><a class="crumb" href="#learn">学习</a><h1 style="margin-top:12px">搜索全文</h1></section>
   <input type="search" id="rq" aria-label="搜索全文" placeholder="例如：对死亡的恐惧" value="${esc(RQ)}">
-  <div class="links">${['想要被认同','想要控制','想要安全','对死亡的恐惧','安静心智','我是谁','业力','欲望','凯迪拉克'].map(k=>`<a href="javascript:void 0" data-q="${k}">${k}</a>`).join('')}</div>
+  <div class="links">${['想要被认同','想要控制','想要安全','对死亡的恐惧','安静心智','我是谁','业力','欲望','凯迪拉克'].map(k=>`<a data-q="${k}">${k}</a>`).join('')}</div>
   <div id="hits"></div></div>`;
 function searchHTML(q){
   q=q.trim();if(!q)return '';
@@ -391,8 +498,7 @@ function searchHTML(q){
     const a=Math.max(0,k-50),b=Math.min(p.length,k+q.length+80),t=(a?'…':'')+esc(p.slice(a,b)).replace(re,m=>`<mark>${m}</mark>`)+(b<p.length?'…':'');
     return `<a href="#p-${s.id}-${i}"><span class="grow"><span class="serif" style="font-size:16px;line-height:1.85">${t}</span><small>${esc(s.title)} · 第 ${s.page} 页</small></span></a>`}).join('')+'</div>';
 }
-
-V.glossary=()=>`<div class="page" style="gap:28px"><section class="head"><a class="back" href="#learn">课程</a><h1 style="margin-top:12px">概念与原话</h1><p class="meta">${(NOTES.terms||[]).length} 个概念，${(NOTES.stories||[]).length} 个故事与比喻，${ALLQ.length} 句原话。</p>
+V.glossary=()=>`<div class="page" style="gap:28px"><section class="head"><a class="crumb" href="#learn">学习</a><h1 style="margin-top:12px">概念与原话</h1><p class="meta">${(NOTES.terms||[]).length} 个概念，${(NOTES.stories||[]).length} 个故事与比喻，${ALLQ.length} 句原话。</p>
   <div class="seg" id="gseg" style="margin-top:10px"><button data-g="t" class="on">概念</button><button data-g="s">故事</button><button data-g="q">原话</button></div></section>
   <div id="gbody">${gloss('t')}</div></div>`;
 function gloss(g){
@@ -401,50 +507,51 @@ function gloss(g){
   return `<div class="pulls">${ALLQ.map(({q,s})=>`<div><p class="pull" style="font-size:18px">${esc(q)}</p><p class="cap" style="padding-left:22px"><a href="#s-${s.id}">${esc(s.title)}</a> · 第 ${s.page} 页</p></div>`).join('')}</div>`;
 }
 
-V.journal=()=>{
-  const days={};journal.forEach(j=>days[j.date]=(days[j.date]||0)+1);
-  const cells=[];for(let i=55;i>=0;i--){const k=daysAgo(i),v=days[k]||0;cells.push(`<i class="${v>=3?'l2':v?'l1':''}" title="${k}：${v} 条"></i>`)}
-  const nl=Object.entries(notes).filter(([k,v])=>v&&byId[k]);
-  return `<div class="page"><section class="head"><h1>记录</h1><p class="meta">只保存在这台设备上。</p></section>
-  <section><div class="split"><h2>最近 8 周</h2><span class="cap">释放 ${nRel()} 次</span></div><div class="cal">${cells.join('')}</div></section>
-  <section><h2>今日反思</h2><textarea id="jtext" aria-label="今日反思" placeholder="今天哪个时刻你抓住了一个感受？放下了吗？"></textarea><div class="row"><button class="btn solid" id="jsave">保存</button></div></section>
-  <section><h2>全部记录</h2>${journal.length?`<div class="group">${journal.slice().reverse().map(logRow).join('')}</div>`:'<p class="meta">还没有记录。去<a class="more" href="#release">释放</a>做第一次练习。</p>'}</section>
-  ${nl.length?`<section><h2>小节笔记</h2><div class="group">${nl.map(([k,v])=>`<a href="#s-${k}"><span class="grow"><span>${esc(byId[k].title)}</span><small>${esc(v)}</small></span><span class="chev"></span></a>`).join('')}</div></section>`:''}
-  <div class="row"><button class="btn" id="jexport">复制全部记录</button><span class="cap" id="jmsg"></span></div></div>`;
-};
-
+/* ---------- router ---------- */
+const TABOF={home:'home',learn:'learn',unit:'learn',sec:'learn',review:'learn',library:'learn',coll:'learn',practice:'learn',read:'learn',glossary:'learn',plan:'plan',day:'plan',release:'release',me:'me'};
+function parse(h){
+  let m;
+  if(m=h.match(/^s-(c\d+s\d+)$/))return['sec',m[1]];
+  if(m=h.match(/^p-(c\d+s\d+)-(\d+)$/))return['sec',m[1],+m[2]];
+  if(m=h.match(/^u-(u\d+)$/))return['unit',m[1]];
+  if(m=h.match(/^c-(c\d+)$/))return['coll',m[1]];
+  if(m=h.match(/^d-(\d+)$/))return['day',m[1]];
+  if(['home','learn','review','library','practice','read','glossary','plan','release','me'].includes(h))return[h];
+  return['home'];
+}
 function route(){
-  const h=(location.hash||'#home').slice(1);let key=h,html;
-  if(h.startsWith('s-')){key='learn';html=V.sec(h.slice(2))}
-  else if(h.startsWith('c-')){key='learn';html=V.coll(h.slice(2))}
-  else if(/^d-\d+$/.test(h)){key='plan';html=V.day(h.slice(2))}
-  else if(/^p-c\d+s\d+-\d+$/.test(h)){key='learn';tab='text';html=V.sec(h.match(/^p-(c\d+s\d+)/)[1])}
-  else if(['practice','quiz','read','glossary'].includes(h)){key='learn';html=V[h]()}
-  if(!html){if(!V[h]||['sec','coll','day'].includes(h))key='home';html=V[key]()}
-  $('#main').innerHTML=html;
-  $('#tabs').innerHTML=TABS.map(([k,t])=>`<a href="#${k}" class="${key===k?'on':''}">${icon(k)}<span>${t}</span></a>`).join('');
-  $('#topstat').textContent=`已读 ${Object.keys(done).length} / ${SECS.length} 节 · 释放 ${nRel()} 次`;
-  bind(h);
-  if(h.startsWith('p-')){const el=$$('.reader p')[+h.split('-').pop()];if(el){el.scrollIntoView({block:'center'});el.innerHTML='<mark>'+el.innerHTML+'</mark>'}}
+  const [v,arg,para]=parse((location.hash||'#home').slice(1));
+  if(v==='sec'&&para!=null){L={id:arg,i:0,mode:'text'}}
+  $('#main').innerHTML=V[v](arg);
+  const tab=TABOF[v];
+  $('#tabs').innerHTML=TABS.map(([k,t])=>`<a href="#${k}" class="${tab===k?'on':''}">${icon(k)}<span>${t}</span></a>`).join('');
+  const st=streak();$('#topstreak').innerHTML=st?`${icon('flame',1)}连续 ${st} 天`:'';
+  bind(v,arg);
+  if(para!=null){const el=$$('.reader p')[para];if(el){el.scrollIntoView({block:'center'});el.innerHTML='<mark>'+el.innerHTML+'</mark>'}}
   else scrollTo(0,0);
 }
 function rerender(){const y=scrollY;route();scrollTo(0,y)}
-function bind(h){
+function bind(v,arg){
   const on=(id,f)=>{const e=$(id);if(e)e.onclick=f};
   $$('[data-start]').forEach(b=>b.onclick=()=>{resetR();R.feel=+b.dataset.start;R.step=1;location.hash='release'});
-  const sid=h.startsWith('s-')?h.slice(2):(h.match(/^p-(c\d+s\d+)/)||[])[1];
-  if(sid){
-    $$('.seg [data-t]').forEach(b=>b.onclick=()=>{tab=b.dataset.t;rerender()});
-    on('#mark',()=>{if(done[sid])delete done[sid];else done[sid]=today();store.set('done',done);rerender()});
-    const ta=$('#note');if(ta)ta.oninput=()=>{notes[sid]=ta.value;store.set('notes',notes)};
-    $$('#qz .opt').forEach(b=>b.onclick=()=>{quizlog[sid]=+b.dataset.k;store.set('quiz',quizlog);rerender()});
+  if(v==='sec'){const id=arg,steps=lessonSteps(id);
+    $$('[data-m]').forEach(b=>b.onclick=()=>{L.mode=b.dataset.m;route()});
+    on('#nextstep',()=>{L.i=Math.min(L.i+1,steps.length-1);if(steps[L.i]==='end')completeLesson(id);route()});
+    on('#prev',()=>{L.i=Math.max(0,L.i-1);route()});
+    on('#finish',()=>{completeLesson(id);route()});
+    const ta=$('#note');if(ta)ta.oninput=()=>{notes[id]=ta.value;store.set('notes',notes)};
+    $$('.card .opt').forEach(b=>b.onclick=()=>{quizlog[id]=+b.dataset.k;store.set('quiz',quizlog);rerender()});
   }
-  if(/^d-\d+$/.test(h)){const n=+h.slice(2);
-    $$('[data-task]').forEach(b=>b.onclick=()=>{const t=planTasks[n]||(planTasks[n]={});t[b.dataset.task]=!t[b.dataset.task];store.set('planTasks',planTasks);rerender()});
+  if(v==='review'){
+    $$('.rvo').forEach(b=>b.onclick=()=>{const id=RV.list[RV.i],ok=+b.dataset.k===SN[id].quiz.answer;RV.ans=+b.dataset.k;if(ok)RV.right++;schedule(id,ok);touch();rerender()});
+    on('#rvnext',()=>{RV.i++;RV.ans=null;route()});
+  }
+  if(v==='day'){const n=+arg;
+    $$('[data-task]').forEach(b=>b.onclick=()=>{const t=planTasks[n]||(planTasks[n]={});t[b.dataset.task]=!t[b.dataset.task];store.set('planTasks',planTasks);touch();rerender()});
     const ta=$('#pnote');if(ta)ta.oninput=()=>{planNotes[n]=ta.value;store.set('planNotes',planNotes)};
-    on('#pdone',()=>{if(planDone[n])delete planDone[n];else{planDone[n]=today();journal.push({type:'note',date:today(),note:`完成 30 天实践第 ${n} 天`+(planNotes[n]?`：${planNotes[n]}`:'')});store.set('journal',journal)}store.set('plan',planDone);if(planDone[n]&&PLAN.days.find(x=>x.day===n+1))location.hash='d-'+(n+1);else rerender()});
+    on('#pdone',()=>{if(planDone[n])delete planDone[n];else{planDone[n]=today();touch();journal.push({type:'note',date:today(),note:`完成 30 天实践第 ${n} 天`+(planNotes[n]?`：${planNotes[n]}`:'')});store.set('journal',journal)}store.set('plan',planDone);if(planDone[n]&&PLAN.days.find(x=>x.day===n+1))location.hash='d-'+(n+1);else rerender()});
   }
-  if(h==='release'){
+  if(v==='release'){
     const t=$('#rtopic');if(t)t.oninput=()=>R.topic=t.value;
     $$('[data-feel]').forEach(b=>b.onclick=()=>{R.feel=+b.dataset.feel;rerender()});
     $$('[data-want]').forEach(b=>b.onclick=()=>{R.want=+b.dataset.want;rerender()});
@@ -452,25 +559,21 @@ function bind(h){
     on('#rnext',()=>{R.step++;route()});on('#rback',()=>{R.step--;route()});
     on('#rlet',()=>{R.rounds++;const o=$('#ball');if(o){o.style.setProperty('--s',Math.max(64,240-R.rounds*36)+'px');o.style.setProperty('--o',Math.max(.3,1-R.rounds*.11))}setTimeout(rerender,700)});
     on('#rswitch',()=>{R.step=1;R.want=null;route()});on('#ragain',()=>{const k=R.topic;resetR();R.topic=k;route()});
-    on('#rsave',()=>{const d=new Date();journal.push({type:'release',date:today(),time:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'),feel:FEEL[R.feel].k,want:WANTS[R.want].k,after:R.after,rounds:R.rounds,topic:R.topic,note:$('#rnote').value});store.set('journal',journal);resetR();route()});
+    on('#rsave',()=>{const d=new Date();journal.push({type:'release',date:today(),time:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'),feel:FEEL[R.feel].k,want:WANTS[R.want].k,after:R.after,rounds:R.rounds,topic:R.topic,note:$('#rnote').value});store.set('journal',journal);touch();resetR();location.hash='home'});
   }
-  if(h==='quiz'){
-    $$('.qopt').forEach(b=>b.onclick=()=>{QZ.ans=+b.dataset.k;if(QZ.ans===QZ.pool[QZ.i].z.answer)QZ.score++;rerender()});
-    on('#qnext',()=>{QZ.i++;QZ.ans=null;route()});on('#qnew',()=>{QZ=null;route()});
-  }
-  if(h==='read'){
+  if(v==='read'){
     const inp=$('#rq'),hits=$('#hits');let tm;const go=()=>{RQ=inp.value;store.set('rq',RQ);hits.innerHTML=searchHTML(RQ)};
     inp.oninput=()=>{clearTimeout(tm);tm=setTimeout(go,250)};go();
-    $$('[data-q]').forEach(b=>b.onclick=e=>{e.preventDefault();inp.value=b.dataset.q;go()});
+    $$('[data-q]').forEach(b=>b.onclick=()=>{inp.value=b.dataset.q;go()});
   }
-  if(h==='glossary')$$('#gseg button').forEach(b=>b.onclick=()=>{$$('#gseg button').forEach(x=>x.classList.toggle('on',x===b));$('#gbody').innerHTML=gloss(b.dataset.g)});
-  if(h==='journal'){
-    on('#jsave',()=>{const v=$('#jtext').value.trim();if(!v)return;journal.push({type:'note',date:today(),note:v});store.set('journal',journal);rerender()});
-    on('#jexport',()=>{const txt=JSON.stringify({journal,notes,done,planDone,planNotes},null,1),msg=$('#jmsg');
+  if(v==='glossary')$$('#gseg button').forEach(b=>b.onclick=()=>{$$('#gseg button').forEach(x=>x.classList.toggle('on',x===b));$('#gbody').innerHTML=gloss(b.dataset.g)});
+  if(v==='me'){
+    on('#jsave',()=>{const val=$('#jtext').value.trim();if(!val)return;journal.push({type:'note',date:today(),note:val});store.set('journal',journal);touch();rerender()});
+    on('#jexport',()=>{const txt=JSON.stringify({journal,notes,done,planDone,planNotes,reviews},null,1),msg=$('#jmsg');
       (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>msg.textContent='已复制').catch(()=>{msg.textContent='无法自动复制，请手动复制下方内容';const t=document.createElement('textarea');t.value=txt;msg.after(t);t.select()})});
   }
 }
-addEventListener('hashchange',()=>{if(!location.hash.startsWith('#p-'))tab='learn';route()});
+addEventListener('hashchange',route);
 route();
 })();
 </script>
