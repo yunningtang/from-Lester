@@ -32,7 +32,8 @@ for f in sorted(glob.glob(S+'/out*.json')):
 missing=[k for k in ids if k not in sections]
 extra=json.load(open(R+'/tools/extra.json')) if os.path.exists(R+'/tools/extra.json') else {}
 notes={'sections':sections,'terms':sorted(terms.values(),key=lambda t:-len(t['sections'])),'stories':stories,
-       'collections':extra.get('collections',{}),'start':extra.get('start',[])}
+       'collections':extra.get('collections',{}),'start':extra.get('start',[]),
+       'plan':json.load(open(R+'/tools/plan.json')) if os.path.exists(R+'/tools/plan.json') else None}
 os.makedirs(R+'/site/data',exist_ok=True)
 open(R+'/site/data/book.js','w').write('window.BOOK='+json.dumps(book,ensure_ascii=False,separators=(',',':'))+';\n')
 open(R+'/site/data/notes.js','w').write('window.NOTES='+json.dumps(notes,ensure_ascii=False,separators=(',',':'))+';\n')
