@@ -1,444 +1,416 @@
 <title>莱斯特释放学堂</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&display=swap">
 <style>
-/* Layout: a cool dawn-sky ground; content sits on translucent glass panes. Sidebar on wide screens, floating glass tab bar on phones. */
+/* Layout: one calm reading column on a plain ground; typography carries the page.
+   Glass is reserved for the single floating control: the tab bar. The release orb is the one signature visual. */
 :root{
-  --sky-1:#cfdff3; --sky-2:#e7eef8; --sky-3:#f1f3f8;
-  --pane:rgba(255,255,255,.62); --pane-solid:#fbfcfe; --pane-hi:rgba(255,255,255,.95); --pane-edge:rgba(255,255,255,.75);
-  --fill:rgba(118,118,128,.12); --label:#0d1220; --label2:#5a6273; --sep:rgba(60,70,90,.14);
-  --tint:#0a63d1; --tint-2:#4f93e8; --tint-fill:rgba(10,99,209,.10); --ring-a:#0a63d1; --ring-b:#2fa36b; --ring-c:#6b7fa6;
-  --green:#1d8a43; --red:#c4302b; --shade:rgba(30,50,90,.08);
-  --heavy:#7d8798; --light:#0a63d1;
-  --f-ui:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
-  --f-read:"Noto Serif SC","Songti SC","STSong",serif;
-  --t-hero:40px; --t-large:32px; --t-title:21px; --t-body:17px; --t-sub:15px; --t-foot:13px;
-  --r:20px; --r-s:14px; --ease:cubic-bezier(.22,1,.36,1);
+  --ground:#f4f6f4; --surface:#ffffff; --ink:#151a17; --ink-2:#5b645f; --ink-3:#8b938e; --line:rgba(21,26,23,.09); --wash:rgba(21,26,23,.05);
+  --accent:#16685a; --accent-ink:#ffffff; --accent-wash:rgba(22,104,90,.09);
+  --orb-1:#d9efe8; --orb-2:#5fae9c; --orb-3:#16685a;
+  --ok:#16685a; --bad:#b4392f; --mark:rgba(232,190,60,.35);
+  --glass:rgba(255,255,255,.66); --glass-edge:rgba(255,255,255,.9); --glass-shade:rgba(21,26,23,.10);
+  --serif:"Noto Serif SC","Songti SC","STSong",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
+  --s-display:44px; --s-h1:34px; --s-h2:23px; --s-lead:19px; --s-body:17px; --s-small:14.5px; --s-cap:13px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --sky-1:#0b1424; --sky-2:#070b14; --sky-3:#05070c;
-  --pane:rgba(36,40,52,.55); --pane-solid:#171b24; --pane-hi:rgba(255,255,255,.14); --pane-edge:rgba(255,255,255,.09);
-  --fill:rgba(140,150,170,.18); --label:#eef1f7; --label2:#9ba4b6; --sep:rgba(150,160,180,.18);
-  --tint:#5aa6ff; --tint-2:#8cc2ff; --tint-fill:rgba(90,166,255,.16); --ring-a:#5aa6ff; --ring-b:#4fd18b; --ring-c:#9fb0d4;
-  --green:#4fd18b; --red:#ff7a70; --shade:rgba(0,0,0,.35); --heavy:#6f7a8e; --light:#5aa6ff; color-scheme:dark}}
+  --ground:#0f1211; --surface:#181c1b; --ink:#e9eeeb; --ink-2:#a3aca7; --ink-3:#737c77; --line:rgba(233,238,235,.10); --wash:rgba(233,238,235,.06);
+  --accent:#63c2ab; --accent-ink:#0b1311; --accent-wash:rgba(99,194,171,.12);
+  --orb-1:#1d3a33; --orb-2:#3f8d7b; --orb-3:#8fd8c5; --ok:#63c2ab; --bad:#f08a80; --mark:rgba(232,190,60,.28);
+  --glass:rgba(30,35,33,.62); --glass-edge:rgba(255,255,255,.10); --glass-shade:rgba(0,0,0,.35); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --sky-1:#0b1424; --sky-2:#070b14; --sky-3:#05070c;
-  --pane:rgba(36,40,52,.55); --pane-solid:#171b24; --pane-hi:rgba(255,255,255,.14); --pane-edge:rgba(255,255,255,.09);
-  --fill:rgba(140,150,170,.18); --label:#eef1f7; --label2:#9ba4b6; --sep:rgba(150,160,180,.18);
-  --tint:#5aa6ff; --tint-2:#8cc2ff; --tint-fill:rgba(90,166,255,.16); --ring-a:#5aa6ff; --ring-b:#4fd18b; --ring-c:#9fb0d4;
-  --green:#4fd18b; --red:#ff7a70; --shade:rgba(0,0,0,.35); --heavy:#6f7a8e; --light:#5aa6ff; color-scheme:dark}
+  --ground:#0f1211; --surface:#181c1b; --ink:#e9eeeb; --ink-2:#a3aca7; --ink-3:#737c77; --line:rgba(233,238,235,.10); --wash:rgba(233,238,235,.06);
+  --accent:#63c2ab; --accent-ink:#0b1311; --accent-wash:rgba(99,194,171,.12);
+  --orb-1:#1d3a33; --orb-2:#3f8d7b; --orb-3:#8fd8c5; --ok:#63c2ab; --bad:#f08a80; --mark:rgba(232,190,60,.28);
+  --glass:rgba(30,35,33,.62); --glass-edge:rgba(255,255,255,.10); --glass-shade:rgba(0,0,0,.35); color-scheme:dark}
+
 *{box-sizing:border-box}
-html{background:var(--sky-3)}
-body{margin:0;min-height:100vh;color:var(--label);font-family:var(--f-ui);font-size:var(--t-body);line-height:1.6;-webkit-font-smoothing:antialiased;
-  background:var(--sky-3) linear-gradient(180deg,var(--sky-1) 0,var(--sky-2) 420px,var(--sky-3) 900px) no-repeat}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--sky-1)}
-a{color:var(--tint);text-decoration:none}
-button{font:inherit;color:inherit;cursor:pointer;border:none;background:none;padding:0}
-:focus-visible{outline:3px solid var(--tint);outline-offset:2px;border-radius:8px}
-h1,h2,h3{margin:0;text-wrap:balance}
-h1{font-size:var(--t-large);font-weight:800;line-height:1.2}
-h2{font-size:var(--t-title);font-weight:700;line-height:1.3}
-p{margin:0;text-wrap:pretty}
+html,body{background:var(--ground);color:var(--ink)}
+body{margin:0;font-family:var(--sans);font-size:var(--s-body);line-height:1.7;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--ground)}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:8px}
+h1,h2,h3,p{margin:0}
+h1,h2,h3{font-family:var(--serif);font-weight:700;text-wrap:balance;letter-spacing:.01em}
+h1{font-size:var(--s-h1);line-height:1.3}
+h2{font-size:var(--s-h2);line-height:1.4}
+p{text-wrap:pretty}
+.serif{font-family:var(--serif)}
 
-/* liquid glass material: translucent fill, backdrop blur, a bright top edge, short soft shadow */
-.glass{background:var(--pane);-webkit-backdrop-filter:blur(30px) saturate(170%);backdrop-filter:blur(30px) saturate(170%);
-  box-shadow:inset 0 1px 0 var(--pane-hi),inset 0 0 0 .5px var(--pane-edge),0 6px 14px var(--shade)}
+/* frame */
+.top{max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:18px 0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.brand{font-family:var(--serif);font-weight:900;font-size:18px;letter-spacing:.06em}
+.dock{position:sticky;top:calc(14px + env(safe-area-inset-top,0px));z-index:10;display:flex;justify-content:center;pointer-events:none;margin-top:-44px}
+.tabs{pointer-events:auto;display:flex;gap:2px;padding:5px;border-radius:999px;background:var(--glass);
+  -webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:inset 0 1px 0 var(--glass-edge),inset 0 0 0 .5px var(--line),0 6px 14px var(--glass-shade)}
+.tabs a{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;font-size:var(--s-small);font-weight:600;color:var(--ink-2);transition:background .3s,color .3s}
+.tabs a svg{width:18px;height:18px;flex:none}
+.tabs a.on{background:var(--ink);color:var(--ground)}
+main{padding-block:64px 140px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.page{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+.page>section{display:flex;flex-direction:column;gap:18px}
+.head{display:flex;flex-direction:column;gap:10px}
+.meta{font-size:var(--s-small);color:var(--ink-2)}
+.cap{font-size:var(--s-cap);color:var(--ink-3)}
+.lead{font-size:var(--s-lead);line-height:1.8;color:var(--ink)}
+.more{font-size:var(--s-small);font-weight:600;color:var(--accent)}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.split{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
 
-.shell{display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100vh}
-.side{position:sticky;top:14px;margin:14px 0 14px 14px;height:calc(100vh - 28px);border-radius:26px;padding:22px 12px 18px;display:flex;flex-direction:column;gap:22px}
-.side .name{padding:0 12px;display:flex;flex-direction:column;gap:2px}
-.side .name b{font-size:19px;font-weight:800}
-.side .name span{font-size:var(--t-foot);color:var(--label2)}
-.nav{display:flex;flex-direction:column;gap:2px}
-.nav a{color:var(--label);padding:9px 12px;border-radius:12px;font-size:var(--t-sub);font-weight:500;display:flex;justify-content:space-between;transition:background .2s}
-.nav a:hover{background:var(--fill)}
-.nav a.on{background:var(--tint);color:#fff}
-.nav a span{opacity:.7;font-size:var(--t-foot);font-variant-numeric:tabular-nums}
-.side .mini{margin-top:auto;padding:0 12px;display:flex;align-items:center;gap:12px;font-size:var(--t-foot);color:var(--label2)}
-main{min-width:0;padding-block:36px 130px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.page{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:40px}
-.page.narrow{max-width:700px;gap:30px}
-.head{display:flex;flex-direction:column;gap:6px}
-.sub{color:var(--label2);font-size:var(--t-sub)}
-.foot{color:var(--label2);font-size:var(--t-foot)}
-.block{display:flex;flex-direction:column;gap:14px}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.between{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+/* controls */
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 24px;border-radius:999px;font-size:var(--s-small);font-weight:600;background:var(--wash);color:var(--ink);transition:transform .2s,background .2s}
+.btn:hover{background:var(--line)}
+.btn.solid{background:var(--ink);color:var(--ground)}
+.btn.solid:hover{background:var(--ink)}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.35;cursor:default;transform:none}
+.seg{display:inline-grid;grid-auto-flow:column;gap:2px;padding:3px;border-radius:999px;background:var(--wash);align-self:flex-start}
+.seg button{padding:7px 18px;border-radius:999px;font-size:var(--s-small);font-weight:600;color:var(--ink-2)}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px var(--glass-shade)}
+textarea,input[type=text],input[type=search]{width:100%;font:inherit;font-size:var(--s-body);color:var(--ink);background:var(--surface);border:0;border-radius:16px;padding:14px 18px;box-shadow:inset 0 0 0 1px var(--line)}
+textarea{min-height:120px;resize:vertical;line-height:1.7}
+textarea::placeholder,input::placeholder{color:var(--ink-3)}
 
-/* buttons */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 22px;border-radius:999px;font-size:var(--t-sub);font-weight:600;color:var(--tint);
-  background:var(--pane);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:inset 0 1px 0 var(--pane-hi),inset 0 0 0 .5px var(--pane-edge);transition:transform .25s var(--ease)}
-.btn.pri{background:linear-gradient(180deg,var(--tint-2),var(--tint));color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 10px rgba(10,99,209,.22)}
-.btn:active{transform:scale(.96)}
-.btn:disabled{opacity:.4;cursor:default;transform:none}
+/* grouped rows: the only container */
+.group{background:var(--surface);border-radius:18px;overflow:hidden}
+.group>*{display:flex;gap:14px;align-items:center;padding:15px 18px;position:relative;width:100%;text-align:left;min-height:54px}
+.group>*+*::before{content:"";position:absolute;top:0;left:18px;right:0;border-top:1px solid var(--line)}
+.group>a:hover,.group>button:hover:not(:disabled){background:var(--wash)}
+.grow{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.grow small{font-size:var(--s-cap);color:var(--ink-2);line-height:1.55}
+.num{font-variant-numeric:tabular-nums;color:var(--ink-3);font-size:var(--s-small);flex:none}
+.chev{width:7px;height:7px;border-right:1.6px solid var(--ink-3);border-top:1.6px solid var(--ink-3);transform:rotate(45deg);flex:none;margin-right:4px}
+.tick{width:22px;height:22px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 1.5px var(--ink-3);display:grid;place-items:center;transition:background .2s}
+.tick.on{background:var(--accent);box-shadow:none}
+.tick.on::after{content:"";width:5px;height:10px;border:solid var(--accent-ink);border-width:0 2px 2px 0;transform:translateY(-1px) rotate(45deg)}
 
-/* hero */
-.hero{border-radius:28px;padding:34px 34px 30px;display:flex;flex-direction:column;gap:22px}
-.hero .date{font-size:var(--t-sub);color:var(--label2);font-weight:500}
-.hero .quote{font-family:var(--f-read);font-size:28px;line-height:1.6;font-weight:700;letter-spacing:.01em}
-.hero .src{font-size:var(--t-foot);color:var(--label2)}
+/* home */
+.page>.today{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:center}
+.today h1{font-size:var(--s-display);line-height:1.2}
+.dayno{font-family:var(--serif);font-size:var(--s-small);font-weight:700;color:var(--accent)}
+.orbbtn{width:148px;height:148px;border-radius:50%;display:grid;place-items:center;position:relative;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.orbbtn:hover{transform:scale(1.04)}
+.orbbtn .lbl{position:relative;font-family:var(--serif);font-weight:700;font-size:16px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.18)}
+.orb{position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.85),rgba(255,255,255,0) 38%),radial-gradient(circle at 50% 60%,var(--orb-2),var(--orb-3) 72%);
+  box-shadow:inset 0 -14px 28px rgba(0,0,0,.18),inset 0 2px 0 rgba(255,255,255,.4),0 10px 14px rgba(21,26,23,.12)}
+.quote{font-family:var(--serif);font-weight:500;font-size:26px;line-height:1.75}
+.figs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.figs div{display:flex;flex-direction:column;gap:2px}
+.figs b{font-family:var(--serif);font-size:38px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.figs span{font-size:var(--s-cap);color:var(--ink-2)}
+.bar{height:3px;border-radius:2px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:2px;transition:width .8s cubic-bezier(.22,1,.36,1)}
+.ladder>*{gap:16px}
+.ladder .w{font-family:var(--serif);font-weight:700;min-width:5em}
+.ladder .lv{flex:1;display:flex;gap:3px}
+.ladder .lv i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.ladder .lv i.f{background:var(--ink-3)}
+.ladder .cap-row .w{color:var(--accent)}
+.ladder .cap-row .lv i.f{background:var(--accent)}
 
-/* activity rings */
-.rings{display:grid;grid-template-columns:auto minmax(0,1fr);gap:24px;align-items:center;border-radius:var(--r);padding:22px 24px}
-.ringwrap{position:relative;width:118px;height:118px}
-.ringwrap svg{width:100%;height:100%;transform:rotate(-90deg)}
-.ringwrap circle{fill:none;stroke-width:11;stroke-linecap:round}
-.ringwrap .tr{stroke:var(--fill)}
-.ringwrap .pr{transition:stroke-dashoffset 1s var(--ease)}
-.legend{display:flex;flex-direction:column;gap:10px}
-.legend div{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:10px;align-items:center}
-.legend i{width:10px;height:10px;border-radius:50%}
-.legend b{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
-.legend span{font-size:var(--t-sub);color:var(--label2)}
-
-/* list */
-.list{border-radius:var(--r);overflow:hidden}
-.list>*{display:flex;align-items:center;gap:14px;padding:13px 18px;color:var(--label);position:relative;min-height:52px;transition:background .15s}
-.list>a:hover,.list>button:hover:not(:disabled){background:var(--fill)}
-.list>*+*::before{content:"";position:absolute;top:0;left:18px;right:0;border-top:.5px solid var(--sep)}
-.list>a::after{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-top:2px solid currentColor;transform:rotate(45deg);opacity:.3;flex:none}
-.grow{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.grow small{color:var(--label2);font-size:var(--t-foot);line-height:1.5}
-.val{color:var(--label2);font-size:var(--t-sub);font-variant-numeric:tabular-nums;flex:none}
-.check{width:24px;height:24px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 1.5px var(--sep);display:grid;place-items:center}
-.check.on{background:var(--green);box-shadow:none}
-.check.on::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.2px 2.2px 0;transform:translateY(-1px) rotate(45deg)}
-.pane{border-radius:var(--r);padding:22px 22px}
-
-/* collections */
-.colls{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-.coll{border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:12px;color:var(--label);transition:transform .3s var(--ease)}
-.coll:hover{transform:translateY(-2px)}
-.coll .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.coll b{font-size:var(--t-body);font-weight:700;line-height:1.35}
-.coll p{font-size:var(--t-foot);color:var(--label2);line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.coll .foot{margin-top:auto}
-.mring{width:38px;height:38px;flex:none}
-.mring svg{width:100%;height:100%;transform:rotate(-90deg)}
-.mring circle{fill:none;stroke-width:5;stroke-linecap:round}
-
-/* feeling scale: heavy at the bottom, light at the top */
-.scale{display:flex;flex-direction:column-reverse;gap:6px}
-.lvl{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:14px;align-items:center;padding:10px 16px;border-radius:var(--r-s);text-align:left;transition:transform .25s var(--ease),background .2s}
-.lvl:hover{transform:translateX(4px)}
-.lvl b{font-weight:600}
-.lvl .bar{height:8px;border-radius:4px;background:var(--fill);overflow:hidden}
-.lvl .bar i{display:block;height:100%;border-radius:4px}
-.lvl small{font-size:var(--t-foot);color:var(--label2)}
-.lvl.cap b{color:var(--tint)}
-.divide{font-size:var(--t-foot);color:var(--label2);text-align:center;padding:4px 0}
+/* course */
+.coll{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 20px;padding:26px 0;border-top:1px solid var(--line)}
+.coll:last-child{border-bottom:1px solid var(--line)}
+.coll h2{transition:color .2s}
+.coll:hover h2{color:var(--accent)}
+.coll p{grid-column:1;font-size:var(--s-small);color:var(--ink-2);line-height:1.7}
+.coll .num{grid-row:1;grid-column:2;align-self:center;font-family:var(--serif);font-size:var(--s-small)}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+.links a{padding:7px 14px;border-radius:999px;background:var(--wash);font-size:var(--s-small);font-weight:600}
+.links a:hover{background:var(--line)}
 
 /* section */
-.navbar{position:sticky;top:calc(10px + env(safe-area-inset-top,0px));z-index:4;align-self:flex-start;border-radius:999px;padding:8px 16px;font-size:var(--t-sub);font-weight:600;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;border-radius:999px;padding:3px;max-width:340px;background:var(--fill)}
-.seg button{padding:8px 12px;border-radius:999px;font-size:var(--t-foot);font-weight:600;transition:background .25s,box-shadow .25s}
-.seg button.on{background:var(--pane-solid);box-shadow:0 2px 6px var(--shade)}
-.lede{font-size:20px;line-height:1.75;font-weight:500}
-.points{list-style:none;margin:0;padding:0}
-.points li{padding:14px 18px;position:relative;line-height:1.65}
-.points li+li::before{content:"";position:absolute;top:0;left:18px;right:0;border-top:.5px solid var(--sep)}
-.q{font-family:var(--f-read);font-size:20px;line-height:1.85;font-weight:600;padding:24px 26px;border-radius:var(--r)}
-.steps{counter-reset:s;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
-.steps li{counter-increment:s;display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;line-height:1.65}
-.steps li::before{content:counter(s);width:26px;height:26px;border-radius:50%;background:var(--tint);color:#fff;display:grid;place-items:center;font-size:var(--t-foot);font-weight:700;margin-top:1px}
-.opt{width:100%;text-align:left}
-.opt.right{color:var(--green);font-weight:600}
-.opt.wrong{color:var(--red)}
-.reader{font-family:var(--f-read);font-size:18.5px;line-height:2.05;padding:30px 32px;border-radius:var(--r)}
-.reader p+p{margin-top:.85em}
-.reader b{font-family:var(--f-ui);font-size:var(--t-sub);color:var(--tint);font-weight:700;margin-right:4px}
-mark{background:rgba(255,200,0,.38);color:inherit;border-radius:3px;padding:0 1px}
-textarea,input[type=text],input[type=search]{font:inherit;font-size:var(--t-body);color:var(--label);background:var(--pane);border:none;border-radius:var(--r-s);padding:14px 18px;width:100%;
-  box-shadow:inset 0 0 0 .5px var(--pane-edge);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
-textarea{min-height:120px;resize:vertical;line-height:1.65}
-textarea::placeholder,input::placeholder{color:var(--label2)}
-.pager{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.pager a{border-radius:var(--r-s);padding:14px 16px;display:flex;flex-direction:column;gap:2px;color:var(--label);min-width:0}
-.pager a small{color:var(--label2);font-size:var(--t-foot)}
-.pager a span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
-.pager a.nx{text-align:right}
+.back{font-size:var(--s-small);font-weight:600;color:var(--ink-2);display:inline-flex;gap:6px;align-items:center;align-self:flex-start}
+.back::before{content:"";width:7px;height:7px;border-left:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:rotate(45deg)}
+.back:hover{color:var(--accent)}
+.points{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.points li{display:grid;grid-template-columns:14px minmax(0,1fr);gap:10px;line-height:1.75}
+.points li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:.72em}
+.pull{font-family:var(--serif);font-weight:500;font-size:21px;line-height:1.85;padding-left:22px;position:relative}
+.pull::before{content:"“";position:absolute;left:-2px;top:-6px;font-size:40px;line-height:1;color:var(--accent);font-family:var(--serif)}
+.pulls{display:flex;flex-direction:column;gap:22px}
+.steps{list-style:none;margin:0;padding:0;counter-reset:s;display:flex;flex-direction:column;gap:16px}
+.steps li{counter-increment:s;display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;line-height:1.75}
+.steps li::before{content:counter(s);font-family:var(--serif);font-weight:700;font-size:20px;line-height:1.5;color:var(--accent)}
+.opt.right{color:var(--ok);font-weight:600}
+.opt.wrong{color:var(--bad)}
+.reader{font-family:var(--serif);font-size:19px;line-height:2.05;font-weight:500}
+.reader p+p{margin-top:.9em}
+.reader b{font-family:var(--sans);font-size:var(--s-cap);font-weight:700;color:var(--accent);margin-right:6px;letter-spacing:.04em}
+mark{background:var(--mark);color:inherit;border-radius:3px;padding:0 1px}
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:16px;border-top:1px solid var(--line);padding-top:22px}
+.pager a{display:flex;flex-direction:column;gap:2px;min-width:0}
+.pager a small{font-size:var(--s-cap);color:var(--ink-3)}
+.pager a span{font-family:var(--serif);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pager a:hover span{color:var(--accent)}
+.pager .nx{text-align:right}
 
-/* workbench */
-.progress{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.progress i{height:4px;border-radius:2px;background:var(--fill);transition:background .4s}
-.progress i.on{background:var(--tint)}
-.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.tile{border-radius:var(--r-s);padding:16px 18px;text-align:left;display:flex;flex-direction:column;gap:4px;min-height:92px;transition:transform .25s var(--ease),box-shadow .2s}
-.tile:active{transform:scale(.97)}
-.tile b{font-size:var(--t-body);font-weight:600}
-.tile small{color:var(--label2);font-size:var(--t-foot);line-height:1.5}
-.tile.on{box-shadow:inset 0 0 0 2px var(--tint),0 6px 14px var(--shade);color:var(--tint)}
-.stage{display:grid;place-items:center;min-height:330px;position:relative;border-radius:28px;overflow:hidden}
-.orb{width:var(--s,240px);height:var(--s,240px);border-radius:50%;transition:width 1.1s var(--ease),height 1.1s var(--ease),opacity 1.1s var(--ease);
-  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.9),rgba(255,255,255,0) 42%),linear-gradient(160deg,var(--tint-2),var(--tint));
-  box-shadow:inset 0 -10px 24px rgba(0,0,0,.18),0 10px 16px var(--shade);opacity:var(--o,1)}
-.stage .words{position:absolute;inset:auto 16px 22px;text-align:center;font-family:var(--f-read);font-size:19px;font-weight:600;line-height:1.7}
-.cal{display:grid;grid-template-columns:repeat(14,1fr);gap:5px}
-.cal i{aspect-ratio:1;border-radius:5px;background:var(--fill)}
-.cal i.l1{background:var(--tint-fill)} .cal i.l2{background:var(--tint)}
-.tag{font-size:var(--t-foot);padding:3px 10px;border-radius:999px;background:var(--fill);color:var(--label);font-weight:500}
-.tag.t{background:var(--tint-fill);color:var(--tint)}
-.chips{display:flex;gap:8px;flex-wrap:wrap}
-.chips button{padding:7px 14px;border-radius:999px;font-size:var(--t-foot);font-weight:600}
-
+/* plan */
+.phase{display:flex;flex-direction:column;gap:14px;padding-top:28px;border-top:1px solid var(--line)}
 .path{display:flex;flex-wrap:wrap;gap:10px}
-.node{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:var(--t-sub);font-variant-numeric:tabular-nums;color:var(--label2);transition:transform .25s var(--ease)}
-.node:hover{transform:scale(1.08)}
-.node.done{background:var(--tint);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
-.node.now{box-shadow:inset 0 0 0 2.5px var(--tint),0 6px 14px var(--shade);color:var(--tint)}
-.phase{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 14px;align-items:start}
-.phase .no{font-size:var(--t-foot);font-weight:700;color:var(--tint);background:var(--tint-fill);border-radius:999px;padding:2px 10px;margin-top:3px;white-space:nowrap}
-.today{border-radius:28px;padding:28px 30px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:center;color:var(--label)}
-.today .big{width:84px;height:84px;border-radius:24px;background:linear-gradient(180deg,var(--tint-2),var(--tint));color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
-.today .big b{font-size:32px;font-weight:800}
-.today .big span{font-size:var(--t-foot);font-weight:600;opacity:.9}
-.today h2{font-size:24px}
-.task{display:flex;gap:14px;align-items:flex-start;text-align:left;width:100%}
-.task .check{margin-top:2px}
-.task.on .txt{color:var(--label2);text-decoration:line-through;text-decoration-color:var(--sep)}
-.tabbar{display:none}
-@media (max-width:880px){
-  .shell{grid-template-columns:minmax(0,1fr)}
-  .side{display:none}
-  main{padding-block:18px 130px}
-  .tabbar{display:flex;position:fixed;z-index:6;left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));border-radius:999px;padding:6px;gap:2px}
-  .tabbar a{flex:1;text-align:center;font-size:var(--t-foot);font-weight:600;color:var(--label);padding:10px 2px;border-radius:999px;transition:background .25s}
-  .tabbar a.on{background:var(--tint);color:#fff}
-  h1{font-size:30px}
-  .hero{padding:26px 22px}
-  .hero .quote{font-size:23px}
-  .rings{grid-template-columns:1fr;justify-items:center;text-align:left}
-  .legend{width:100%}
-  .lvl{grid-template-columns:84px minmax(0,1fr)}
-  .lvl small{display:none}
-  .today{grid-template-columns:1fr;padding:24px 22px}
-  .node{width:42px;height:42px}
-  .reader{padding:22px 20px;font-size:17.5px}
-  .q{font-size:18px;padding:20px}
+.node{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-weight:700;font-size:var(--s-small);color:var(--ink-2);background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);transition:transform .2s}
+.node:hover{transform:scale(1.07)}
+.node.done{background:var(--accent);color:var(--accent-ink);box-shadow:none}
+.node.now{box-shadow:inset 0 0 0 2px var(--accent);color:var(--accent)}
+.task.on .txt{color:var(--ink-3);text-decoration:line-through}
+
+/* release */
+.steps4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.steps4 i{height:3px;border-radius:2px;background:var(--line);transition:background .4s}
+.steps4 i.on{background:var(--accent)}
+.choices{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.choice{background:var(--surface);border-radius:16px;padding:16px 18px;text-align:left;display:flex;flex-direction:column;gap:4px;box-shadow:inset 0 0 0 1px var(--line);transition:box-shadow .2s,transform .2s}
+.choice:active{transform:scale(.98)}
+.choice b{font-family:var(--serif);font-weight:700;font-size:var(--s-lead)}
+.choice small{font-size:var(--s-cap);color:var(--ink-2);line-height:1.55}
+.choice.on{box-shadow:inset 0 0 0 2px var(--accent)}
+.choice.on b{color:var(--accent)}
+.stage{display:flex;flex-direction:column;align-items:center;gap:28px;padding:20px 0}
+.stage .ball{width:var(--s,240px);height:var(--s,240px);position:relative;opacity:var(--o,1);transition:width 1.2s cubic-bezier(.22,1,.36,1),height 1.2s cubic-bezier(.22,1,.36,1),opacity 1.2s}
+.stage .words{font-family:var(--serif);font-weight:500;font-size:22px;line-height:1.8;text-align:center;max-width:24em}
+.cal{display:grid;grid-template-columns:repeat(14,1fr);gap:5px}
+.cal i{aspect-ratio:1;border-radius:4px;background:var(--line)}
+.cal i.l1{background:var(--accent-wash);box-shadow:inset 0 0 0 1px var(--accent)} .cal i.l2{background:var(--accent)}
+.tag{font-size:var(--s-cap);padding:2px 10px;border-radius:999px;background:var(--wash);color:var(--ink-2);font-weight:600}
+.tag.a{background:var(--accent-wash);color:var(--accent)}
+
+@media (max-width:760px){
+  :root{--s-display:34px;--s-h1:29px;--s-h2:21px;--s-lead:18px}
+  .top{display:none}
+  .dock{position:fixed;top:auto;margin:0;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom,0px));padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+  .tabs{width:100%;justify-content:space-between}
+  .tabs a{flex:1;flex-direction:column;gap:2px;padding:7px 2px;font-size:11.5px}
+  .tabs a svg{width:21px;height:21px}
+  main{padding-block:28px 130px}
+  .page{gap:44px}
+  .page>.today{grid-template-columns:1fr;gap:24px}
+  .orbbtn{justify-self:start}
+  .orbbtn{width:124px;height:124px}
+  .quote{font-size:22px}
+  .reader{font-size:18px}
+  .pull{font-size:19px}
+  .figs b{font-size:32px}
 }
 @media (prefers-reduced-motion:no-preference){
-  .page>*{animation:rise .5s var(--ease) both}
-  .page>*:nth-child(2){animation-delay:.04s}.page>*:nth-child(3){animation-delay:.08s}.page>*:nth-child(4){animation-delay:.12s}.page>*:nth-child(n+5){animation-delay:.16s}
-  @keyframes rise{from{opacity:.5;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .page>*{animation:rise .6s cubic-bezier(.22,1,.36,1) both}
+  .page>*:nth-child(2){animation-delay:.05s}.page>*:nth-child(3){animation-delay:.1s}.page>*:nth-child(n+4){animation-delay:.15s}
+  @keyframes rise{from{opacity:.4;transform:translateY(8px)}to{opacity:1;transform:none}}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
-<div class="shell">
-  <aside class="side glass">
-    <div class="name"><b>莱斯特释放学堂</b><span>Lester Levenson 教导合集</span></div>
-    <nav class="nav" id="nav"></nav>
-    <div class="mini" id="mini"></div>
-  </aside>
-  <main id="main"><div class="page"><p class="sub">正在载入全书……</p></div></main>
-</div>
-<nav class="tabbar glass" id="tabbar"></nav>
+<header class="top"><span class="brand">莱斯特释放学堂</span><span class="cap" id="topstat"></span></header>
+<div class="dock"><nav class="tabs" id="tabs" aria-label="主导航"></nav></div>
+<main id="main"><div class="page"><p class="meta">正在载入全书……</p></div></main>
 
 <script src="data/book.js"></script>
 <script src="data/notes.js"></script>
 <script>
 (function(){
-const BOOK=window.BOOK||[],NOTES=window.NOTES||{sections:{},terms:[],stories:[]},SN=NOTES.sections||{};
+const BOOK=window.BOOK||[],NOTES=window.NOTES||{sections:{},terms:[],stories:[]},SN=NOTES.sections||{},PLAN=NOTES.plan;
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const store={get(k,d){try{const v=localStorage.getItem('lester:'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('lester:'+k,JSON.stringify(v))}catch(e){}}};
 let done=store.get('done',{}),journal=store.get('journal',[]),notes=store.get('notes',{}),quizlog=store.get('quiz',{});
+let planDone=store.get('plan',{}),planTasks=store.get('planTasks',{}),planNotes=store.get('planNotes',{});
 const SECS=[];BOOK.forEach(c=>c.sections.forEach(s=>{s.coll=c;SECS.push(s)}));
 const byId=Object.fromEntries(SECS.map(s=>[s.id,s])),collById=Object.fromEntries(BOOK.map(c=>[c.id,c]));
 const chars=s=>s.paras.reduce((a,p)=>a+p.length,0),TOTAL=SECS.reduce((a,s)=>a+chars(s),0);
 
-const FEEL=[
-  {k:'万念俱灰',en:'Apathy',d:'无力、麻木，觉得没有用'},{k:'悲苦',en:'Grief',d:'伤心、失落、自怜'},{k:'恐惧',en:'Fear',d:'担心、焦虑、不安'},
+const FEEL=[{k:'万念俱灰',en:'Apathy',d:'无力、麻木，觉得没有用'},{k:'悲苦',en:'Grief',d:'伤心、失落、自怜'},{k:'恐惧',en:'Fear',d:'担心、焦虑、不安'},
   {k:'贪求',en:'Lust',d:'渴求，非要不可'},{k:'愤怒',en:'Anger',d:'恼火、怨恨、想反击'},{k:'自尊自傲',en:'Pride',d:'优越、评判、不肯动'}];
 const CAP=[{k:'无畏',en:'Courageousness',d:'有能量，敢于去做'},{k:'接纳',en:'Acceptance',d:'事情本来如此，也很好'},{k:'平和',en:'Peace',d:'安静，无所求'}];
 const WANTS=[{k:'想要被认同',d:'想被喜欢、被认可、被爱、被理解'},{k:'想要控制',d:'想改变它，想让事情按我的方式来'},{k:'想要安全/生存',d:'担心失去、受伤、活不下去'}];
-const ROUTES=[['home','今天'],['plan','30 天'],['learn','课程'],['release','释放'],['practice','练习库'],['quiz','自测'],['read','全文'],['glossary','概念与金句'],['journal','记录']];
-const MOBILE=['home','plan','learn','release','journal'];
+const ICON={
+  home:'<path d="M4 10.5 12 4l8 6.5V20h-5v-6H9v6H4z"/>',
+  plan:'<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>',
+  learn:'<path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/>',
+  release:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/>',
+  journal:'<path d="M6 4h10l3 3v13H6z"/><path d="M9 10h7M9 14h7M9 18h4"/>'};
+const TABS=[['home','今天'],['plan','30 天'],['learn','课程'],['release','释放'],['journal','记录']];
+const icon=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${ICON[k]}</svg>`;
 
 const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const daysAgo=n=>{const d=new Date();d.setDate(d.getDate()-n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 const daySeed=()=>today().split('-').reduce((a,b)=>a*31+ +b,7),pick=(a,n)=>a[Math.abs(n)%a.length];
-const stats=()=>({n:Object.keys(done).length,rel:journal.filter(j=>j.type==='release').length,days:new Set(journal.map(j=>j.date)).size});
 const ALLQ=[];SECS.forEach(s=>{const n=SN[s.id];if(n&&n.quotes)n.quotes.forEach(q=>ALLQ.push({q,s}))});
 const ALLP=SECS.filter(s=>SN[s.id]&&SN[s.id].practice).map(s=>({s,p:SN[s.id].practice}));
 const ALLZ=SECS.filter(s=>SN[s.id]&&SN[s.id].quiz).map(s=>({s,z:SN[s.id].quiz}));
 const START=(NOTES.start||[]).filter(id=>byId[id]);
 const src=s=>`${esc(s.coll.title)}《${esc(s.title)}》，第 ${s.page} 页`;
-function ring(r,frac,color,w){const C=2*Math.PI*r;return `<circle class="tr" r="${r}" cx="59" cy="59" style="stroke-width:${w}"/><circle class="pr" r="${r}" cx="59" cy="59" style="stroke:${color};stroke-width:${w};stroke-dasharray:${C};stroke-dashoffset:${C*(1-Math.min(1,Math.max(0,frac)))}"/>`}
-function mring(frac){const C=2*Math.PI*15;return `<span class="mring"><svg viewBox="0 0 38 38"><circle r="15" cx="19" cy="19" style="stroke:var(--fill)"/><circle r="15" cx="19" cy="19" style="stroke:var(--tint);stroke-dasharray:${C};stroke-dashoffset:${C*(1-frac)}"/></svg></span>`}
-function weekCount(){const t=new Date();t.setDate(t.getDate()-6);const k=t.toISOString().slice(0,10);return journal.filter(j=>j.type==='release'&&j.date>=k).length}
+const curDay=()=>PLAN?(PLAN.days.find(x=>!planDone[x.day])||PLAN.days[PLAN.days.length-1]):null;
+const phaseOf=n=>PLAN.phases.findIndex(p=>n>=p.days[0]&&n<=p.days[1]);
+const nRel=()=>journal.filter(j=>j.type==='release').length;
 
 const V={};
 V.home=()=>{
-  const st=stats(),seed=daySeed(),q=ALLQ.length?pick(ALLQ,seed):null,pr=ALLP.length?pick(ALLP,seed>>3):null,next=SECS.find(s=>!done[s.id]),d=new Date();
-  const wk=weekCount(),days=Math.min(7,new Set(journal.filter(j=>{const t=new Date();t.setDate(t.getDate()-6);return j.date>=t.toISOString().slice(0,10)}).map(j=>j.date)).size);
+  const seed=daySeed(),q=ALLQ.length?pick(ALLQ,seed):null,d=curDay(),next=SECS.find(s=>!done[s.id]),now=new Date();
+  const wk=journal.filter(j=>j.type==='release'&&j.date>=daysAgo(6)).length,learned=Object.keys(done).length,pd=Object.keys(planDone).length;
   return `<div class="page">
-  <section class="hero glass">
-    <span class="date">${d.getMonth()+1} 月 ${d.getDate()} 日 · 今天的一句</span>
-    ${q?`<p class="quote">${esc(q.q)}</p><span class="src">${src(q.s)}</span>`:''}
-    <div class="row"><a class="btn pri" href="#release">开始一次释放</a>${next?`<a class="btn" href="#s-${next.id}">继续 ${esc(next.title)}</a>`:''}</div>
+  <section class="today">
+    <div class="head">
+      <p class="meta">${now.getMonth()+1} 月 ${now.getDate()} 日${d?` · <span class="dayno">30 天实践 第 ${d.day} 天</span>`:''}</p>
+      <h1>${d?esc(d.title):'今天'}</h1>
+      ${d?`<p class="lead">${esc(d.story)}</p>`:''}
+      <div class="row" style="margin-top:8px">${d?`<a class="btn solid" href="#d-${d.day}">开始今天的练习</a>`:''}${next?`<a class="btn" href="#s-${next.id}">继续读 ${esc(next.title)}</a>`:''}</div>
+    </div>
+    <a class="orbbtn" href="#release" aria-label="开始一次释放"><span class="orb"></span><span class="lbl">释放</span></a>
   </section>
-  ${PLAN?`<section class="block"><h2>30 天实践</h2>${todayCard()}</section>`:''}
-  <section class="rings glass">
-    <div class="ringwrap" role="img" aria-label="进度环"><svg viewBox="0 0 118 118">${ring(52,st.n/SECS.length,'var(--ring-a)',11)}${ring(38,wk/7,'var(--ring-b)',11)}${ring(24,days/7,'var(--ring-c)',11)}</svg></div>
-    <div class="legend">
-      <div><i style="background:var(--ring-a)"></i><span>已学小节</span><b>${st.n}<small class="foot"> / ${SECS.length}</small></b></div>
-      <div><i style="background:var(--ring-b)"></i><span>本周释放</span><b>${wk}<small class="foot"> / 7</small></b></div>
-      <div><i style="background:var(--ring-c)"></i><span>本周练习天数</span><b>${days}<small class="foot"> / 7</small></b></div>
+  ${q?`<section><p class="quote">${esc(q.q)}</p><p class="cap">${src(q.s)}</p></section>`:''}
+  <section>
+    <div class="figs"><div><b>${pd}</b><span>实践天数 / 30</span></div><div><b>${wk}</b><span>本周释放次数</span></div><div><b>${learned}</b><span>已读小节 / ${SECS.length}</span></div></div>
+    <div class="bar" aria-label="30 天进度"><i style="width:${pd/30*100}%"></i></div>
+  </section>
+  <section>
+    <div class="head"><h2>你现在在哪一层</h2><p class="meta">莱斯特的情绪图表。下面六种合称 AGFLAP，放下它们，就上升到无畏、接纳与平和。点一层，从那里开始释放。</p></div>
+    <div class="group ladder">
+      ${CAP.slice().reverse().map((f,i)=>`<div class="cap-row"><span class="w">${f.k}</span><span class="lv">${Array.from({length:9},(_,k)=>`<i class="${k<9-i?'f':''}"></i>`).join('')}</span><span class="num">${f.en}</span></div>`).join('')}
+      ${FEEL.slice().reverse().map((f,i)=>`<button data-start="${5-i}"><span class="w">${f.k}</span><span class="lv">${Array.from({length:9},(_,k)=>`<i class="${k<6-i?'f':''}"></i>`).join('')}</span><span class="num">${f.en}</span></button>`).join('')}
     </div>
   </section>
-  <section class="block"><div class="head"><h2>你现在在哪一层？</h2><p class="sub">书中的情绪图表。下面六种合称 AGFLAP，放下它们，就上升到无畏、接纳与平和。点一层，从这里开始释放。</p></div>
-    <div class="scale">${FEEL.map((f,i)=>`<button class="lvl glass" data-start="${i}"><b>${f.k}</b><span class="bar"><i style="width:${30+i*8}%;background:var(--heavy);opacity:${.45+i*.06}"></i></span><small>${f.en}</small></button>`).join('')}
-    <div class="divide">放下 AGFLAP，上升到 CAP</div>
-    ${CAP.map((f,i)=>`<div class="lvl glass cap"><b>${f.k}</b><span class="bar"><i style="width:${80+i*10}%;background:var(--light)"></i></span><small>${f.en}</small></div>`).join('')}</div></section>
-  ${START.length?`<section class="block"><div class="head"><h2>从这里开始</h2><p class="sub">六节入门：先听莱斯特讲他的发现，再学会方法本身。</p></div>
-  <div class="list glass">${START.map(id=>{const s=byId[id];return `<a href="#s-${id}"><span class="check ${done[id]?'on':''}"></span><span class="grow"><span>${esc(s.title)}</span><small>${esc(s.coll.title)}</small></span></a>`}).join('')}</div></section>`:''}
-  ${pr?`<section class="block"><div class="head"><h2>今日练习</h2><p class="sub">${esc(pr.p.title)}</p></div><div class="pane glass"><ol class="steps">${pr.p.steps.map(x=>`<li><span>${esc(x)}</span></li>`).join('')}</ol></div><p class="foot">出自${src(pr.s)} · <a href="#s-${pr.s.id}">读这一节</a></p></section>`:''}
-  <p class="foot">进度、笔记和释放记录只保存在这台设备的浏览器里。</p></div>`;
+  ${START.length?`<section><div class="head"><h2>第一次来，先读这六节</h2><p class="meta">先听莱斯特讲他的发现，再学方法本身。</p></div>
+  <div class="group">${START.map(id=>{const s=byId[id];return `<a href="#s-${id}"><span class="tick ${done[id]?'on':''}"></span><span class="grow"><span>${esc(s.title)}</span><small>${esc(s.coll.title)}</small></span><span class="chev"></span></a>`}).join('')}</div></section>`:''}
+  <p class="cap">进度、笔记和释放记录只保存在这台设备的浏览器里。</p></div>`;
 };
 
-const PLAN=NOTES.plan;
-let planDone=store.get('plan',{}),planTasks=store.get('planTasks',{}),planNotes=store.get('planNotes',{});
-const curDay=()=>{if(!PLAN)return null;const d=PLAN.days.find(x=>!planDone[x.day]);return d||PLAN.days[PLAN.days.length-1]};
-const phaseOf=n=>PLAN.phases.findIndex(p=>n>=p.days[0]&&n<=p.days[1]);
-function todayCard(){const d=curDay();if(!d)return '';const all=Object.keys(planDone).length===PLAN.days.length;
-  return `<a class="today glass" href="#d-${d.day}"><span class="big"><span>第</span><b>${d.day}</b><span>天</span></span>
-  <span class="grow" style="gap:6px"><span class="foot">${all?'30 天已全部完成，可以重温任意一天':`${esc(PLAN.phases[phaseOf(d.day)].title)}`}</span><h2>${esc(d.title)}</h2><span class="sub">${esc(d.story)}</span></span></a>`}
-V.plan=()=>{if(!PLAN)return `<div class="page"><h1>30 天实践</h1><p class="sub">计划尚未生成。</p></div>`;
+V.plan=()=>{if(!PLAN)return `<div class="page"><h1>30 天实践</h1></div>`;
   const n=Object.keys(planDone).length,cd=curDay();
-  return `<div class="page"><div class="head"><h1>30 天实践</h1><p class="sub">${esc(PLAN.intro)}</p></div>
-  <section class="block">${todayCard()}<div class="meter" aria-label="已完成 ${n} 天"><i style="width:${n/30*100}%"></i></div><p class="foot">已完成 ${n} / 30 天</p></section>
-  ${PLAN.phases.map((p,i)=>`<section class="block"><div class="phase"><span class="no">第 ${p.days[0]}–${p.days[1]} 天</span><div class="head" style="gap:4px"><h2>${esc(p.title)}</h2><p class="sub">${esc(p.story)}${byId[p.section]?` <a href="#s-${p.section}">读原文</a>`:''}</p></div></div>
-    <div class="path">${PLAN.days.filter(d=>d.day>=p.days[0]&&d.day<=p.days[1]).map(d=>`<a class="node ${planDone[d.day]?'done':(cd&&cd.day===d.day?'now glass':'glass')}" href="#d-${d.day}" title="${esc(d.title)}" aria-label="第 ${d.day} 天：${esc(d.title)}">${d.day}</a>`).join('')}</div></section>`).join('')}
-  </div>`};
+  return `<div class="page">
+  <section class="head"><h1>30 天实践</h1><p class="lead">${esc(PLAN.intro)}</p></section>
+  <section><div class="split"><span class="meta">已完成 ${n} / 30 天</span><a class="more" href="#d-${cd.day}">继续第 ${cd.day} 天</a></div><div class="bar"><i style="width:${n/30*100}%"></i></div></section>
+  ${PLAN.phases.map(p=>`<section class="phase">
+    <div class="head"><h2>${esc(p.title)}</h2><p class="cap">第 ${p.days[0]}–${p.days[1]} 天</p><p class="meta">${esc(p.story)}${byId[p.section]?` <a class="more" href="#s-${p.section}">读原文</a>`:''}</p></div>
+    <div class="path">${PLAN.days.filter(d=>d.day>=p.days[0]&&d.day<=p.days[1]).map(d=>`<a class="node ${planDone[d.day]?'done':(cd.day===d.day?'now':'')}" href="#d-${d.day}" aria-label="第 ${d.day} 天：${esc(d.title)}" title="${esc(d.title)}">${d.day}</a>`).join('')}</div>
+  </section>`).join('')}</div>`};
+
 V.day=n=>{if(!PLAN)return V.plan();const d=PLAN.days.find(x=>x.day===+n);if(!d)return V.plan();
   const p=PLAN.phases[phaseOf(d.day)],tk=planTasks[d.day]||{},qs=byId[d.quoteSection],rd=byId[d.read],prev=PLAN.days.find(x=>x.day===d.day-1),next=PLAN.days.find(x=>x.day===d.day+1);
-  return `<div class="page narrow"><a class="navbar glass" href="#plan">‹ 30 天实践</a>
-  <div class="head"><h1>${esc(d.title)}</h1><p class="sub">第 ${d.day} 天 · ${esc(p.title)}</p></div>
-  <p class="lede">${esc(d.story)}</p>
-  ${d.quote?`<section class="block"><p class="q glass">${esc(d.quote)}</p>${qs?`<p class="foot">${src(qs)}</p>`:''}</section>`:''}
-  <section class="block"><h2>今天要做的</h2><div class="list glass">${d.tasks.map((t,i)=>`<button class="task ${tk[i]?'on':''}" data-task="${i}"><span class="check ${tk[i]?'on':''}"></span><span class="txt">${esc(t)}</span></button>`).join('')}</div>
-    <div class="row"><a class="btn" href="#release">需要时打开释放工作台</a></div></section>
-  <section class="block"><div class="head"><h2>晚上回看</h2><p class="sub">${esc(d.reflect)}</p></div><textarea id="pnote" aria-label="晚上回看">${esc(planNotes[d.day]||'')}</textarea></section>
-  ${rd?`<section class="block"><h2>今天读</h2><div class="list glass"><a href="#s-${rd.id}"><span class="grow"><span>${esc(rd.title)}</span><small>${esc(rd.coll.title)} · 第 ${rd.page} 页</small></span></a></div></section>`:''}
-  <div class="row"><button class="btn ${planDone[d.day]?'':'pri'}" id="pdone">${planDone[d.day]?'取消完成':'完成第 '+d.day+' 天'}</button></div>
-  <nav class="pager">${prev?`<a class="glass" href="#d-${prev.day}"><small>第 ${prev.day} 天</small><span>${esc(prev.title)}</span></a>`:'<span></span>'}${next?`<a class="glass nx" href="#d-${next.day}"><small>第 ${next.day} 天</small><span>${esc(next.title)}</span></a>`:''}</nav></div>`};
+  return `<div class="page">
+  <section class="head"><a class="back" href="#plan">30 天实践</a><p class="dayno" style="margin-top:12px">第 ${d.day} 天 · ${esc(p.title)}</p><h1>${esc(d.title)}</h1><p class="lead">${esc(d.story)}</p></section>
+  ${d.quote?`<section><p class="pull">${esc(d.quote)}</p>${qs?`<p class="cap" style="padding-left:22px">${src(qs)}</p>`:''}</section>`:''}
+  <section><h2>今天要做的</h2><div class="group">${d.tasks.map((t,i)=>`<button class="task ${tk[i]?'on':''}" data-task="${i}"><span class="tick ${tk[i]?'on':''}"></span><span class="txt">${esc(t)}</span></button>`).join('')}</div>
+    <p class="meta">感受升起来的时候，打开<a class="more" href="#release">释放</a>，一步一步放下。</p></section>
+  <section><div class="head"><h2>晚上回看</h2><p class="meta">${esc(d.reflect)}</p></div><textarea id="pnote" aria-label="晚上回看">${esc(planNotes[d.day]||'')}</textarea></section>
+  ${rd?`<section><h2>今天读</h2><div class="group"><a href="#s-${rd.id}"><span class="grow"><span>${esc(rd.title)}</span><small>${esc(rd.coll.title)} · 第 ${rd.page} 页</small></span><span class="chev"></span></a></div></section>`:''}
+  <div class="row"><button class="btn ${planDone[d.day]?'':'solid'}" id="pdone">${planDone[d.day]?'取消完成':'完成第 '+d.day+' 天'}</button></div>
+  <nav class="pager">${prev?`<a href="#d-${prev.day}"><small>第 ${prev.day} 天</small><span>${esc(prev.title)}</span></a>`:'<span></span>'}${next?`<a class="nx" href="#d-${next.day}"><small>第 ${next.day} 天</small><span>${esc(next.title)}</span></a>`:''}</nav></div>`};
 
-V.learn=()=>`<div class="page"><div class="head"><h1>课程</h1><p class="sub">${BOOK.length} 个合集，${SECS.length} 节，按原书顺序。</p></div>
-  <div class="row"><a class="btn" href="#read">搜索全文</a><a class="btn" href="#practice">练习库</a><a class="btn" href="#quiz">随机自测</a><a class="btn" href="#glossary">概念与金句</a></div>
-  <div class="colls">${BOOK.map(c=>{const n=c.sections.filter(s=>done[s.id]).length,ov=(NOTES.collections||{})[c.id]||'';return `<a class="coll glass" href="#c-${c.id}">
-    <span class="top"><b>${esc(c.title)}</b>${mring(n/c.sections.length)}</span><p>${esc(ov)}</p><span class="foot">${c.sections.length} 节 · 第 ${c.page} 页起${n?` · 已学 ${n}`:''}</span></a>`}).join('')}</div></div>`;
+V.learn=()=>`<div class="page">
+  <section class="head"><h1>课程</h1><p class="lead">《莱斯特合集》全书，${BOOK.length} 个合集、${SECS.length} 节，约 ${Math.round(TOTAL/10000)} 万字，按原书顺序。</p>
+  <div class="links" style="margin-top:6px"><a href="#read">搜索全文</a><a href="#practice">练习库</a><a href="#quiz">自测</a><a href="#glossary">概念与原话</a></div></section>
+  <section style="gap:0">${BOOK.map(c=>{const n=c.sections.filter(s=>done[s.id]).length;return `<a class="coll" href="#c-${c.id}"><h2>${esc(c.title)}</h2><span class="num">${n?`${n} / `:''}${c.sections.length} 节</span><p>${esc((NOTES.collections||{})[c.id]||'')}</p></a>`}).join('')}</section></div>`;
 
-V.coll=id=>{const c=collById[id];if(!c)return V.learn();const n=c.sections.filter(s=>done[s.id]).length;
-  return `<div class="page narrow"><a class="navbar glass" href="#learn">‹ 课程</a>
-  <div class="head"><h1>${esc(c.title)}</h1><p class="sub">${esc((NOTES.collections||{})[c.id]||'')}</p><p class="foot">${c.sections.length} 节 · 已学 ${n}</p></div>
-  <div class="list glass">${c.sections.map(s=>`<a href="#s-${s.id}"><span class="check ${done[s.id]?'on':''}"></span><span class="grow"><span>${esc(s.title)}</span>${SN[s.id]&&SN[s.id].summary?`<small>${esc(SN[s.id].summary.slice(0,46))}…</small>`:''}</span><span class="val">${s.page}</span></a>`).join('')}</div></div>`};
+V.coll=id=>{const c=collById[id];if(!c)return V.learn();
+  return `<div class="page"><section class="head"><a class="back" href="#learn">课程</a><h1 style="margin-top:12px">${esc(c.title)}</h1><p class="lead">${esc((NOTES.collections||{})[c.id]||'')}</p></section>
+  <section><div class="group">${c.sections.map(s=>`<a href="#s-${s.id}"><span class="tick ${done[s.id]?'on':''}"></span><span class="grow"><span>${esc(s.title)}</span>${SN[s.id]&&SN[s.id].summary?`<small>${esc(SN[s.id].summary.slice(0,44))}…</small>`:''}</span><span class="num">${s.page}</span></a>`).join('')}</div></section></div>`};
 
 let tab='learn';
 V.sec=id=>{
   const s=byId[id];if(!s)return V.learn();
   const n=SN[id]||{},i=SECS.indexOf(s),prev=SECS[i-1],next=SECS[i+1],z=n.quiz,a=quizlog[id];
   const learn=`
-    ${n.summary?`<p class="lede">${esc(n.summary)}</p>`:'<p class="sub">这一节暂无提炼，请直接读原文。</p>'}
-    ${n.points&&n.points.length?`<section class="block"><h2>要点</h2><ul class="points list glass">${n.points.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></section>`:''}
-    ${n.quotes&&n.quotes.length?`<section class="block"><h2>莱斯特原话</h2>${n.quotes.map(q=>`<p class="q glass">${esc(q)}</p>`).join('')}</section>`:''}
-    ${n.practice?`<section class="block"><div class="head"><h2>练习</h2><p class="sub">${esc(n.practice.title)}</p></div><div class="pane glass"><ol class="steps">${n.practice.steps.map(x=>`<li><span>${esc(x)}</span></li>`).join('')}</ol></div>
-      ${n.practice.note?`<p class="foot">${esc(n.practice.note)}</p>`:''}<div class="row"><a class="btn" href="#release">打开释放工作台</a></div></section>`:''}
-    ${z?`<section class="block" id="qz"><div class="head"><h2>自测</h2><p>${esc(z.q)}</p></div>
-      <div class="list glass">${z.options.map((o,k)=>`<button class="opt ${a!=null?(k===z.answer?'right':(k===a?'wrong':'')):''}" data-k="${k}" ${a!=null?'disabled':''}><span class="grow">${esc(o)}</span>${a!=null&&k===z.answer?'<span class="check on"></span>':''}</button>`).join('')}</div>
-      ${a!=null?`<p class="sub">${esc(z.explain||'')}</p>`:''}</section>`:''}
-    <section class="block"><h2>笔记</h2><textarea id="note" aria-label="笔记" placeholder="读完这一节，你看到了什么？">${esc(notes[id]||'')}</textarea></section>`;
-  const text=`<div class="reader glass">${s.paras.map(p=>{const m=p.match(/^([^，。：:]{1,8})[：:](.*)$/);return m?`<p><b>${esc(m[1])}</b>${esc(m[2])}</p>`:`<p>${esc(p)}</p>`}).join('')}</div>`;
-  return `<div class="page narrow">
-    <a class="navbar glass" href="#c-${s.coll.id}">‹ ${esc(s.coll.title)}</a>
-    <div class="head"><h1>${esc(s.title)}</h1><p class="sub">第 ${s.page} 页 · ${chars(s).toLocaleString()} 字${done[id]?' · 已学':''}</p></div>
-    <div class="seg" role="tablist"><button data-t="learn" class="${tab==='learn'?'on':''}">学习与练习</button><button data-t="text" class="${tab==='text'?'on':''}">完整原文</button></div>
+    ${n.summary?`<p class="lead">${esc(n.summary)}</p>`:'<p class="meta">这一节暂无提炼，请直接读原文。</p>'}
+    ${n.points&&n.points.length?`<section><h2>要点</h2><ul class="points">${n.points.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></section>`:''}
+    ${n.quotes&&n.quotes.length?`<section><h2>莱斯特原话</h2><div class="pulls">${n.quotes.map(q=>`<p class="pull">${esc(q)}</p>`).join('')}</div></section>`:''}
+    ${n.practice?`<section><div class="head"><h2>练习</h2><p class="meta">${esc(n.practice.title)}</p></div><ol class="steps">${n.practice.steps.map(x=>`<li><span>${esc(x)}</span></li>`).join('')}</ol>${n.practice.note?`<p class="cap">${esc(n.practice.note)}</p>`:''}</section>`:''}
+    ${z?`<section id="qz"><div class="head"><h2>自测</h2><p>${esc(z.q)}</p></div>
+      <div class="group">${z.options.map((o,k)=>`<button class="opt ${a!=null?(k===z.answer?'right':(k===a?'wrong':'')):''}" data-k="${k}" ${a!=null?'disabled':''}><span class="grow">${esc(o)}</span>${a!=null&&k===z.answer?'<span class="tick on"></span>':''}</button>`).join('')}</div>
+      ${a!=null?`<p class="meta">${esc(z.explain||'')}</p>`:''}</section>`:''}
+    <section><h2>笔记</h2><textarea id="note" aria-label="笔记" placeholder="读完这一节，你看到了什么？">${esc(notes[id]||'')}</textarea></section>`;
+  const text=`<div class="reader">${s.paras.map(p=>{const m=p.match(/^([^，。：:]{1,8})[：:](.*)$/);return m?`<p><b>${esc(m[1])}</b>${esc(m[2])}</p>`:`<p>${esc(p)}</p>`}).join('')}</div>`;
+  return `<div class="page">
+    <section class="head"><a class="back" href="#c-${s.coll.id}">${esc(s.coll.title)}</a><h1 style="margin-top:12px">${esc(s.title)}</h1><p class="meta">第 ${s.page} 页 · ${chars(s).toLocaleString()} 字${done[id]?' · 已读':''}</p>
+    <div class="seg" role="tablist" style="margin-top:10px"><button data-t="learn" class="${tab==='learn'?'on':''}">导读</button><button data-t="text" class="${tab==='text'?'on':''}">原文</button></div></section>
     ${tab==='learn'?learn:text}
-    <div class="row"><button class="btn ${done[id]?'':'pri'}" id="mark">${done[id]?'取消“已学”':'学完了，标记为已学'}</button></div>
-    <nav class="pager">${prev?`<a class="glass" href="#s-${prev.id}"><small>上一节</small><span>${esc(prev.title)}</span></a>`:'<span></span>'}${next?`<a class="glass nx" href="#s-${next.id}"><small>下一节</small><span>${esc(next.title)}</span></a>`:''}</nav></div>`;
+    <div class="row"><button class="btn ${done[id]?'':'solid'}" id="mark">${done[id]?'标为未读':'读完了'}</button></div>
+    <nav class="pager">${prev?`<a href="#s-${prev.id}"><small>上一节</small><span>${esc(prev.title)}</span></a>`:'<span></span>'}${next?`<a class="nx" href="#s-${next.id}"><small>下一节</small><span>${esc(next.title)}</span></a>`:''}</nav></div>`;
 };
 
 let R=null;const resetR=()=>R={step:0,feel:null,topic:'',want:null,rounds:0,after:null};
 V.release=()=>{
   if(!R)resetR();
-  const T=['此刻，你感受到了什么？','它底下想要的是什么？','允许它浮现，然后放下','现在感觉怎么样？'];
+  const T=['此刻，你感受到了什么？','它底下想要的是什么？','允许它浮现，然后放下','现在怎么样？'];
   let b='';
-  if(R.step===0)b=`<p class="sub">表面的感受最终都汇聚成这六种更沉重的感受。选最接近的一个就行。</p>
-    <input type="text" id="rtopic" aria-label="关于什么事" value="${esc(R.topic)}" placeholder="关于什么事？（可不填）">
-    <div class="tiles">${FEEL.map((f,i)=>`<button class="tile glass ${R.feel===i?'on':''}" data-feel="${i}"><b>${f.k}</b><small>${f.d}</small></button>`).join('')}</div>
-    <div class="row"><button class="btn pri" id="rnext" ${R.feel==null?'disabled':''}>下一步</button></div>`;
-  if(R.step===1)b=`<p class="sub">“AGFLAP 来自于两个，被称作想要被认同、想要控制，这两个又来自于一个，称为想要安全/想要生存。”（私教课，第 95 页）</p>
-    <p>看着这份${esc(FEEL[R.feel].k)}，它来自哪一个“想要”？</p>
-    <div class="tiles">${WANTS.map((w,i)=>`<button class="tile glass ${R.want===i?'on':''}" data-want="${i}"><b>${w.k}</b><small>${w.d}</small></button>`).join('')}</div>
-    <div class="row"><button class="btn" id="rback">上一步</button><button class="btn pri" id="rnext" ${R.want==null?'disabled':''}>下一步</button></div>`;
-  if(R.step===2){const sz=Math.max(70,240-R.rounds*34),op=Math.max(.35,1-R.rounds*.1);b=`
-    <div class="stage glass"><div class="orb" id="orb" style="--s:${sz}px;--o:${op}"></div><p class="words">${R.rounds?'还有剩下的吗？如果有，再放一次。':`感受这份${esc(WANTS[R.want].k)}，允许它完全浮现，然后让它离开。`}</p></div>
-    <div class="row" style="justify-content:center"><button class="btn pri" id="rlet">放下了</button><button class="btn" id="rswitch">底下还有别的想要</button><button class="btn" id="rnext" ${R.rounds?'':'disabled'}>轻了，下一步</button></div>
-    <p class="foot" style="text-align:center">已放下 ${R.rounds} 次 · “审视每一个出现的感受，看到它是想要被认同、想要控制、还是想要安全，然后让它离开。”（1983 年在圣多纳的谈话）</p>`}
-  if(R.step===3)b=`<p class="sub">选最接近现在的一个。还停在下面的话，可以再来一轮。</p>
-    <div class="tiles">${[...CAP,...FEEL.slice().reverse()].map(f=>`<button class="tile glass ${R.after===f.k?'on':''}" data-after="${f.k}"><b>${f.k}</b><small>${f.d}</small></button>`).join('')}</div>
+  if(R.step===0)b=`<p class="meta">表面的感受最终都汇聚成这六种更沉重的感受。选最接近的一个就好。</p>
+    <input type="text" id="rtopic" aria-label="关于什么事" value="${esc(R.topic)}" placeholder="关于什么事？可以不填">
+    <div class="choices">${FEEL.map((f,i)=>`<button class="choice ${R.feel===i?'on':''}" data-feel="${i}"><b>${f.k}</b><small>${f.d}</small></button>`).join('')}</div>
+    <div class="row"><button class="btn solid" id="rnext" ${R.feel==null?'disabled':''}>下一步</button></div>`;
+  if(R.step===1)b=`<p class="pull" style="font-size:18px">AGFLAP 来自于两个，被称作想要被认同、想要控制，这两个又来自于一个，称为想要安全/想要生存。</p><p class="cap" style="padding-left:22px">莱斯特·利文森的私教课《释放对自由的抗拒 Part 1》，第 95 页</p>
+    <p>看着这份${esc(FEEL[R.feel].k)}，它来自哪一个想要？</p>
+    <div class="choices">${WANTS.map((w,i)=>`<button class="choice ${R.want===i?'on':''}" data-want="${i}"><b>${w.k}</b><small>${w.d}</small></button>`).join('')}</div>
+    <div class="row"><button class="btn" id="rback">上一步</button><button class="btn solid" id="rnext" ${R.want==null?'disabled':''}>下一步</button></div>`;
+  if(R.step===2){const sz=Math.max(64,240-R.rounds*36),op=Math.max(.3,1-R.rounds*.11);b=`
+    <div class="stage"><div class="ball" id="ball" style="--s:${sz}px;--o:${op}"><span class="orb"></span></div>
+    <p class="words">${R.rounds?'还有剩下的吗？<br>有的话，再放一次。':`感受这份${esc(WANTS[R.want].k)}。<br>允许它完全浮现，然后让它离开。`}</p></div>
+    <div class="row" style="justify-content:center"><button class="btn solid" id="rlet">放下了</button><button class="btn" id="rswitch">底下还有别的想要</button><button class="btn" id="rnext" ${R.rounds?'':'disabled'}>轻了，下一步</button></div>
+    <p class="cap" style="text-align:center">已放下 ${R.rounds} 次</p>`}
+  if(R.step===3)b=`<p class="meta">选最接近现在的一个。还停在下面的话，可以再来一轮。</p>
+    <div class="choices">${[...CAP.slice().reverse(),...FEEL.slice().reverse()].map(f=>`<button class="choice ${R.after===f.k?'on':''}" data-after="${f.k}"><b>${f.k}</b><small>${f.d}</small></button>`).join('')}</div>
     <textarea id="rnote" aria-label="记录" placeholder="放下了什么？有什么新的看见？"></textarea>
-    <div class="row"><button class="btn pri" id="rsave" ${R.after?'':'disabled'}>保存这次释放</button><button class="btn" id="ragain">再来一轮</button></div>`;
+    <div class="row"><button class="btn solid" id="rsave" ${R.after?'':'disabled'}>保存这次释放</button><button class="btn" id="ragain">再来一轮</button></div>`;
   const recent=journal.filter(j=>j.type==='release').slice(-3).reverse();
-  return `<div class="page narrow"><div class="progress" aria-label="第 ${R.step+1} 步，共 4 步">${[0,1,2,3].map(k=>`<i class="${k<=R.step?'on':''}"></i>`).join('')}</div>
+  return `<div class="page" style="gap:32px"><div class="steps4" aria-label="第 ${R.step+1} 步，共 4 步">${[0,1,2,3].map(k=>`<i class="${k<=R.step?'on':''}"></i>`).join('')}</div>
   <h1>${T[R.step]}</h1>${b}
-  ${recent.length?`<section class="block" style="margin-top:14px"><h2>最近</h2><div class="list glass">${recent.map(logRow).join('')}</div></section>`:''}</div>`;
+  ${recent.length?`<section style="margin-top:24px"><h2>最近的释放</h2><div class="group">${recent.map(logRow).join('')}</div></section>`:''}</div>`;
 };
 function logRow(j){
-  if(j.type==='release')return `<div><span class="grow"><span class="row" style="gap:6px"><span class="tag">${esc(j.feel)}</span><span class="tag">${esc(j.want)}</span><span class="tag t">${esc(j.after)}</span></span>${j.topic?`<span>${esc(j.topic)}</span>`:''}${j.note?`<small>${esc(j.note)}</small>`:''}</span><span class="val">${j.date.slice(5)}</span></div>`;
-  return `<div><span class="grow"><span>${esc(j.note)}</span></span><span class="val">${j.date.slice(5)}</span></div>`;
+  if(j.type==='release')return `<div><span class="grow"><span class="row" style="gap:6px"><span class="tag">${esc(j.feel)}</span><span class="tag">${esc(j.want)}</span><span class="tag a">${esc(j.after)}</span></span>${j.topic?`<span>${esc(j.topic)}</span>`:''}${j.note?`<small>${esc(j.note)}</small>`:''}</span><span class="num">${j.date.slice(5)}</span></div>`;
+  return `<div><span class="grow"><span>${esc(j.note)}</span></span><span class="num">${j.date.slice(5)}</span></div>`;
 }
 
-V.practice=()=>`<div class="page"><div class="head"><h1>练习库</h1><p class="sub">书中给出的 ${ALLP.length} 个具体方法，按原书顺序。</p></div>
-  ${BOOK.map(c=>{const ps=ALLP.filter(x=>x.s.coll===c);if(!ps.length)return'';return `<section class="block"><h2>${esc(c.title)}</h2><div class="list glass">
-  ${ps.map(({s,p})=>`<details style="display:block"><summary style="cursor:pointer;font-weight:600;list-style-position:inside">${esc(p.title)} <span class="foot" style="font-weight:400">《${esc(s.title)}》</span></summary><ol class="steps" style="margin:16px 0 6px">${p.steps.map(x=>`<li><span>${esc(x)}</span></li>`).join('')}</ol>${p.note?`<p class="foot">${esc(p.note)}</p>`:''}<p class="foot" style="margin-top:8px"><a href="#s-${s.id}">读这一节</a></p></details>`).join('')}</div></section>`}).join('')}</div>`;
+V.practice=()=>`<div class="page"><section class="head"><a class="back" href="#learn">课程</a><h1 style="margin-top:12px">练习库</h1><p class="lead">书中给出的 ${ALLP.length} 个具体方法，按原书顺序。</p></section>
+  ${BOOK.map(c=>{const ps=ALLP.filter(x=>x.s.coll===c);if(!ps.length)return'';return `<section><h2>${esc(c.title)}</h2><div class="group">
+  ${ps.map(({s,p})=>`<details style="display:block"><summary style="cursor:pointer;font-weight:600">${esc(p.title)}</summary><ol class="steps" style="margin:16px 0 8px">${p.steps.map(x=>`<li><span>${esc(x)}</span></li>`).join('')}</ol>${p.note?`<p class="cap">${esc(p.note)}</p>`:''}<p class="cap" style="margin-top:8px">出自<a class="more" href="#s-${s.id}">《${esc(s.title)}》</a></p></details>`).join('')}</div></section>`}).join('')}</div>`;
 
 let QZ=null;
 V.quiz=()=>{
   if(!QZ)QZ={pool:[...ALLZ].sort(()=>Math.random()-.5).slice(0,10),i:0,score:0,ans:null};
-  if(!QZ.pool.length)return `<div class="page"><h1>自测</h1><p class="sub">暂无题目。</p></div>`;
-  if(QZ.i>=QZ.pool.length)return `<div class="page narrow"><div class="hero glass"><span class="date">这一轮的成绩</span><p class="quote" style="font-family:var(--f-ui);font-size:56px;font-weight:800">${QZ.score} / ${QZ.pool.length}</p><p class="sub">答错的题，回到那一节再读一遍原文。</p><div class="row"><button class="btn pri" id="qnew">再来 10 题</button></div></div></div>`;
+  if(!QZ.pool.length)return `<div class="page"><h1>自测</h1></div>`;
+  if(QZ.i>=QZ.pool.length)return `<div class="page"><section class="head"><a class="back" href="#learn">课程</a><h1 style="margin-top:12px;font-size:64px">${QZ.score} / ${QZ.pool.length}</h1><p class="lead">答错的题，回到那一节再读一遍原文。</p></section><div class="row"><button class="btn solid" id="qnew">再来 10 题</button></div></div>`;
   const {s,z}=QZ.pool[QZ.i],a=QZ.ans;
-  return `<div class="page narrow"><div class="progress" style="grid-template-columns:repeat(${QZ.pool.length},1fr)">${QZ.pool.map((_,k)=>`<i class="${k<=QZ.i?'on':''}"></i>`).join('')}</div>
-  <div class="head"><h1 style="font-size:26px">${esc(z.q)}</h1><p class="foot">出自${src(s)}</p></div>
-  <div class="list glass">${z.options.map((o,k)=>`<button class="opt qopt ${a!=null?(k===z.answer?'right':(k===a?'wrong':'')):''}" data-k="${k}" ${a!=null?'disabled':''}><span class="grow">${esc(o)}</span>${a!=null&&k===z.answer?'<span class="check on"></span>':''}</button>`).join('')}</div>
-  ${a!=null?`<p class="sub">${esc(z.explain||'')} <a href="#s-${s.id}">读这一节</a></p><div class="row"><button class="btn pri" id="qnext">下一题</button></div>`:`<p class="foot">第 ${QZ.i+1} 题，已答对 ${QZ.score} 题</p>`}</div>`;
+  return `<div class="page" style="gap:32px"><div class="steps4" style="grid-template-columns:repeat(${QZ.pool.length},1fr)">${QZ.pool.map((_,k)=>`<i class="${k<=QZ.i?'on':''}"></i>`).join('')}</div>
+  <section class="head"><h1 style="font-size:var(--s-h2)">${esc(z.q)}</h1><p class="cap">出自${src(s)}</p></section>
+  <div class="group">${z.options.map((o,k)=>`<button class="opt qopt ${a!=null?(k===z.answer?'right':(k===a?'wrong':'')):''}" data-k="${k}" ${a!=null?'disabled':''}><span class="grow">${esc(o)}</span>${a!=null&&k===z.answer?'<span class="tick on"></span>':''}</button>`).join('')}</div>
+  ${a!=null?`<p class="meta">${esc(z.explain||'')} <a class="more" href="#s-${s.id}">读这一节</a></p><div class="row"><button class="btn solid" id="qnext">下一题</button></div>`:`<p class="cap">第 ${QZ.i+1} 题，答对 ${QZ.score} 题</p>`}</div>`;
 };
 
 let RQ=store.get('rq','');
-V.read=()=>`<div class="page narrow"><div class="head"><h1>全文</h1><p class="sub">在全书 ${SECS.length} 节、约 ${Math.round(TOTAL/10000)} 万字中搜索。</p></div>
-  <input type="search" id="rq" aria-label="搜索全文" placeholder="搜索，例如：对死亡的恐惧" value="${esc(RQ)}">
-  <div class="chips">${['想要被认同','想要控制','想要安全','对死亡的恐惧','安静心智','我是谁','业力','欲望','凯迪拉克'].map(k=>`<button class="glass" data-q="${k}">${k}</button>`).join('')}</div>
+V.read=()=>`<div class="page" style="gap:28px"><section class="head"><a class="back" href="#learn">课程</a><h1 style="margin-top:12px">搜索全文</h1></section>
+  <input type="search" id="rq" aria-label="搜索全文" placeholder="例如：对死亡的恐惧" value="${esc(RQ)}">
+  <div class="links">${['想要被认同','想要控制','想要安全','对死亡的恐惧','安静心智','我是谁','业力','欲望','凯迪拉克'].map(k=>`<a href="javascript:void 0" data-q="${k}">${k}</a>`).join('')}</div>
   <div id="hits"></div></div>`;
 function searchHTML(q){
   q=q.trim();if(!q)return '';
   const out=[];let total=0;
   for(const s of SECS)for(let i=0;i<s.paras.length;i++){const p=s.paras[i],k=p.indexOf(q);if(k>=0){total++;if(out.length<200)out.push({s,i,p,k})}}
   const re=new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g');
-  return `<p class="foot" style="margin-bottom:12px">找到 ${total} 处${total>200?'，显示前 200 处':''}</p><div class="list glass">`+out.map(({s,i,p,k})=>{
+  return `<p class="cap" style="margin-bottom:12px">找到 ${total} 处${total>200?'，显示前 200 处':''}</p><div class="group">`+out.map(({s,i,p,k})=>{
     const a=Math.max(0,k-50),b=Math.min(p.length,k+q.length+80),t=(a?'…':'')+esc(p.slice(a,b)).replace(re,m=>`<mark>${m}</mark>`)+(b<p.length?'…':'');
-    return `<a href="#p-${s.id}-${i}"><span class="grow"><span style="font-family:var(--f-read);font-size:var(--t-sub);line-height:1.75">${t}</span><small>${esc(s.title)} · 第 ${s.page} 页</small></span></a>`}).join('')+'</div>';
+    return `<a href="#p-${s.id}-${i}"><span class="grow"><span class="serif" style="font-size:16px;line-height:1.85">${t}</span><small>${esc(s.title)} · 第 ${s.page} 页</small></span></a>`}).join('')+'</div>';
 }
 
-V.glossary=()=>`<div class="page narrow"><div class="head"><h1>概念与金句</h1><p class="sub">${(NOTES.terms||[]).length} 个概念，${(NOTES.stories||[]).length} 个故事与比喻，${ALLQ.length} 句原话。</p></div>
-  <div class="seg" id="gseg"><button data-g="t" class="on">概念</button><button data-g="s">故事</button><button data-g="q">原话</button></div>
+V.glossary=()=>`<div class="page" style="gap:28px"><section class="head"><a class="back" href="#learn">课程</a><h1 style="margin-top:12px">概念与原话</h1><p class="meta">${(NOTES.terms||[]).length} 个概念，${(NOTES.stories||[]).length} 个故事与比喻，${ALLQ.length} 句原话。</p>
+  <div class="seg" id="gseg" style="margin-top:10px"><button data-g="t" class="on">概念</button><button data-g="s">故事</button><button data-g="q">原话</button></div></section>
   <div id="gbody">${gloss('t')}</div></div>`;
 function gloss(g){
-  if(g==='t')return `<div class="list glass">${(NOTES.terms||[]).map(t=>`<div><span class="grow"><span style="font-weight:700">${esc(t.term)}</span><span style="font-size:var(--t-sub);line-height:1.65">${esc(t.def)}</span>${(t.sections||[]).filter(id=>byId[id]).length?`<small>${t.sections.filter(id=>byId[id]).slice(0,5).map(id=>`<a href="#s-${id}">${esc(byId[id].title)}</a>`).join('、')}</small>`:''}</span></div>`).join('')}</div>`;
-  if(g==='s')return `<div class="list glass">${(NOTES.stories||[]).map(t=>`<div><span class="grow"><span style="font-weight:700">${esc(t.title)}</span><span style="font-size:var(--t-sub);line-height:1.65">${esc(t.summary)}</span>${byId[t.section]?`<small><a href="#s-${t.section}">${esc(byId[t.section].title)}</a></small>`:''}</span></div>`).join('')}</div>`;
-  return `<div class="list glass">${ALLQ.map(({q,s})=>`<div><span class="grow"><span style="font-family:var(--f-read);line-height:1.85;font-weight:600">${esc(q)}</span><small><a href="#s-${s.id}">${esc(s.title)}</a> · 第 ${s.page} 页</small></span></div>`).join('')}</div>`;
+  if(g==='t')return `<div class="group">${(NOTES.terms||[]).map(t=>`<div><span class="grow"><span class="serif" style="font-weight:700">${esc(t.term)}</span><span style="font-size:var(--s-small);line-height:1.75">${esc(t.def)}</span>${(t.sections||[]).filter(id=>byId[id]).length?`<small>${t.sections.filter(id=>byId[id]).slice(0,5).map(id=>`<a class="more" href="#s-${id}">${esc(byId[id].title)}</a>`).join('、')}</small>`:''}</span></div>`).join('')}</div>`;
+  if(g==='s')return `<div class="group">${(NOTES.stories||[]).map(t=>`<div><span class="grow"><span class="serif" style="font-weight:700">${esc(t.title)}</span><span style="font-size:var(--s-small);line-height:1.75">${esc(t.summary)}</span>${byId[t.section]?`<small><a class="more" href="#s-${t.section}">${esc(byId[t.section].title)}</a></small>`:''}</span></div>`).join('')}</div>`;
+  return `<div class="pulls">${ALLQ.map(({q,s})=>`<div><p class="pull" style="font-size:18px">${esc(q)}</p><p class="cap" style="padding-left:22px"><a href="#s-${s.id}">${esc(s.title)}</a> · 第 ${s.page} 页</p></div>`).join('')}</div>`;
 }
 
 V.journal=()=>{
   const days={};journal.forEach(j=>days[j.date]=(days[j.date]||0)+1);
-  const cells=[],d=new Date();d.setDate(d.getDate()-55);
-  for(let i=0;i<56;i++){const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),v=days[k]||0;cells.push(`<i class="${v>=3?'l2':v?'l1':''}" title="${k}：${v} 条"></i>`);d.setDate(d.getDate()+1)}
+  const cells=[];for(let i=55;i>=0;i--){const k=daysAgo(i),v=days[k]||0;cells.push(`<i class="${v>=3?'l2':v?'l1':''}" title="${k}：${v} 条"></i>`)}
   const nl=Object.entries(notes).filter(([k,v])=>v&&byId[k]);
-  return `<div class="page narrow"><div class="head"><h1>记录</h1><p class="sub">只保存在这台设备上。</p></div>
-  <section class="block"><h2>最近 8 周</h2><div class="pane glass"><div class="cal">${cells.join('')}</div></div></section>
-  <section class="block"><h2>今日反思</h2><textarea id="jtext" aria-label="今日反思" placeholder="今天哪个时刻你抓住了一个感受？放下了吗？"></textarea><div class="row"><button class="btn pri" id="jsave">保存</button></div></section>
-  <section class="block"><h2>全部记录</h2>${journal.length?`<div class="list glass">${journal.slice().reverse().map(logRow).join('')}</div>`:'<p class="sub">还没有记录。去<a href="#release">释放</a>做第一次练习。</p>'}</section>
-  ${nl.length?`<section class="block"><h2>小节笔记</h2><div class="list glass">${nl.map(([k,v])=>`<a href="#s-${k}"><span class="grow"><span>${esc(byId[k].title)}</span><small>${esc(v)}</small></span></a>`).join('')}</div></section>`:''}
-  <div class="row"><button class="btn" id="jexport">复制全部记录</button><span class="foot" id="jmsg"></span></div></div>`;
+  return `<div class="page"><section class="head"><h1>记录</h1><p class="meta">只保存在这台设备上。</p></section>
+  <section><div class="split"><h2>最近 8 周</h2><span class="cap">释放 ${nRel()} 次</span></div><div class="cal">${cells.join('')}</div></section>
+  <section><h2>今日反思</h2><textarea id="jtext" aria-label="今日反思" placeholder="今天哪个时刻你抓住了一个感受？放下了吗？"></textarea><div class="row"><button class="btn solid" id="jsave">保存</button></div></section>
+  <section><h2>全部记录</h2>${journal.length?`<div class="group">${journal.slice().reverse().map(logRow).join('')}</div>`:'<p class="meta">还没有记录。去<a class="more" href="#release">释放</a>做第一次练习。</p>'}</section>
+  ${nl.length?`<section><h2>小节笔记</h2><div class="group">${nl.map(([k,v])=>`<a href="#s-${k}"><span class="grow"><span>${esc(byId[k].title)}</span><small>${esc(v)}</small></span><span class="chev"></span></a>`).join('')}</div></section>`:''}
+  <div class="row"><button class="btn" id="jexport">复制全部记录</button><span class="cap" id="jmsg"></span></div></div>`;
 };
 
 function route(){
@@ -446,13 +418,12 @@ function route(){
   if(h.startsWith('s-')){key='learn';html=V.sec(h.slice(2))}
   else if(h.startsWith('c-')){key='learn';html=V.coll(h.slice(2))}
   else if(/^d-\d+$/.test(h)){key='plan';html=V.day(h.slice(2))}
-  else if(/^p-c\d+s\d+-\d+$/.test(h)){key='read';tab='text';html=V.sec(h.match(/^p-(c\d+s\d+)/)[1])}
+  else if(/^p-c\d+s\d+-\d+$/.test(h)){key='learn';tab='text';html=V.sec(h.match(/^p-(c\d+s\d+)/)[1])}
+  else if(['practice','quiz','read','glossary'].includes(h)){key='learn';html=V[h]()}
   if(!html){if(!V[h]||['sec','coll','day'].includes(h))key='home';html=V[key]()}
   $('#main').innerHTML=html;
-  const st=stats();
-  $('#nav').innerHTML=ROUTES.map(([k,t])=>`<a href="#${k}" class="${key===k?'on':''}">${t}${k==='learn'?`<span>${st.n}/${SECS.length}</span>`:''}</a>`).join('');
-  $('#tabbar').innerHTML=ROUTES.filter(r=>MOBILE.includes(r[0])).map(([k,t])=>`<a href="#${k}" class="${key===k?'on':''}">${t}</a>`).join('');
-  $('#mini').innerHTML=`${mring(st.n/SECS.length)}<span>已学 ${st.n} 节<br>释放 ${st.rel} 次</span>`;
+  $('#tabs').innerHTML=TABS.map(([k,t])=>`<a href="#${k}" class="${key===k?'on':''}">${icon(k)}<span>${t}</span></a>`).join('');
+  $('#topstat').textContent=`已读 ${Object.keys(done).length} / ${SECS.length} 节 · 释放 ${nRel()} 次`;
   bind(h);
   if(h.startsWith('p-')){const el=$$('.reader p')[+h.split('-').pop()];if(el){el.scrollIntoView({block:'center'});el.innerHTML='<mark>'+el.innerHTML+'</mark>'}}
   else scrollTo(0,0);
@@ -479,7 +450,7 @@ function bind(h){
     $$('[data-want]').forEach(b=>b.onclick=()=>{R.want=+b.dataset.want;rerender()});
     $$('[data-after]').forEach(b=>b.onclick=()=>{const n=$('#rnote').value;R.after=b.dataset.after;rerender();$('#rnote').value=n});
     on('#rnext',()=>{R.step++;route()});on('#rback',()=>{R.step--;route()});
-    on('#rlet',()=>{R.rounds++;const o=$('#orb');const sz=Math.max(70,240-R.rounds*34);if(o){o.style.setProperty('--s',sz+'px');o.style.setProperty('--o',Math.max(.35,1-R.rounds*.1))}setTimeout(rerender,600)});
+    on('#rlet',()=>{R.rounds++;const o=$('#ball');if(o){o.style.setProperty('--s',Math.max(64,240-R.rounds*36)+'px');o.style.setProperty('--o',Math.max(.3,1-R.rounds*.11))}setTimeout(rerender,700)});
     on('#rswitch',()=>{R.step=1;R.want=null;route()});on('#ragain',()=>{const k=R.topic;resetR();R.topic=k;route()});
     on('#rsave',()=>{const d=new Date();journal.push({type:'release',date:today(),time:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'),feel:FEEL[R.feel].k,want:WANTS[R.want].k,after:R.after,rounds:R.rounds,topic:R.topic,note:$('#rnote').value});store.set('journal',journal);resetR();route()});
   }
@@ -490,12 +461,12 @@ function bind(h){
   if(h==='read'){
     const inp=$('#rq'),hits=$('#hits');let tm;const go=()=>{RQ=inp.value;store.set('rq',RQ);hits.innerHTML=searchHTML(RQ)};
     inp.oninput=()=>{clearTimeout(tm);tm=setTimeout(go,250)};go();
-    $$('[data-q]').forEach(b=>b.onclick=()=>{inp.value=b.dataset.q;go()});
+    $$('[data-q]').forEach(b=>b.onclick=e=>{e.preventDefault();inp.value=b.dataset.q;go()});
   }
   if(h==='glossary')$$('#gseg button').forEach(b=>b.onclick=()=>{$$('#gseg button').forEach(x=>x.classList.toggle('on',x===b));$('#gbody').innerHTML=gloss(b.dataset.g)});
   if(h==='journal'){
     on('#jsave',()=>{const v=$('#jtext').value.trim();if(!v)return;journal.push({type:'note',date:today(),note:v});store.set('journal',journal);rerender()});
-    on('#jexport',()=>{const txt=JSON.stringify({journal,notes,done},null,1),msg=$('#jmsg');
+    on('#jexport',()=>{const txt=JSON.stringify({journal,notes,done,planDone,planNotes},null,1),msg=$('#jmsg');
       (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>msg.textContent='已复制').catch(()=>{msg.textContent='无法自动复制，请手动复制下方内容';const t=document.createElement('textarea');t.value=txt;msg.after(t);t.select()})});
   }
 }
