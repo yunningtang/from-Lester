@@ -411,7 +411,7 @@ V.learn=()=>{
   <section class="head"><h1>学习</h1><p class="lead">全书 ${SECS.length} 节按主题编排成 ${UNITS.length} 个单元，由浅入深。每单元先学必读课，选读课用来加深。</p></section>
   ${s?`<section class="resume"><span class="kick">${u?`第 ${u.idx+1} 单元 · ${esc(u.title)}`:'继续'}</span><h2>${esc(s.title)}</h2><span class="meta">${esc(((SN[nl]||{}).summary||'').slice(0,60))}…</span><a class="btn solid" href="#s-${nl}">${coreDone?'继续学习':'开始第一课'}</a></section>`:''}
   <section style="gap:0">${UNITS.map((u,i)=>{const all=[...u.core,...u.extra],cd=u.core.filter(id=>done[id]).length,full=cd===u.core.length,cur=u===unitOf[nl];
-    return `<a class="unit ${full?'full':''} ${cur?'cur':''}" href="#u-${u.id}"><span class="no">${i+1}</span><h2>${esc(u.title)}</h2><p>${esc(u.goal||u.intro)}</p><p class="cap">必读 ${cd} / ${u.core.length} · 共 ${all.length} 节</p><div class="bar"><i style="width:${cd/u.core.length*100}%"></i></div></a>`}).join('')}</section>
+    return `<a class="unit ${full?'full':''} ${cur?'cur':''}" href="#u-${u.id}"><span class="no" style="--h:${(150+i*37)%360}">${i+1}</span><h2>${esc(u.title)}</h2><p>${esc(u.goal||u.intro)}</p><p class="cap">必读 ${cd} / ${u.core.length} · 共 ${all.length} 节</p><div class="bar"><i style="width:${cd/u.core.length*100}%"></i></div></a>`}).join('')}</section>
   <section><h2>工具</h2><div class="group">
     <a href="#notes"><span class="grow"><span>我的笔记</span><small>划线和笔记按单元整理，可以跳回原文</small></span><span class="num">${NL.length||''}</span><span class="chev"></span></a>
     <a href="#review"><span class="grow"><span>间隔复习</span><small>学过的题按 1、3、7、14、30 天回来</small></span><span class="num">${dueList().length||''}</span><span class="chev"></span></a>
