@@ -243,6 +243,9 @@ body.focus main{padding-block:0}
 .task.on .txt{color:var(--ink-3);text-decoration:line-through}
 
 /* release */
+.meter{display:flex;flex-direction:column;gap:6px;background:var(--surface);border-radius:18px;padding:16px 18px;box-shadow:inset 0 0 0 1px var(--line)}
+.meter input[type=range]{width:100%;accent-color:var(--accent);padding:0;box-shadow:none;background:none;height:28px}
+.mnum{font-family:var(--serif);font-size:30px;font-weight:900;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
 .choices{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .choice{background:var(--surface);border-radius:16px;padding:16px 18px;text-align:left;display:flex;flex-direction:column;gap:4px;box-shadow:inset 0 0 0 1px var(--line);transition:box-shadow .2s,transform .2s}
 .choice:active{transform:scale(.98)}
@@ -262,7 +265,7 @@ body.focus main{padding-block:0}
 .ladder .up .lv i.f{background:var(--accent)}
 
 /* me */
-.figs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.page>.figs,.figs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 .figs div{display:flex;flex-direction:column;gap:2px}
 .figs b{font-family:var(--serif);font-size:34px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
 .figs span{font-size:var(--s-cap);color:var(--ink-2)}
@@ -382,7 +385,7 @@ a.tile:active,button.tile:active{transform:scale(.98)}
   .pull{font-size:19px}
   .page>.resume{grid-template-columns:1fr}
   .resume .btn{grid-row:auto;grid-column:auto;margin-top:10px}
-  .figs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .page>.figs,.figs{grid-template-columns:repeat(2,minmax(0,1fr))}
   .unit{grid-template-columns:44px minmax(0,1fr);gap:4px 14px}
   .unit .no{width:44px;height:44px;font-size:18px;border-radius:14px}
   .rd-view{width:calc(100% - 44px)}
@@ -742,45 +745,110 @@ V.day=n=>{if(!PLAN)return V.plan();const d=PLAN.days.find(x=>x.day===+n);if(!d)r
   <nav class="split" style="border-top:1px solid var(--line);padding-top:20px">${prev?`<a class="more" href="#d-${prev.day}">第 ${prev.day} 天</a>`:'<span></span>'}${next?`<a class="more" href="#d-${next.day}">第 ${next.day} 天：${esc(next.title)}</a>`:''}</nav></div>`};
 
 /* ---------- 释放 ---------- */
-let R=null;const resetR=()=>R={step:0,feel:null,topic:'',want:null,rounds:0,after:null};
-const RT=['此刻，你感受到了什么？','它底下想要的是什么？','允许它浮现，然后放下','现在怎么样？'];
+/* Flow (all wording from the book):
+   0 开始：一个感受 / 卡住或说不清 / 一件想要的事
+   1 看见：选 AGFLAP 中的感受，并给强度打分
+   2 辨认：想要被认同 / 想要控制 / 想要安全；看不清就释放“想要改变这个感受”
+   3 放下：一轮一轮，像波浪一样浮现、离开；卡住时释放想要改变卡住的感受；认同与控制放下后，往下看对死亡的恐惧
+   4 回看：再打分，选现在的层级，记一句
+   5 完成：强度变化与这次放下了什么 */
+let R=null;
+const resetR=()=>R={step:0,mode:'feel',topic:'',feel:null,before:6,cur:null,wants:{},rounds:0,deep:false,afterI:null,after:null,saved:null};
+const CHANGE='想要改变这个感受';
+const WANTQ=['我想让谁认可我、喜欢我、理解我吗？','我想改变它，让事情按我的方式来吗？','我担心失去、受伤，或活不下去吗？'];
+const RSTEPS=['开始','看见','辨认','放下','回看'];
 V.release=()=>{if(!R)resetR();
-  return `<div class="fx"><div class="fx-top"><a class="iconbtn" href="#home" aria-label="退出释放">${icon('close')}</a><div class="segs" id="rsegs"></div></div><div class="fx-body" id="rbody"></div><div class="fx-foot" id="rfoot"></div></div>`};
+  return `<div class="fx"><div class="fx-top"><a class="iconbtn" href="#home" aria-label="退出释放">${icon('close')}</a><div class="segs" id="rsegs"></div><span class="cap" id="rstep" style="min-width:3em;text-align:right"></span></div><div class="fx-body" id="rbody"></div><div class="fx-foot" id="rfoot"></div></div>`};
+const curName=()=>R.cur==='change'?CHANGE:WANTS[R.cur].k;
+function slider(id,val,label){return `<div class="meter"><div class="split"><span class="meta">${label}</span><b class="mnum" id="${id}v">${val}</b></div>
+  <input type="range" id="${id}" min="0" max="10" step="1" value="${val}" aria-label="${label}"><div class="split cap"><span>0 很轻</span><span>10 非常强</span></div></div>`}
 function rPaint(){
-  $('#rsegs').innerHTML=[0,1,2,3].map(k=>`<i class="${k<=R.step?'on':''}"></i>`).join('');
-  let b='',f='';
-  if(R.step===0){b=`<p class="meta">表面的感受最终都汇聚成这六种更沉重的感受。选最接近的一个就好。</p>
-    <input type="text" id="rtopic" aria-label="关于什么事" value="${esc(R.topic)}" placeholder="关于什么事？可以不填">
-    <div class="choices">${FEEL.map((x,i)=>`<button class="choice ${R.feel===i?'on':''}" data-feel="${i}"><b>${x.k}</b><small>${x.d}</small></button>`).join('')}</div>`;
-    f=`<span></span><button class="btn solid" id="rnext" ${R.feel==null?'disabled':''}>下一步</button>`}
-  if(R.step===1){b=`<p class="pull" style="font-size:18px">AGFLAP 来自于两个，被称作想要被认同、想要控制，这两个又来自于一个，称为想要安全/想要生存。</p><p class="cap" style="padding-left:22px">莱斯特·利文森的私教课《释放对自由的抗拒 Part 1》，第 95 页 · <a class="more" href="#r-c4s1">读原文</a></p>
-    <p>看着这份${esc(FEEL[R.feel].k)}，它来自哪一个想要？</p>
-    <div class="choices">${WANTS.map((w,i)=>`<button class="choice ${R.want===i?'on':''}" data-want="${i}"><b>${w.k}</b><small>${w.d}</small></button>`).join('')}</div>`;
-    f=`<button class="btn" id="rback">上一步</button><button class="btn solid" id="rnext" ${R.want==null?'disabled':''}>下一步</button>`}
-  if(R.step===2){const sz=Math.max(64,240-R.rounds*36),op=Math.max(.3,1-R.rounds*.11);b=`
-    <div class="stage"><div class="ball" id="ball" style="--s:${sz}px;--o:${op}"><span class="orb breathe" style="display:block"></span></div>
-    <p class="words" id="words">${R.rounds?'还有剩下的吗？<br>有的话，再放一次。':`感受这份${esc(WANTS[R.want].k)}。<br>允许它完全浮现，然后让它离开。`}</p>
-    <p class="cap" id="rcount">已放下 ${R.rounds} 次</p><button class="btn sm" id="rswitch">底下还有别的想要</button></div>`;
-    f=`<button class="btn" id="rlet">放下了</button><button class="btn solid" id="rnext" ${R.rounds?'':'disabled'}>轻了，下一步</button>`}
-  if(R.step===3){b=`<p class="meta">选最接近现在的一个。还停在下面的话，可以再来一轮。</p>
+  const st=Math.min(R.step,4);
+  $('#rsegs').innerHTML=RSTEPS.map((_,k)=>`<i class="${k<=st&&R.step<5?'on':(R.step>=5?'on':'')}"></i>`).join('');
+  $('#rstep').textContent=R.step<5?RSTEPS[st]:'完成';
+  let h='',b='',f='';
+  if(R.step===0){
+    const recent=[...new Set(journal.filter(j=>j.type==='release'&&j.topic).map(j=>j.topic).reverse())].slice(0,5);
+    h='现在想处理什么？';
+    b=`<input type="text" id="rtopic" aria-label="关于什么事" value="${esc(R.topic)}" placeholder="关于什么事？一句话就好，也可以不填">
+    ${recent.length?`<div class="chips">${recent.map(t=>`<button class="chip" data-topic="${esc(t)}">${esc(t)}</button>`).join('')}</div>`:''}
+    <div class="choices">
+      <button class="choice" data-mode="feel"><b>一个感受</b><small>有一股情绪正在升起，或者想起某件事就不舒服</small></button>
+      <button class="choice" data-mode="stuck"><b>卡住了，说不清</b><small>闷、累、模糊，看不清是什么感受</small></button>
+      <button class="choice" data-mode="goal"><b>一件想要的事</b><small>莱斯特说：从现在起，任何你想要的，都通过释放来得到它</small></button>
+    </div>`;
+    f=`<a class="btn" href="#learn">先去学方法</a><span class="cap">点一项开始</span>`}
+  if(R.step===1){
+    if(R.mode==='stuck'){h='这种卡住有多强？';
+      b=`<p class="pull" style="font-size:18px">仅仅释放卡住的感受，或者甚至是模糊不清的感受，你可能甚至都看不到它，因为你正在试图逃避它，释放“想要改变这个模糊不清的感受”</p><p class="cap" style="padding-left:22px">The Way《Lesson 1》，第 1 页</p>${slider('rbefore',R.before,'现在的强度')}`;
+      f=`<button class="btn" data-back>上一步</button><button class="btn solid" id="rgo">开始放下</button>`}
+    else{h=R.mode==='goal'?`想到${R.topic?'「'+esc(R.topic)+'」':'这件想要的事'}，升起了什么感受？`:'此刻，你感受到了什么？';
+      b=`${slider('rbefore',R.before,'先给它打个分')}
+      <p class="meta">表面的感受最终都汇聚成这六种更沉重的感受，选最接近的一个。</p>
+      <div class="choices">${FEEL.map((x,i)=>`<button class="choice ${R.feel===i?'on':''}" data-feel="${i}"><b>${x.k}</b><small>${x.d}</small></button>`).join('')}
+      <button class="choice" data-feel="-1"><b>说不清</b><small>那就直接释放“想要改变这个感受”</small></button></div>`;
+      f=`<button class="btn" data-back>上一步</button><span class="cap">选一个就会继续</span>`}}
+  if(R.step===2){h='它底下想要的是什么？';
+    b=`<p class="meta">看着这份${esc(FEEL[R.feel].k)}，问自己下面三个问题，哪个说“是”。</p>
+    <div class="group">${WANTS.map((w,i)=>`<button data-want="${i}"><span class="grow"><span style="font-weight:600">${w.k}</span><small>${WANTQ[i]}</small></span><span class="chev"></span></button>`).join('')}
+    <button data-want="change"><span class="grow"><span style="font-weight:600">看不清</span><small>那就释放${CHANGE}</small></span><span class="chev"></span></button></div>
+    <p class="cap">“AGFLAP 来自于两个，被称作想要被认同、想要控制，这两个又来自于一个，称为想要安全/想要生存。” 私教课，第 95 页</p>`;
+    f=`<button class="btn" data-back>上一步</button><span class="cap">点一项就会继续</span>`}
+  if(R.step===3){h=R.cur==='change'?'释放想要改变它':'允许它浮现，然后放下';
+    const sz=Math.max(64,240-R.rounds*30),op=Math.max(.32,1-R.rounds*.09);
+    const word=R.rounds===0?(R.cur==='change'?`不管它是什么，<br>让“想要改变它”的那股劲离开。`:`感受这份${curName()}。<br>允许它完全浮现上来，然后让它离开。`)
+      :(R.rounds<3?'还有剩下的吗？<br>有的话，再放一次。':'像波浪一样，浮现，离开，<br>直到波浪停止。');
+    const askDeep=!R.deep&&R.rounds>=3&&(R.wants['想要被认同']||R.wants['想要控制'])&&R.cur!==2;
+    const tally=Object.entries(R.wants).map(([k,n])=>`${k} ×${n}`).join(' · ');
+    b=`<div class="stage"><div class="ball" id="ball" style="--s:${sz}px;--o:${op}"><span class="orb breathe" style="display:block"></span></div>
+      <p class="words" id="words">${word}</p><p class="cap" id="rcount">${tally||'还没放下'}</p></div>
+      ${askDeep?`<div class="feedback"><p>当你释放了那些，在它们底端的“对死亡的恐惧”，就会自然地、明显可察觉地浮现出来，给你去释放。</p><p class="cap" style="margin-top:6px">The Way《Lesson 1》</p><div class="row" style="margin-top:10px"><button class="btn sm" id="rdeep">往下看一层：想要安全</button></div></div>`:''}
+      <div class="row" style="justify-content:center"><button class="btn sm" id="rswitch">底下还有别的想要</button><button class="btn sm" id="rstuck">卡住了</button></div>`;
+    f=`<button class="btn solid" id="rlet" style="flex:1">放下了</button><button class="btn" id="rnext" ${R.rounds?'':'disabled'}>轻了，回看</button>`}
+  if(R.step===4){h='现在怎么样？';if(R.afterI==null)R.afterI=Math.max(0,R.before-2);
+    b=`${slider('rafter',R.afterI,`之前是 ${R.before}，现在呢`)}
+    <p class="meta">选最接近现在的一个。还停在下面的话，可以再来一轮。</p>
     <div class="choices">${[...CAP.slice().reverse(),...FEEL.slice().reverse()].map(x=>`<button class="choice ${R.after===x.k?'on':''}" data-after="${x.k}"><b>${x.k}</b><small>${x.d}</small></button>`).join('')}</div>
     <textarea id="rnote" aria-label="记录" placeholder="放下了什么？有什么新的看见？"></textarea>`;
-    f=`<button class="btn" id="ragain">再来一轮</button><button class="btn solid" id="rsave" ${R.after?'':'disabled'}>保存这次释放</button>`}
-  $('#rbody').innerHTML=`<div class="swap" style="display:flex;flex-direction:column;gap:22px"><h1>${RT[R.step]}</h1>${b}</div>`;$('#rfoot').innerHTML=f;
+    f=`<button class="btn" id="ragain">再来一轮</button><button class="btn solid" id="rsave" ${R.after?'':'disabled'}>保存</button>`}
+  if(R.step===5){const s=R.saved,drop=s.before-s.afterI;h=drop>0?`轻了 ${drop} 分`:'记下来了';
+    b=`<div class="finish" style="padding-top:10px"><span class="orbbtn" style="width:${Math.max(56,120-drop*8)}px;height:${Math.max(56,120-drop*8)}px"><span class="orb"></span></span>
+      <p class="t-big" style="font-family:var(--serif);font-weight:900;font-size:56px;line-height:1">${s.before} → ${s.afterI}</p>
+      <p class="meta">${esc(s.feel)}${s.topic?' · '+esc(s.topic):''} → ${esc(s.after)}</p>
+      <p class="cap">放下了 ${s.rounds} 次：${Object.entries(s.wants).map(([k,n])=>`${k} ×${n}`).join('、')}</p></div>
+      <div class="feedback">“从现在开始，任何你想要的东西，都通过释放来得到它。”<span class="cap"> The Way《Lesson 1》</span></div>`;
+    f=`<a class="btn" href="#home">回到今天</a><button class="btn solid" id="rmore">再释放一件事</button>`}
+  $('#rbody').innerHTML=`<div class="swap" style="display:flex;flex-direction:column;gap:22px"><h1>${h}</h1>${b}</div>`;$('#rfoot').innerHTML=f;bindRelease()}
+function rGo(step){R.step=step;rPaint();scrollTo(0,0)}
+function bindRelease(){
   const on=(id,fn)=>{const e=$(id);if(e)e.onclick=fn};
   const t=$('#rtopic');if(t)t.oninput=()=>R.topic=t.value;
-  const pickOne=(sel,el)=>$$(sel).forEach(x=>x.classList.toggle('on',x===el));
-  $$('[data-feel]').forEach(b=>b.onclick=()=>{R.feel=+b.dataset.feel;pickOne('[data-feel]',b);$('#rnext').disabled=false});
-  $$('[data-want]').forEach(b=>b.onclick=()=>{R.want=+b.dataset.want;pickOne('[data-want]',b);$('#rnext').disabled=false});
-  $$('[data-after]').forEach(b=>b.onclick=()=>{R.after=b.dataset.after;pickOne('[data-after]',b);$('#rsave').disabled=false});
-  on('#rnext',()=>{R.step++;rPaint();scrollTo(0,0)});on('#rback',()=>{R.step--;rPaint()});
-  on('#rlet',()=>{R.rounds++;const o=$('#ball');o.style.setProperty('--s',Math.max(64,240-R.rounds*36)+'px');o.style.setProperty('--o',Math.max(.3,1-R.rounds*.11));
-    $('#words').innerHTML='还有剩下的吗？<br>有的话，再放一次。';$('#rcount').textContent=`已放下 ${R.rounds} 次`;$('#rnext').disabled=false});
-  on('#rswitch',()=>{R.step=1;R.want=null;rPaint()});on('#ragain',()=>{const k=R.topic;resetR();R.topic=k;rPaint()});
-  on('#rsave',()=>{const d=new Date();journal.push({type:'release',date:today(),time:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'),feel:FEEL[R.feel].k,want:WANTS[R.want].k,after:R.after,rounds:R.rounds,topic:R.topic,note:$('#rnote').value});store.set('journal',journal);touch();resetR();location.hash='home'});
+  $$('[data-topic]').forEach(b=>b.onclick=()=>{R.topic=b.dataset.topic;$('#rtopic').value=R.topic});
+  $$('[data-mode]').forEach(b=>b.onclick=()=>{R.mode=b.dataset.mode;rGo(1)});
+  const sl=(id,key)=>{const e=$('#'+id);if(e)e.oninput=()=>{R[key]=+e.value;$('#'+id+'v').textContent=e.value}};sl('rbefore','before');sl('rafter','afterI');
+  $$('[data-back]').forEach(b=>b.onclick=()=>rGo(Math.max(0,R.step-1)));
+  on('#rgo',()=>{R.feel=null;R.cur='change';rGo(3)});
+  $$('[data-feel]').forEach(b=>b.onclick=()=>{const v=+b.dataset.feel;if(v<0){R.feel=null;R.cur='change';rGo(3)}else{R.feel=v;rGo(2)}});
+  $$('[data-want]').forEach(b=>b.onclick=()=>{const v=b.dataset.want;R.cur=v==='change'?'change':+v;rGo(3)});
+  on('#rlet',()=>{R.rounds++;const k=curName();R.wants[k]=(R.wants[k]||0)+1;touch();
+    if(R.rounds===3&&!R.deep&&(R.wants['想要被认同']||R.wants['想要控制'])){rPaint();return}
+    const o=$('#ball');o.style.setProperty('--s',Math.max(64,240-R.rounds*30)+'px');o.style.setProperty('--o',Math.max(.32,1-R.rounds*.09));
+    $('#words').innerHTML=R.rounds<3?'还有剩下的吗？<br>有的话，再放一次。':'像波浪一样，浮现，离开，<br>直到波浪停止。';
+    $('#rcount').textContent=Object.entries(R.wants).map(([k,n])=>`${k} ×${n}`).join(' · ');$('#rnext').disabled=false});
+  on('#rswitch',()=>{if(R.feel==null)R.feel=2;rGo(2)});
+  on('#rstuck',()=>{R.cur='change';rPaint()});
+  on('#rdeep',()=>{R.deep=true;R.cur=2;rPaint()});
+  on('#rnext',()=>rGo(4));
+  $$('[data-after]').forEach(b=>b.onclick=()=>{R.after=b.dataset.after;$$('[data-after]').forEach(x=>x.classList.toggle('on',x===b));$('#rsave').disabled=false});
+  on('#ragain',()=>{R.afterI=null;rGo(R.mode==='stuck'?3:2)});
+  on('#rsave',()=>{const d=new Date(),wants=Object.keys(R.wants);
+    const rec={type:'release',date:today(),time:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'),mode:R.mode,
+      feel:R.feel!=null?FEEL[R.feel].k:(R.mode==='stuck'?'卡住':'说不清'),want:wants.join('、')||CHANGE,wants:R.wants,before:R.before,afterI:R.afterI,after:R.after,rounds:R.rounds,topic:R.topic,note:$('#rnote').value};
+    journal.push(rec);store.set('journal',journal);touch();R.saved=rec;rGo(5)});
+  on('#rmore',()=>{resetR();rGo(0)});
 }
 function logRow(j){
-  if(j.type==='release')return `<div><span class="grow"><span class="row" style="gap:6px"><span class="tag">${esc(j.feel)}</span><span class="tag">${esc(j.want)}</span><span class="tag a">${esc(j.after)}</span></span>${j.topic?`<span>${esc(j.topic)}</span>`:''}${j.note?`<small>${esc(j.note)}</small>`:''}</span><span class="num">${j.date.slice(5)}</span></div>`;
+  if(j.type==='release')return `<div><span class="grow"><span class="row" style="gap:6px"><span class="tag">${esc(j.feel)}</span><span class="tag">${esc(j.want)}</span><span class="tag a">${esc(j.after)}</span>${j.before!=null&&j.afterI!=null?`<span class="tag">${j.before} → ${j.afterI}</span>`:''}</span>${j.topic?`<span>${esc(j.topic)}</span>`:''}${j.note?`<small>${esc(j.note)}</small>`:''}</span><span class="num">${j.date.slice(5)}</span></div>`;
   return `<div><span class="grow"><span>${esc(j.note)}</span></span><span class="num">${j.date.slice(5)}</span></div>`;
 }
 
@@ -794,6 +862,10 @@ V.me=()=>{
     <a href="#notes"><span class="grow"><span>我的笔记</span><small>划线、笔记和 30 天回看</small></span><span class="num">${NL.length||''}</span><span class="chev"></span></a>
     <a href="#review"><span class="grow"><span>复习</span><small>今天到期 ${dueList().length} 题</small></span><span class="chev"></span></a>
     <a href="#plan"><span class="grow"><span>30 天实践</span><small>已完成 ${Object.keys(planDone).length} 天</small></span><span class="chev"></span></a></div></section>
+  ${(()=>{const rs=journal.filter(j=>j.type==='release');if(!rs.length)return '';const cnt=(f)=>{const m={};rs.forEach(r=>f(r).forEach(k=>m[k]=(m[k]||0)+1));return Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,3)};
+    const fe=cnt(r=>[r.feel]),wa=cnt(r=>r.wants?Object.keys(r.wants):(r.want?[r.want]:[])),dr=rs.filter(r=>r.before!=null&&r.afterI!=null),avg=dr.length?(dr.reduce((a,r)=>a+(r.before-r.afterI),0)/dr.length).toFixed(1):null;
+    return `<section><h2>释放的规律</h2><div class="figs" style="grid-template-columns:repeat(3,minmax(0,1fr))"><div><b>${rs.length}</b><span>次释放</span></div><div><b>${avg??'–'}</b><span>平均减轻（分）</span></div><div><b>${rs.reduce((a,r)=>a+(r.rounds||0),0)}</b><span>次放下</span></div></div>
+    <div class="group"><div><span class="grow"><span>最常出现的感受</span><small>${fe.map(([k,n])=>k+' ×'+n).join('、')}</small></span></div><div><span class="grow"><span>最常放下的想要</span><small>${wa.map(([k,n])=>k+' ×'+n).join('、')||'–'}</small></span></div></div></section>`})()}
   <section><h2>释放与反思</h2><textarea id="jtext" aria-label="今日反思" placeholder="今天哪个时刻你抓住了一个感受？放下了吗？"></textarea><div class="row"><button class="btn solid" id="jsave">保存反思</button></div>
   ${journal.length?`<div class="group">${journal.slice().reverse().slice(0,50).map(logRow).join('')}</div>`:''}</section>
   <div class="row"><button class="btn" id="jexport">复制全部数据</button><span class="cap" id="jmsg"></span></div></div>`;
@@ -859,7 +931,7 @@ function paintView(v,arg,anim){
 function refresh(){const y=scrollY,[v,arg]=parse((location.hash||'#home').slice(1));if(v==='reader')return;$('#main').innerHTML=V[v](arg);bind(v,arg);scrollTo(0,y)}
 function bind(v,arg){
   const on=(id,f)=>{const e=$(id);if(e)e.onclick=f};
-  $$('[data-start]').forEach(b=>b.onclick=()=>{resetR();R.feel=+b.dataset.start;R.step=1;location.hash='release'});
+  $$('[data-start]').forEach(b=>b.onclick=()=>{resetR();R.mode='feel';R.feel=+b.dataset.start;R.step=2;location.hash='release'});
   if(v==='sec')bindLesson(arg);
   if(v==='release')rPaint();
   if(v==='review'&&RV)rvPaint();
