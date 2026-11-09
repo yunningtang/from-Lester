@@ -5,7 +5,7 @@
 /* Layout: one calm reading column on a plain ground; typography carries the page.
    Glass only on floating controls. Lessons, the reader and release run full-screen, one focus at a time. */
 :root{
-  --ground:#f4f6f4; --surface:#ffffff; --page:#fbfcfb; --ink:#151a17; --ink-2:#5b645f; --ink-3:#8b938e; --line:rgba(21,26,23,.09); --wash:rgba(21,26,23,.05);
+  --ground:#f6f6f3; --surface:#ffffff; --page:#fcfcfa; --ink:#151a17; --ink-2:#5b645f; --ink-3:#8b938e; --line:rgba(21,26,23,.09); --wash:rgba(21,26,23,.05);
   --accent:#16685a; --accent-ink:#ffffff; --accent-wash:rgba(22,104,90,.09);
   --orb-2:#5fae9c; --orb-3:#16685a; --ok:#16685a; --bad:#b4392f; --hl:rgba(232,190,60,.38); --hl-note:rgba(22,104,90,.16); --flame:#c2581d;
   --glass:rgba(255,255,255,.7); --glass-edge:rgba(255,255,255,.9); --glass-shade:rgba(21,26,23,.10); --scrim:rgba(10,14,12,.32);
@@ -53,6 +53,7 @@ p{text-wrap:pretty}
 .tabs a.on{background:var(--ink);color:var(--ground)}
 main{padding-block:64px 140px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .page{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:52px}
+.page.wide{max-width:960px}
 .page>section{display:flex;flex-direction:column;gap:18px}
 .head{display:flex;flex-direction:column;gap:10px}
 .meta{font-size:var(--s-small);color:var(--ink-2)}
@@ -269,6 +270,94 @@ body.focus main{padding-block:0}
 .coll .num{grid-row:1;grid-column:2}
 mark{background:var(--hl);color:inherit;border-radius:3px;padding:0 1px}
 
+
+/* ===== living layer: colored tiles, unit covers, breathing orb ===== */
+.tile{--h:150;position:relative;overflow:hidden;border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:10px;color:hsl(var(--h) 45% 20%);
+  background:hsl(var(--h) 38% 90%);transition:transform .45s var(--ease)}
+a.tile:hover,button.tile:hover{transform:translateY(-3px) rotate(-.3deg)}
+a.tile:active,button.tile:active{transform:scale(.98)}
+.tile .t-k{font-size:var(--s-small);font-weight:600;opacity:.75}
+.tile .t-big{font-family:var(--serif);font-weight:900;line-height:1;font-size:72px;letter-spacing:-.02em}
+.tile h2,.tile h3{color:inherit}
+.tile p{color:inherit;opacity:.82}
+.tile .go{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;background:hsl(var(--h) 45% 20%);color:hsl(var(--h) 38% 94%);font-size:var(--s-small);font-weight:600}
+.tile .shape{position:absolute;pointer-events:none;border-radius:50%;background:hsl(var(--h) 40% 80%)}
+.tile .shape.b{background:none;box-shadow:inset 0 0 0 2px hsl(var(--h) 40% 70%)}
+.page>.bento,.bento{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
+.bento .w6{grid-column:span 6}.bento .w4{grid-column:span 4}.bento .w3{grid-column:span 3}.bento .w2{grid-column:span 2}
+.bento .tall{min-height:300px}
+.tile.orbt{align-items:center;justify-content:center;text-align:center;background:hsl(var(--h) 30% 14%);color:hsl(var(--h) 40% 92%)}
+.tile.orbt .orbwrap{width:min(150px,70%);aspect-ratio:1;position:relative}
+.breathe{animation:breathe 7s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(.94)}50%{transform:scale(1.04)}}
+.tile.quote-t{background:var(--surface);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.tile.quote-t .quote{font-size:23px}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:9px 16px;border-radius:999px;font-weight:600;font-size:var(--s-small);background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);transition:transform .25s var(--ease),background .2s}
+.chip:hover{transform:translateY(-2px)}
+.chip.up{background:var(--accent-wash);color:var(--accent);box-shadow:none}
+/* unit covers */
+.shelf{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.cover{--h:150;position:relative;overflow:hidden;border-radius:26px;aspect-ratio:3/4;padding:20px;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;
+  background:hsl(var(--h) 38% 88%);color:hsl(var(--h) 50% 18%);transition:transform .45s var(--ease)}
+.cover:hover{transform:translateY(-4px)}
+.cover .n{position:absolute;top:14px;left:20px;font-family:var(--serif);font-weight:900;font-size:56px;line-height:1;opacity:.9}
+.cover h3{font-size:20px;line-height:1.35;position:relative}
+.cover small{position:relative;font-size:var(--s-cap);opacity:.75}
+.cover .bar{position:relative;background:hsl(var(--h) 30% 78%)}
+.cover .bar i{background:hsl(var(--h) 50% 22%)}
+.cover .s1,.cover .s2{position:absolute;pointer-events:none}
+.cover[data-p="0"] .s1{width:78%;aspect-ratio:1;border-radius:50%;right:-22%;top:12%;background:hsl(var(--h) 42% 76%)}
+.cover[data-p="0"] .s2{width:34%;aspect-ratio:1;border-radius:50%;right:30%;top:8%;box-shadow:inset 0 0 0 2px hsl(var(--h) 40% 64%)}
+.cover[data-p="1"] .s1{width:90%;aspect-ratio:1;border-radius:50% 50% 0 0;left:5%;top:28%;background:hsl(var(--h) 42% 77%)}
+.cover[data-p="1"] .s2{width:24%;aspect-ratio:1;border-radius:50%;right:8%;top:8%;background:hsl(var(--h) 50% 66%)}
+.cover[data-p="2"] .s1{width:56%;aspect-ratio:1;border-radius:50%;right:-6%;top:6%;background:hsl(var(--h) 42% 76%)}
+.cover[data-p="2"] .s2{width:56%;aspect-ratio:1;border-radius:50%;right:24%;top:22%;background:hsl(var(--h) 48% 68%);mix-blend-mode:multiply;opacity:.6}
+.cover[data-p="3"] .s1{width:36%;height:72%;border-radius:999px;right:12%;top:-8%;background:hsl(var(--h) 42% 76%);transform:rotate(24deg)}
+.cover[data-p="3"] .s2{width:20%;aspect-ratio:1;border-radius:50%;right:46%;top:30%;background:hsl(var(--h) 50% 66%)}
+.cover.full::after{content:"已完成";position:absolute;top:22px;right:18px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;background:hsl(var(--h) 50% 22%);color:hsl(var(--h) 38% 92%)}
+.cover.cur{box-shadow:inset 0 0 0 3px hsl(var(--h) 50% 30%)}
+.banner{--h:150;position:relative;overflow:hidden;border-radius:30px;padding:28px 26px;min-height:240px;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;background:hsl(var(--h) 38% 88%);color:hsl(var(--h) 50% 18%)}
+.banner h1,.banner p{position:relative;color:inherit}
+.banner .crumb{position:absolute;top:22px;left:24px;color:inherit;opacity:.8}
+.banner .s1,.banner .s2{position:absolute;pointer-events:none}
+.banner .s1{width:300px;height:300px;border-radius:50%;right:-80px;top:-90px;background:hsl(var(--h) 42% 78%)}
+.banner .s2{width:120px;height:120px;border-radius:50%;right:150px;top:30px;box-shadow:inset 0 0 0 2px hsl(var(--h) 40% 66%)}
+.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.tool{background:var(--surface);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:6px;box-shadow:inset 0 0 0 1px var(--line);transition:transform .35s var(--ease)}
+.tool:hover{transform:translateY(-3px)}
+.tool .ic{width:38px;height:38px;border-radius:12px}
+.tool b{font-weight:700}
+.tool small{font-size:var(--s-cap);color:var(--ink-2);line-height:1.5}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tile,:root:not([data-theme="light"]) .cover,:root:not([data-theme="light"]) .banner{background:hsl(var(--h) 22% 17%);color:hsl(var(--h) 45% 86%)}
+  :root:not([data-theme="light"]) .tile .shape,:root:not([data-theme="light"]) .cover .s1,:root:not([data-theme="light"]) .banner .s1{background:hsl(var(--h) 25% 24%)}
+  :root:not([data-theme="light"]) .cover .s2,:root:not([data-theme="light"]) .banner .s2{background:hsl(var(--h) 30% 30%);box-shadow:none;mix-blend-mode:normal;opacity:1}
+  :root:not([data-theme="light"]) .tile .go,:root:not([data-theme="light"]) .cover .bar i{background:hsl(var(--h) 45% 80%);color:hsl(var(--h) 30% 12%)}
+  :root:not([data-theme="light"]) .cover .bar{background:hsl(var(--h) 20% 26%)}
+  :root:not([data-theme="light"]) .tile.orbt{background:hsl(var(--h) 22% 11%)}
+  :root:not([data-theme="light"]) .tile.quote-t{background:var(--surface);color:var(--ink)}}
+:root[data-theme="dark"] .tile,:root[data-theme="dark"] .cover,:root[data-theme="dark"] .banner{background:hsl(var(--h) 22% 17%);color:hsl(var(--h) 45% 86%)}
+:root[data-theme="dark"] .tile .shape,:root[data-theme="dark"] .cover .s1,:root[data-theme="dark"] .banner .s1{background:hsl(var(--h) 25% 24%)}
+:root[data-theme="dark"] .cover .s2,:root[data-theme="dark"] .banner .s2{background:hsl(var(--h) 30% 30%);box-shadow:none;mix-blend-mode:normal;opacity:1}
+:root[data-theme="dark"] .tile .go,:root[data-theme="dark"] .cover .bar i{background:hsl(var(--h) 45% 80%);color:hsl(var(--h) 30% 12%)}
+:root[data-theme="dark"] .tile.quote-t{background:var(--surface);color:var(--ink)}
+@media (max-width:760px){
+  .page>.bento,.bento{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .bento .w6,.bento .w4{grid-column:span 2}.bento .w3,.bento .w2{grid-column:span 1}
+  .bento .tall{min-height:260px}
+  .tile{padding:20px;border-radius:24px}
+  .tile .t-big{font-size:56px}
+  .tile .shape.b{display:none}
+  .shelf .cover{aspect-ratio:4/5}
+  .shelf{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;margin-right:calc(-1 * max(16px,env(safe-area-inset-right,0px)));padding-right:16px;scrollbar-width:none}
+  .shelf::-webkit-scrollbar{display:none}
+  .shelf .cover{flex:none;width:62%;scroll-snap-align:start}
+  .tools{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .banner{min-height:220px}
+}
+@media (prefers-reduced-motion:reduce){.breathe{animation:none}}
+
 @media (max-width:760px){
   :root{--s-display:32px;--s-h1:28px;--s-h2:21px;--s-lead:18px}
   .top{display:none}
@@ -293,7 +382,9 @@ mark{background:var(--hl);color:inherit;border-radius:3px;padding:0 1px}
 }
 @media (prefers-reduced-motion:no-preference){
   .enter>*{animation:rise .5s var(--ease) both}
-  .enter>*:nth-child(2){animation-delay:.04s}.enter>*:nth-child(n+3){animation-delay:.08s}
+  .enter>*:nth-child(2){animation-delay:.05s}.enter>*:nth-child(3){animation-delay:.1s}.enter>*:nth-child(n+4){animation-delay:.15s}
+  .enter .bento>*{animation:rise .6s var(--ease) both}.enter .bento>*:nth-child(2){animation-delay:.06s}.enter .bento>*:nth-child(3){animation-delay:.12s}.enter .bento>*:nth-child(4){animation-delay:.16s}.enter .bento>*:nth-child(n+5){animation-delay:.2s}
+  .enter .shelf>*{animation:rise .6s var(--ease) both}.enter .shelf>*:nth-child(2n){animation-delay:.06s}
   @keyframes rise{from{opacity:.3;transform:translateY(8px)}to{opacity:1;transform:none}}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -371,53 +462,58 @@ const speaker=p=>{const m=p.match(/^([^，。：:]{1,8})[：:](.*)$/);return m?[
 
 const V={};
 /* ---------- 今天 ---------- */
+const HUE=[150,205,28,12,178,95,222,48,340,165];
+const uh=u=>HUE[u.idx%HUE.length];
 V.home=()=>{
   const now=new Date(),h=now.getHours(),hi=h<11?'早上好':h<14?'中午好':h<18?'下午好':'晚上好';
   const d=curDay(),nl=nextLesson(),due=dueList(),st=streak(),q=ALLQ.length?pick(ALLQ,daySeed()):null;
-  const items=[];
-  if(d)items.push({on:planDone[d.day]===today(),ic:'plan',t:`30 天实践 · 第 ${d.day} 天`,s:d.title,href:`#d-${d.day}`});
-  if(nl){const s=byId[nl],u=unitOf[nl],did=Object.values(done).filter(x=>x===today()).length;
-    items.push(did?{on:true,ic:'learn',t:`今天已学 ${did} 课`,s:`还想学，可以继续：${s.title}`,href:`#s-${nl}`}:{on:false,ic:'learn',t:`下一课 · ${s.title}`,s:`${u?u.title+' · ':''}约 ${3+mins(s)} 分钟`,href:`#s-${nl}`})}
-  items.push({on:due.length===0&&Object.keys(reviews).length>0,ic:'review',t:due.length?`复习 ${due.length} 题`:'复习',s:due.length?'间隔复习，巩固学过的课':(Object.keys(reviews).length?'今天没有到期的复习':'学完一课后，题目会按时回来'),href:'#review'});
-  items.push({on:relToday(),ic:'release',t:'释放一次',s:'有感受升起时，一步一步放下',href:'#release'});
-  const left=items.filter(x=>!x.on).length,lr=lastRead&&byId[lastRead];
-  return `<div class="page">
-  <section class="hello"><div class="head"><p class="meta">${now.getMonth()+1} 月 ${now.getDate()} 日 · ${hi}</p><h1>${left?`今天还有 ${left} 件事`:'今天都完成了'}</h1>
-    <p class="meta">${st?`已连续练习 ${st} 天。`:'从第一件开始，每天一点点。'}</p></div>
-    <a class="orbbtn" href="#release" aria-label="开始一次释放"><span class="orb"></span><span class="lbl">释放</span></a></section>
-  <section><div class="group daily">${items.map(x=>`<a href="${x.href}" class="${x.on?'done':''}"><span class="ic">${x.on?'<span class="tick on" style="background:none"></span>':icon(x.ic)}</span><span class="grow"><span>${esc(x.t)}</span><small>${esc(x.s)}</small></span><span class="chev"></span></a>`).join('')}</div></section>
-  ${lr?`<section><div class="group"><a href="#r-${lr.id}"><span class="ic" style="background:var(--wash);color:var(--ink-2)">${icon('learn')}</span><span class="grow"><span>接着读《${esc(lr.title)}》</span><small>本节 ${Math.round((readMax[lr.id]||0)*100)}% · 全书 ${(bookPct()*100).toFixed(1)}%</small></span><span class="chev"></span></a></div></section>`:''}
-  ${q?`<section><p class="quote">${esc(q.q)}</p><p class="cap">${src(q.s)} · <a class="more" href="#r-${q.s.id}">读原文</a></p></section>`:''}
-  <section><div class="head"><h2>你现在在哪一层</h2><p class="meta">莱斯特的情绪图表。下面六种合称 AGFLAP，放下它们，就上升到无畏、接纳与平和。点一层，从那里开始释放。</p></div>
-    <div class="group ladder">
-      ${CAP.slice().reverse().map((f,i)=>`<div class="up"><span class="w">${f.k}</span><span class="lv">${Array.from({length:9},(_,k)=>`<i class="${k<9-i?'f':''}"></i>`).join('')}</span><span class="num">${f.en}</span></div>`).join('')}
-      ${FEEL.slice().reverse().map((f,i)=>`<button data-start="${5-i}"><span class="w">${f.k}</span><span class="lv">${Array.from({length:9},(_,k)=>`<i class="${k<6-i?'f':''}"></i>`).join('')}</span><span class="num">${f.en}</span></button>`).join('')}
-    </div></section>
+  const s=nl&&byId[nl],u=nl&&unitOf[nl],did=Object.values(done).filter(x=>x===today()).length,lr=lastRead&&byId[lastRead];
+  const todo=[d&&planDone[d.day]!==today(),nl&&!did,due.length>0,!relToday()].filter(Boolean).length;
+  return `<div class="page wide" style="gap:40px">
+  <section class="head"><p class="meta">${now.getMonth()+1} 月 ${now.getDate()} 日 · ${hi}</p><h1 style="font-size:var(--s-display);line-height:1.2">${todo?`今天还有 ${todo} 件小事`:'今天都完成了'}</h1></section>
+  <section class="bento">
+    ${d?`<a class="tile w4 tall" style="--h:150" href="#d-${d.day}"><span class="shape" style="width:260px;height:260px;right:-70px;top:-80px"></span><span class="shape b" style="width:90px;height:90px;right:150px;top:-30px"></span>
+      <span class="t-k" style="position:relative">30 天实践</span><span class="t-big" style="position:relative">${String(d.day).padStart(2,'0')}<span style="font-size:22px;font-weight:700;margin-left:6px">/ 30</span></span>
+      <h2 style="position:relative;font-size:26px">${esc(d.title)}</h2><p style="position:relative;max-width:30em">${esc(d.story)}</p>
+      <span class="go">${planDone[d.day]===today()?'今天已完成 · 再看看':'开始今天'}</span></a>`:''}
+    <a class="tile orbt w2 tall" style="--h:165" href="#release"><span class="orbwrap breathe"><span class="orb"></span></span><h3 style="font-size:20px">释放一次</h3><p style="font-size:var(--s-cap)">${relToday()?'今天已释放 · 再来一次':'有感受升起时，点这里'}</p></a>
+    ${s?`<a class="tile w3" style="--h:${uh(u)}" href="#s-${nl}"><span class="shape" style="width:140px;height:140px;right:-40px;bottom:-50px"></span><span class="t-k">${did?`今天已学 ${did} 课 · 下一课`:'下一课'}</span><h3 style="font-family:var(--serif);font-size:21px;position:relative">${esc(s.title)}</h3><p style="font-size:var(--s-cap);position:relative">第 ${u.idx+1} 单元 · ${esc(u.title)} · 约 ${3+mins(s)} 分钟</p></a>`:''}
+    <a class="tile w3" style="--h:205" href="#review"><span class="t-k">间隔复习</span><span class="t-big" style="font-size:52px">${due.length}</span><p style="font-size:var(--s-cap)">${due.length?'题到期，巩固学过的课':(Object.keys(reviews).length?'今天没有到期的题':'学完一课后，题会按时回来')}</p></a>
+    <a class="tile w2" style="--h:28" href="#me"><span class="t-k">连续练习</span><span class="t-big" style="font-size:52px">${st}</span><p style="font-size:var(--s-cap)">天${st?'，保持下去':'，从今天开始'}</p></a>
+    ${q?`<div class="tile quote-t w4"><p class="quote">${esc(q.q)}</p><p class="cap">${src(q.s)} · <a class="more" href="#r-${q.s.id}">读原文</a></p></div>`:''}
+    ${lr?`<a class="tile w6" style="--h:222;flex-direction:row;align-items:center;gap:16px" href="#r-${lr.id}"><span class="grow"><span class="t-k">接着读</span><h3 style="font-family:var(--serif)">《${esc(lr.title)}》</h3></span><span class="t-big" style="font-size:40px">${Math.round((readMax[lr.id]||0)*100)}%</span></a>`:''}
+  </section>
+  <section><div class="head"><h2>你现在在哪一层</h2><p class="meta">莱斯特的情绪图表。点一种感受，直接从它开始释放。</p></div>
+    <div class="chips">${FEEL.map((f,i)=>`<button class="chip" data-start="${i}">${f.k}</button>`).join('')}${CAP.map(f=>`<span class="chip up">${f.k}</span>`).join('')}</div>
+    <p class="cap">万念俱灰、悲苦、恐惧、贪求、愤怒、自尊自傲合称 AGFLAP；放下它们，就上升到无畏、接纳与平和。</p></section>
   <p class="cap">学习进度、笔记和记录只保存在这台设备的浏览器里。</p></div>`;
 };
 
 /* ---------- 学习 ---------- */
 V.learn=()=>{
   const nl=nextLesson(),s=nl&&byId[nl],u=nl&&unitOf[nl],coreDone=COREPATH.filter(id=>done[id]).length;
-  return `<div class="page">
-  <section class="head"><h1>学习</h1><p class="lead">全书 ${SECS.length} 节按主题编排成 ${UNITS.length} 个单元，由浅入深。每单元先学必读课，选读课用来加深。</p></section>
-  ${s?`<section class="resume"><span class="kick">${u?`第 ${u.idx+1} 单元 · ${esc(u.title)}`:'继续'}</span><h2>${esc(s.title)}</h2><span class="meta">${esc(((SN[nl]||{}).summary||'').slice(0,60))}…</span><a class="btn solid" href="#s-${nl}">${coreDone?'继续学习':'开始第一课'}</a></section>`:''}
-  <section style="gap:0">${UNITS.map((u,i)=>{const all=[...u.core,...u.extra],cd=u.core.filter(id=>done[id]).length,full=cd===u.core.length,cur=u===unitOf[nl];
-    return `<a class="unit ${full?'full':''} ${cur?'cur':''}" href="#u-${u.id}"><span class="no" style="--h:${(150+i*37)%360}">${i+1}</span><h2>${esc(u.title)}</h2><p>${esc(u.goal||u.intro)}</p><p class="cap">必读 ${cd} / ${u.core.length} · 共 ${all.length} 节</p><div class="bar"><i style="width:${cd/u.core.length*100}%"></i></div></a>`}).join('')}</section>
-  <section><h2>工具</h2><div class="group">
-    <a href="#notes"><span class="grow"><span>我的笔记</span><small>划线和笔记按单元整理，可以跳回原文</small></span><span class="num">${NL.length||''}</span><span class="chev"></span></a>
-    <a href="#review"><span class="grow"><span>间隔复习</span><small>学过的题按 1、3、7、14、30 天回来</small></span><span class="num">${dueList().length||''}</span><span class="chev"></span></a>
-    <a href="#library"><span class="grow"><span>原书阅读</span><small>按原书顺序翻页阅读，已读全书 ${(bookPct()*100).toFixed(1)}%</small></span><span class="chev"></span></a>
-    <a href="#read"><span class="grow"><span>搜索全文</span><small>在约 ${Math.round(TOTAL/10000)} 万字里找任何一句话</small></span><span class="chev"></span></a>
-    <a href="#practice"><span class="grow"><span>练习库</span><small>书中给出的 ${ALLP.length} 个具体方法</small></span><span class="chev"></span></a>
-    <a href="#glossary"><span class="grow"><span>概念与原话</span><small>术语、故事与比喻、莱斯特原话</small></span><span class="chev"></span></a>
+  return `<div class="page wide" style="gap:44px">
+  <section class="head"><h1>学习</h1><p class="lead">全书 ${SECS.length} 节按主题编排成 ${UNITS.length} 个单元，由浅入深。</p></section>
+  ${s?`<a class="tile w6" style="--h:${uh(u)};min-height:200px" href="#s-${nl}"><span class="shape" style="width:220px;height:220px;right:-60px;top:-70px"></span><span class="shape b" style="width:90px;height:90px;right:110px;bottom:24px"></span>
+    <span class="t-k" style="position:relative">${coreDone?'继续学习':'从这里开始'} · 第 ${u.idx+1} 单元</span><h2 style="position:relative;font-size:26px">${esc(s.title)}</h2><p style="position:relative;max-width:32em;font-size:var(--s-small)">${esc(((SN[nl]||{}).summary||'').slice(0,70))}…</p><span class="go">${coreDone?'继续':'开始第一课'}</span></a>`:''}
+  <section><div class="split"><h2>${UNITS.length} 个单元</h2><span class="cap">必读 ${coreDone} / ${COREPATH.length}</span></div>
+  <div class="shelf">${UNITS.map((u,i)=>{const all=[...u.core,...u.extra],cd=u.core.filter(id=>done[id]).length,full=cd===u.core.length,cur=u===unitOf[nl];
+    return `<a class="cover ${full?'full':''} ${cur?'cur':''}" data-p="${i%4}" style="--h:${uh(u)}" href="#u-${u.id}"><span class="s1"></span><span class="s2"></span><span class="n">${i+1}</span><h3>${esc(u.title)}</h3><small>${cd} / ${u.core.length} 必读 · 共 ${all.length} 节</small><div class="bar"><i style="width:${cd/u.core.length*100}%"></i></div></a>`}).join('')}</div></section>
+  <section><h2>工具</h2><div class="tools">
+    <a class="tool" href="#notes"><span class="ic">${icon('note')}</span><b>我的笔记</b><small>${NL.length} 条，可跳回原文</small></a>
+    <a class="tool" href="#review"><span class="ic">${icon('review')}</span><b>间隔复习</b><small>今天到期 ${dueList().length} 题</small></a>
+    <a class="tool" href="#library"><span class="ic">${icon('learn')}</span><b>原书阅读</b><small>已读全书 ${(bookPct()*100).toFixed(1)}%</small></a>
+    <a class="tool" href="#read"><span class="ic">${icon('list')}</span><b>搜索全文</b><small>约 ${Math.round(TOTAL/10000)} 万字</small></a>
+    <a class="tool" href="#practice"><span class="ic">${icon('release')}</span><b>练习库</b><small>${ALLP.length} 个具体方法</small></a>
+    <a class="tool" href="#glossary"><span class="ic">${icon('font')}</span><b>概念与原话</b><small>术语、故事、原话</small></a>
   </div></section></div>`};
 
 V.unit=id=>{const u=UNITS.find(x=>x.id===id);if(!u)return V.learn();const nl=nextLesson();
   const row=(sid,i)=>{const s=byId[sid],st=done[sid]?'done':(sid===nl?'now':'');return `<a class="les ${st}" href="#s-${sid}"><span class="dot">${done[sid]?'':i}</span><span><b>${esc(s.title)}</b><small>${esc(((SN[sid]||{}).summary||'').slice(0,40))}…</small></span><span class="num">${mins(s)} 分钟</span></a>`};
   const prev=UNITS[u.idx-1],next=UNITS[u.idx+1];
-  return `<div class="page">
-  <section class="head"><a class="crumb" href="#learn">学习</a><p class="kick" style="margin-top:12px">第 ${u.idx+1} 单元</p><h1>${esc(u.title)}</h1><p class="lead">${esc(u.intro)}</p>${u.goal?`<p class="meta">${esc(u.goal)}</p>`:''}</section>
+  return `<div class="page" style="gap:40px">
+  <section class="banner" style="--h:${uh(u)}"><span class="s1"></span><span class="s2"></span><a class="crumb" href="#learn">学习</a><p style="font-family:var(--serif);font-weight:900;font-size:56px;line-height:1">${u.idx+1}</p><h1>${esc(u.title)}</h1></section>
+  <section class="head"><p class="lead">${esc(u.intro)}</p>${u.goal?`<p class="meta">${esc(u.goal)}</p>`:''}</section>
   <section><div class="split"><h2>必读</h2><span class="cap">${u.core.filter(x=>done[x]).length} / ${u.core.length}</span></div><div class="lessons">${u.core.map((sid,i)=>row(sid,i+1)).join('')}</div></section>
   ${u.extra.length?`<section><div class="split"><h2>选读</h2><span class="cap">${u.extra.filter(x=>done[x]).length} / ${u.extra.length}</span></div><p class="meta">学完必读后，用这些课把同一主题读深。</p>
     <div class="group">${u.extra.map(sid=>{const s=byId[sid];return `<a href="#s-${sid}"><span class="tick ${done[sid]?'on':''}"></span><span class="grow"><span>${esc(s.title)}</span><small>${esc(s.coll.title)} · ${mins(s)} 分钟</small></span><span class="chev"></span></a>`}).join('')}</div></section>`:''}
@@ -429,7 +525,7 @@ function lessonSteps(id){const n=SN[id]||{},a=['intro'];if(n.points&&n.points.le
   if(n.quiz)a.push('quiz');if(n.practice)a.push('practice');a.push('note','end');return a}
 const STEPNAME={intro:'概述',points:'要点',read:'读原文',quotes:'莱斯特原话',quiz:'检验一下',practice:'练习',note:'记笔记',end:'完成'};
 V.sec=id=>{
-  const s=byId[id];if(!s)return V.learn();
+  const s=byId[id];if(!s)return V.learn();document.documentElement.style.setProperty('--unit-h',unitOf[id]?uh(unitOf[id]):150);
   const steps=lessonSteps(id),i=Math.min(LS[id]||0,steps.length-1),u=unitOf[id];
   return `<div class="fx">
     <div class="fx-top"><a class="iconbtn" href="${u?'#u-'+u.id:'#library'}" aria-label="退出这一课">${icon('close')}</a><div class="segs" id="segs">${steps.map((x,j)=>`<i class="${j<=i?'on':''}"></i>`).join('')}</div><a class="iconbtn" href="#r-${id}" aria-label="读原文">${icon('learn')}</a></div>
@@ -654,7 +750,7 @@ function rPaint(){
     <div class="choices">${WANTS.map((w,i)=>`<button class="choice ${R.want===i?'on':''}" data-want="${i}"><b>${w.k}</b><small>${w.d}</small></button>`).join('')}</div>`;
     f=`<button class="btn" id="rback">上一步</button><button class="btn solid" id="rnext" ${R.want==null?'disabled':''}>下一步</button>`}
   if(R.step===2){const sz=Math.max(64,240-R.rounds*36),op=Math.max(.3,1-R.rounds*.11);b=`
-    <div class="stage"><div class="ball" id="ball" style="--s:${sz}px;--o:${op}"><span class="orb"></span></div>
+    <div class="stage"><div class="ball" id="ball" style="--s:${sz}px;--o:${op}"><span class="orb breathe" style="display:block"></span></div>
     <p class="words" id="words">${R.rounds?'还有剩下的吗？<br>有的话，再放一次。':`感受这份${esc(WANTS[R.want].k)}。<br>允许它完全浮现，然后让它离开。`}</p>
     <p class="cap" id="rcount">已放下 ${R.rounds} 次</p><button class="btn sm" id="rswitch">底下还有别的想要</button></div>`;
     f=`<button class="btn" id="rlet">放下了</button><button class="btn solid" id="rnext" ${R.rounds?'':'disabled'}>轻了，下一步</button>`}
