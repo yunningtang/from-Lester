@@ -243,6 +243,42 @@ body.focus main{padding-block:0}
 .task.on .txt{color:var(--ink-3);text-decoration:line-through}
 
 /* release */
+.emo{display:flex;flex-direction:column;gap:14px}
+.emo-l{display:grid;grid-template-columns:5.5em minmax(0,1fr);gap:10px;align-items:start}
+.emo-l>b{font-family:var(--serif);font-weight:700;padding-top:6px}
+.emo-l>b small{display:block;font-family:var(--sans);font-weight:500;font-size:12px;color:var(--ink-3)}
+.emo-w{display:flex;flex-wrap:wrap;gap:6px}
+.emo-w button{padding:6px 12px;border-radius:999px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);font-size:var(--s-small);transition:background .2s,transform .2s}
+.emo-w button:hover{transform:translateY(-1px);background:var(--accent-wash)}
+.emo-w button.hit{background:var(--accent-wash);color:var(--accent);box-shadow:none;font-weight:600}
+.emo-l.dim{opacity:.35}
+.wcard{background:var(--surface);border-radius:20px;padding:18px 20px;text-align:left;display:flex;flex-direction:column;gap:10px;box-shadow:inset 0 0 0 1px var(--line);transition:transform .25s var(--ease),box-shadow .2s;width:100%}
+.wcard:hover{transform:translateY(-2px);box-shadow:inset 0 0 0 2px var(--accent)}
+.wcard .wh{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.wcard .wh b{font-family:var(--serif);font-size:20px}
+.wcard ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:4px;font-size:var(--s-small);line-height:1.6}
+.wcard .say{display:flex;flex-wrap:wrap;gap:6px}
+.wcard .say span{font-size:var(--s-cap);padding:3px 10px;border-radius:999px;background:var(--wash);color:var(--ink-2)}
+.badge{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--accent);color:var(--accent-ink)}
+.clean{border-radius:16px;padding:14px 16px;background:var(--accent-wash);font-size:var(--s-small);line-height:1.7}
+/* continuous release */
+.flowtime{font-family:var(--serif);font-weight:900;font-size:64px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.01em;text-align:center}
+.flowgoal{display:flex;flex-direction:column;gap:8px}
+.qgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.qbtn{background:var(--surface);border-radius:20px;padding:18px 16px;display:flex;flex-direction:column;gap:2px;text-align:left;box-shadow:inset 0 0 0 1px var(--line);transition:transform .2s var(--ease),background .2s}
+.qbtn:active{transform:scale(.96)}
+.qbtn b{font-family:var(--serif);font-size:19px}
+.qbtn small{font-size:var(--s-cap);color:var(--ink-2)}
+.qbtn .c{font-family:var(--serif);font-weight:900;font-size:22px;color:var(--accent);font-variant-numeric:tabular-nums}
+.qbtn.pop{background:var(--accent-wash)}
+.ping{box-shadow:inset 0 0 0 2px var(--accent)!important}
+.toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--ground);border-radius:999px;padding:10px 18px;font-size:var(--s-small);font-weight:600;box-shadow:0 6px 14px var(--glass-shade);animation:up .35s var(--ease) both;display:flex;gap:12px;align-items:center;max-width:calc(100% - 32px);white-space:nowrap}
+.toast a{color:var(--accent);text-decoration:underline}
+.ramp{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.ramp button{padding:10px 4px;border-radius:14px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);font-size:var(--s-cap);display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.3}
+.ramp button b{font-family:var(--serif);font-size:16px}
+.ramp button.on{background:var(--ink);color:var(--ground);box-shadow:none}
+
 .meter{display:flex;flex-direction:column;gap:6px;background:var(--surface);border-radius:18px;padding:16px 18px;box-shadow:inset 0 0 0 1px var(--line)}
 .meter input[type=range]{width:100%;accent-color:var(--accent);padding:0;box-shadow:none;background:none;height:28px}
 .mnum{font-family:var(--serif);font-size:30px;font-weight:900;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
@@ -438,6 +474,22 @@ const COREPATH=UNITS.flatMap(u=>u.core);
 const FEEL=[{k:'万念俱灰',en:'Apathy',d:'无力、麻木，觉得没有用'},{k:'悲苦',en:'Grief',d:'伤心、失落、自怜'},{k:'恐惧',en:'Fear',d:'担心、焦虑、不安'},
   {k:'贪求',en:'Lust',d:'渴求，非要不可'},{k:'愤怒',en:'Anger',d:'恼火、怨恨、想反击'},{k:'自尊自傲',en:'Pride',d:'优越、评判、不肯动'}];
 const CAP=[{k:'无畏',en:'Courageousness',d:'有能量，敢于去做'},{k:'接纳',en:'Acceptance',d:'事情本来如此，也很好'},{k:'平和',en:'Peace',d:'安静，无所求'}];
+// 情绪词：参考 1992 年圣多纳课程的情绪表整理（不是本书原文），用来帮你说出此刻的感受
+const EMO=[
+  ['无聊','麻木','绝望','无力','没用','放弃','疲惫','冷漠','心灰意冷','提不起劲','无所谓','被困住','迷失','拖延','懒得动'],
+  ['委屈','伤心','失落','孤独','心痛','被抛弃','遗憾','后悔','无助','自怜','想哭','被误解','思念','愧疚','受伤'],
+  ['焦虑','担心','紧张','害怕','不安','慌张','恐慌','怀疑','尴尬','害羞','警惕','怕出错','怕失去','怯场','多疑'],
+  ['渴望','贪心','急切','执着','上瘾','迫不及待','嫉妒','非要不可','想占有','羡慕','不满足','强求','索取','计较','馋'],
+  ['烦躁','生气','恼火','怨恨','不耐烦','嫌弃','愤慨','讨厌','叛逆','挑剔','暴躁','不服','敌意','抓狂','想反击'],
+  ['优越','看不起','评判','固执','自以为是','要面子','不屑','清高','自满','傲慢','不肯认错','炫耀','虚荣','爱比较','觉得自己对']];
+const CAPW=[['自信','有干劲','清晰','乐于行动','有创造力'],['温暖','感恩','包容','喜悦','平衡'],['宁静','完整','轻盈','自在','合一']];
+// 识别三大想要的提示词：自问句 + 常见念头
+const WANTP=[
+  {ask:['我想让别人喜欢我、认可我吗？','我在意他会怎么看我吗？','我想被爱、被照顾、被理解吗？','我觉得自己不够好吗？'],say:['他们会怎么看我','我做得够好吗','为什么没人懂我','我得证明自己','他不在乎我']},
+  {ask:['我想改变这件事或这个人吗？','我想让事情按我的方式来吗？','我想弄明白、想要一个答案吗？','我在抗拒正在发生的事吗？'],say:['应该 / 不应该','必须','怎么还不……','我得想办法','凭什么']},
+  {ask:['我担心会失去什么吗？','我怕受伤、怕出事吗？','我觉得没有它就活不下去吗？','我在为将来担心吗？'],say:['万一……怎么办','我会失去……','我撑不住了','不安全','来不及了']}];
+// 每层感受常见的想要（参考，不是规则）
+const WANTHINT=[[2],[0,2],[2],[1,0],[1],[0,1]];
 const WANTS=[{k:'想要被认同',d:'想被喜欢、被认可、被爱、被理解'},{k:'想要控制',d:'想改变它，想让事情按我的方式来'},{k:'想要安全/生存',d:'担心失去、受伤、活不下去'}];
 const ICON={
   home:'<path d="M4 10.5 12 4l8 6.5V20h-5v-6H9v6H4z"/>',
@@ -487,6 +539,9 @@ V.home=()=>{
       <span class="t-k" style="position:relative">30 天实践</span><span class="t-big" style="position:relative">${String(d.day).padStart(2,'0')}<span style="font-size:22px;font-weight:700;margin-left:6px">/ 30</span></span>
       <h2 style="position:relative;font-size:26px">${esc(d.title)}</h2><p style="position:relative;max-width:30em">${esc(d.story)}</p>
       <span class="go">${planDone[d.day]===today()?'今天已完成 · 再看看':'开始今天'}</span></a>`:''}
+    ${(()=>{const t=flowToday(),p=Math.min(100,t.ms/(FC.goal*36e5)*100);return `<a class="tile w6" style="--h:165" href="#flow"><span class="split" style="position:relative"><span class="t-k">持续释放 · 今天目标 ${FC.goal} 小时</span><span class="t-k">${FS?`进行中 <span id="hflow">${clock(Date.now()-FS.start)}</span>`:'点开开始'}</span></span>
+      <span class="split" style="align-items:flex-end;position:relative"><span class="t-big" style="font-size:44px">${fmt(t.ms)}</span><span class="t-k">清醒时间的 ${Math.round(t.ms/(FC.awake*36e5)*100)}% · 目标 50%</span></span>
+      <span class="bar" style="position:relative;background:hsl(var(--h) 30% 80%)"><i style="width:${p}%;background:hsl(var(--h) 50% 24%)"></i></span></a>`})()}
     <a class="tile orbt w2 tall" style="--h:165" href="#release"><span class="orbwrap breathe"><span class="orb"></span></span><h3 style="font-size:20px">释放一次</h3><p style="font-size:var(--s-cap)">${relToday()?'今天已释放 · 再来一次':'有感受升起时，点这里'}</p></a>
     ${s?`<a class="tile w3" style="--h:${uh(u)}" href="#s-${nl}"><span class="shape" style="width:140px;height:140px;right:-40px;bottom:-50px"></span><span class="t-k">${did?`今天已学 ${did} 课 · 下一课`:'下一课'}</span><h3 style="font-family:var(--serif);font-size:21px;position:relative">${esc(s.title)}</h3><p style="font-size:var(--s-cap);position:relative">第 ${u.idx+1} 单元 · ${esc(u.title)} · 约 ${3+mins(s)} 分钟</p></a>`:''}
     <a class="tile w3" style="--h:205" href="#review"><span class="t-k">间隔复习</span><span class="t-big" style="font-size:52px">${due.length}</span><p style="font-size:var(--s-cap)">${due.length?'题到期，巩固学过的课':(Object.keys(reviews).length?'今天没有到期的题':'学完一课后，题会按时回来')}</p></a>
@@ -775,6 +830,7 @@ function rPaint(){
     <div class="choices">
       <button class="choice" data-mode="feel"><b>一个感受</b><small>有一股情绪正在升起，或者想起某件事就不舒服</small></button>
       <button class="choice" data-mode="stuck"><b>卡住了，说不清</b><small>闷、累、模糊，看不清是什么感受</small></button>
+      <a class="choice" href="#flow" style="grid-column:1/-1;background:var(--ink);color:var(--ground);box-shadow:none"><b>持续释放 · 一整段时间</b><small style="color:inherit;opacity:.75">工作、走路、做家务时开着，觉察到想要就点一下放掉，计入今天的释放时间</small></a>
       <button class="choice" data-mode="goal"><b>一件想要的事</b><small>莱斯特说：从现在起，任何你想要的，都通过释放来得到它</small></button>
     </div>`;
     f=`<a class="btn" href="#learn">先去学方法</a><span class="cap">点一项开始</span>`}
@@ -784,14 +840,16 @@ function rPaint(){
       f=`<button class="btn" data-back>上一步</button><button class="btn solid" id="rgo">开始放下</button>`}
     else{h=R.mode==='goal'?`想到${R.topic?'「'+esc(R.topic)+'」':'这件想要的事'}，升起了什么感受？`:'此刻，你感受到了什么？';
       b=`${slider('rbefore',R.before,'先给它打个分')}
-      <p class="meta">表面的感受最终都汇聚成这六种更沉重的感受，选最接近的一个。</p>
-      <div class="choices">${FEEL.map((x,i)=>`<button class="choice ${R.feel===i?'on':''}" data-feel="${i}"><b>${x.k}</b><small>${x.d}</small></button>`).join('')}
-      <button class="choice" data-feel="-1"><b>说不清</b><small>那就直接释放“想要改变这个感受”</small></button></div>`;
-      f=`<button class="btn" data-back>上一步</button><span class="cap">选一个就会继续</span>`}}
+      <input type="search" id="emoq" aria-label="找一个词" placeholder="找一个词，比如：委屈、烦躁、焦虑">
+      <div class="emo" id="emo">${FEEL.map((x,i)=>`<div class="emo-l" data-l="${i}"><b>${x.k}<small>${x.en}</small></b><div class="emo-w">${EMO[i].map(w=>`<button data-word="${w}" data-feel="${i}">${w}</button>`).join('')}</div></div>`).join('')}</div>
+      <p class="cap">情绪词参考 1992 年圣多纳课程的情绪表整理。点最贴近的那个词；找不到就选它属于哪一层。</p>
+      <div class="row"><button class="btn sm" data-feel="-1">说不清，直接释放“想要改变这个感受”</button></div>`;
+      f=`<button class="btn" data-back>上一步</button><span class="cap">点一个词就会继续</span>`}}
   if(R.step===2){h='它底下想要的是什么？';
-    b=`<p class="meta">看着这份${esc(FEEL[R.feel].k)}，问自己下面三个问题，哪个说“是”。</p>
-    <div class="group">${WANTS.map((w,i)=>`<button data-want="${i}"><span class="grow"><span style="font-weight:600">${w.k}</span><small>${WANTQ[i]}</small></span><span class="chev"></span></button>`).join('')}
-    <button data-want="change"><span class="grow"><span style="font-weight:600">看不清</span><small>那就释放${CHANGE}</small></span><span class="chev"></span></button></div>
+    b=`<p class="meta">看着这份「${esc(R.word||FEEL[R.feel].k)}」，慢慢读下面的问题，哪一组让你心里一动，说“是”。</p>
+    ${WANTS.map((w,i)=>`<button class="wcard" data-want="${i}"><span class="wh"><b>${w.k}</b>${WANTHINT[R.feel].includes(i)?`<span class="badge">${esc(FEEL[R.feel].k)}常见</span>`:''}</span>
+      <ul>${WANTP[i].ask.map(q=>`<li>${q}</li>`).join('')}</ul><span class="say">${WANTP[i].say.map(t=>`<span>“${t}”</span>`).join('')}</span></button>`).join('')}
+    <div class="group"><button data-want="change"><span class="grow"><span style="font-weight:600">看不清</span><small>那就释放${CHANGE}</small></span><span class="chev"></span></button></div>
     <p class="cap">“AGFLAP 来自于两个，被称作想要被认同、想要控制，这两个又来自于一个，称为想要安全/想要生存。” 私教课，第 95 页</p>`;
     f=`<button class="btn" data-back>上一步</button><span class="cap">点一项就会继续</span>`}
   if(R.step===3){h=R.cur==='change'?'释放想要改变它':'允许它浮现，然后放下';
@@ -807,6 +865,7 @@ function rPaint(){
     f=`<button class="btn solid" id="rlet" style="flex:1">放下了</button><button class="btn" id="rnext" ${R.rounds?'':'disabled'}>轻了，回看</button>`}
   if(R.step===4){h='现在怎么样？';if(R.afterI==null)R.afterI=Math.max(0,R.before-2);
     b=`${slider('rafter',R.afterI,`之前是 ${R.before}，现在呢`)}
+    <div class="clean" id="clean" ${R.afterI>0?'':'hidden'}><p>还剩一点，说明想要还在。想要的感觉就是“没有”，留着它就会一直想要。</p><p class="cap" style="margin:6px 0 10px">“你们有没有特别注意去持续释放欲望，放走更多、放走更多、放走更多，直到没有更多？” The Right Path 开篇</p><button class="btn sm" id="rclean">继续放到 0</button></div>
     <p class="meta">选最接近现在的一个。还停在下面的话，可以再来一轮。</p>
     <div class="choices">${[...CAP.slice().reverse(),...FEEL.slice().reverse()].map(x=>`<button class="choice ${R.after===x.k?'on':''}" data-after="${x.k}"><b>${x.k}</b><small>${x.d}</small></button>`).join('')}</div>
     <textarea id="rnote" aria-label="记录" placeholder="放下了什么？有什么新的看见？"></textarea>`;
@@ -814,7 +873,7 @@ function rPaint(){
   if(R.step===5){const s=R.saved,drop=s.before-s.afterI;h=drop>0?`轻了 ${drop} 分`:'记下来了';
     b=`<div class="finish" style="padding-top:10px"><span class="orbbtn" style="width:${Math.max(56,120-drop*8)}px;height:${Math.max(56,120-drop*8)}px"><span class="orb"></span></span>
       <p class="t-big" style="font-family:var(--serif);font-weight:900;font-size:56px;line-height:1">${s.before} → ${s.afterI}</p>
-      <p class="meta">${esc(s.feel)}${s.topic?' · '+esc(s.topic):''} → ${esc(s.after)}</p>
+      <p class="meta">${esc(s.word||s.feel)}${s.topic?' · '+esc(s.topic):''} → ${esc(s.after)}</p>
       <p class="cap">放下了 ${s.rounds} 次：${Object.entries(s.wants).map(([k,n])=>`${k} ×${n}`).join('、')}</p></div>
       <div class="feedback">“从现在开始，任何你想要的东西，都通过释放来得到它。”<span class="cap"> The Way《Lesson 1》</span></div>`;
     f=`<a class="btn" href="#home">回到今天</a><button class="btn solid" id="rmore">再释放一件事</button>`}
@@ -825,10 +884,12 @@ function bindRelease(){
   const t=$('#rtopic');if(t)t.oninput=()=>R.topic=t.value;
   $$('[data-topic]').forEach(b=>b.onclick=()=>{R.topic=b.dataset.topic;$('#rtopic').value=R.topic});
   $$('[data-mode]').forEach(b=>b.onclick=()=>{R.mode=b.dataset.mode;rGo(1)});
-  const sl=(id,key)=>{const e=$('#'+id);if(e)e.oninput=()=>{R[key]=+e.value;$('#'+id+'v').textContent=e.value}};sl('rbefore','before');sl('rafter','afterI');
+  const sl=(id,key)=>{const e=$('#'+id);if(e)e.oninput=()=>{R[key]=+e.value;$('#'+id+'v').textContent=e.value;const c=$('#clean');if(c&&key==='afterI')c.hidden=!(R.afterI>0)}};sl('rbefore','before');sl('rafter','afterI');
+  on('#rclean',()=>{R.before=R.afterI;R.afterI=null;rGo(R.mode==='stuck'||R.cur==='change'?3:2)});
+  const eq=$('#emoq');if(eq)eq.oninput=()=>{const q=eq.value.trim();$$('#emo .emo-l').forEach(l=>{let any=false;l.querySelectorAll('[data-word]').forEach(b=>{const m=q&&b.dataset.word.includes(q);b.classList.toggle('hit',!!m);any=any||m});l.classList.toggle('dim',!!q&&!any)})};
   $$('[data-back]').forEach(b=>b.onclick=()=>rGo(Math.max(0,R.step-1)));
   on('#rgo',()=>{R.feel=null;R.cur='change';rGo(3)});
-  $$('[data-feel]').forEach(b=>b.onclick=()=>{const v=+b.dataset.feel;if(v<0){R.feel=null;R.cur='change';rGo(3)}else{R.feel=v;rGo(2)}});
+  $$('[data-feel]').forEach(b=>b.onclick=()=>{const v=+b.dataset.feel;R.word=b.dataset.word||null;if(v<0){R.feel=null;R.cur='change';rGo(3)}else{R.feel=v;rGo(2)}});
   $$('[data-want]').forEach(b=>b.onclick=()=>{const v=b.dataset.want;R.cur=v==='change'?'change':+v;rGo(3)});
   on('#rlet',()=>{R.rounds++;const k=curName();R.wants[k]=(R.wants[k]||0)+1;touch();
     if(R.rounds===3&&!R.deep&&(R.wants['想要被认同']||R.wants['想要控制'])){rPaint();return}
@@ -843,10 +904,62 @@ function bindRelease(){
   on('#ragain',()=>{R.afterI=null;rGo(R.mode==='stuck'?3:2)});
   on('#rsave',()=>{const d=new Date(),wants=Object.keys(R.wants);
     const rec={type:'release',date:today(),time:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'),mode:R.mode,
-      feel:R.feel!=null?FEEL[R.feel].k:(R.mode==='stuck'?'卡住':'说不清'),want:wants.join('、')||CHANGE,wants:R.wants,before:R.before,afterI:R.afterI,after:R.after,rounds:R.rounds,topic:R.topic,note:$('#rnote').value};
+      feel:R.feel!=null?FEEL[R.feel].k:(R.mode==='stuck'?'卡住':'说不清'),word:R.word||'',want:wants.join('、')||CHANGE,wants:R.wants,before:R.before,afterI:R.afterI,after:R.after,rounds:R.rounds,topic:R.topic,note:$('#rnote').value};
     journal.push(rec);store.set('journal',journal);touch();R.saved=rec;rGo(5)});
   on('#rmore',()=>{resetR();rGo(0)});
 }
+
+/* ---------- 持续释放 ---------- */
+// 风：每天 50% 以上的时间在释放。莱斯特：一天一小时，早晚各一小时，几个小时，半天，最后一整天。
+let FS=store.get('flowSess',null),FD=store.get('flowDay',{}),FC=store.get('flowCfg',{every:10,goal:8,awake:16});
+const RAMP=[[1,'一天一小时'],[2,'早晚各一小时'],[4,'几个小时'],[8,'半天'],[16,'一整天']];
+const fmt=ms=>{const m=Math.floor(ms/60000),h=Math.floor(m/60);return h?`${h} 小时 ${m%60} 分`:`${m} 分钟`};
+const clock=ms=>{const t=Math.floor(ms/1000);return [Math.floor(t/3600),Math.floor(t/60)%60,t%60].map(x=>String(x).padStart(2,'0')).join(':')};
+function flowToday(){const d=FD[today()]||{ms:0,rel:{},checks:0};let ms=d.ms;if(FS){const st=new Date(FS.start),mid=new Date();mid.setHours(0,0,0,0);ms+=Date.now()-Math.max(FS.start,mid.getTime())}return{...d,ms}}
+function flowStart(){FS={start:Date.now(),rel:{},checks:0,ping:Date.now()};store.set('flowSess',FS);touch();lockOn();beep(true)}
+function flowStop(){if(!FS)return;const k=today(),d=FD[k]||(FD[k]={ms:0,rel:{},checks:0});const mid=new Date();mid.setHours(0,0,0,0);
+  d.ms+=Date.now()-Math.max(FS.start,mid.getTime());Object.entries(FS.rel).forEach(([w,n])=>d.rel[w]=(d.rel[w]||0)+n);d.checks+=FS.checks;
+  journal.push({type:'note',date:k,note:`持续释放 ${fmt(Date.now()-FS.start)}，放下 ${Object.values(FS.rel).reduce((a,b)=>a+b,0)} 次`});store.set('journal',journal);
+  FS=null;store.set('flowSess',null);store.set('flowDay',FD);lockOff()}
+let AC=null;function beep(soft){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=soft?528:660;
+  g.gain.setValueAtTime(0.0001,AC.currentTime);g.gain.exponentialRampToValueAtTime(soft?0.05:0.12,AC.currentTime+0.05);g.gain.exponentialRampToValueAtTime(0.0001,AC.currentTime+1.6);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+1.7)}catch(e){}
+  try{navigator.vibrate&&navigator.vibrate(soft?30:[60,80,60])}catch(e){}}
+let WL=null;async function lockOn(){try{WL=await navigator.wakeLock.request('screen')}catch(e){}}function lockOff(){try{WL&&WL.release()}catch(e){}WL=null}
+document.addEventListener('visibilitychange',()=>{if(FS&&document.visibilityState==='visible'&&!WL)lockOn()});
+function flowRelease(k){if(!FS)flowStart();FS.rel[k]=(FS.rel[k]||0)+1;FS.ping=Date.now();store.set('flowSess',FS);touch()}
+V.flow=()=>{const t=flowToday(),goalMs=FC.goal*3600000,pct=Math.min(100,t.ms/goalMs*100),awakePct=Math.round(t.ms/(FC.awake*3600000)*100);
+  const qs=[...WANTS.map((w,i)=>({k:w.k,d:WANTP[i].say.slice(0,2).map(x=>'“'+x+'”').join(' ')})),{k:CHANGE,d:'卡住、说不清的时候'}];
+  return `<div class="fx"><div class="fx-top"><a class="iconbtn" href="#home" aria-label="离开（计时会继续）">${icon('close')}</a><span class="grow" style="text-align:center;font-weight:600">持续释放</span><span style="width:40px"></span></div>
+  <div class="fx-body">
+    <div class="stage" style="padding:0"><div class="ball" id="fball" style="--s:150px"><span class="orb breathe" style="display:block"></span></div></div>
+    <p class="flowtime" id="ftime">${FS?clock(Date.now()-FS.start):'00:00:00'}</p>
+    <p class="meta" style="text-align:center" id="fsub">${FS?'进行中。觉察到想要，就点下面放掉它。':'开始后，这段时间都计入今天的释放时间。'}</p>
+    <div class="flowgoal"><div class="split"><span class="meta">今天 <b id="ftoday">${fmt(t.ms)}</b> / 目标 ${FC.goal} 小时</span><span class="cap" id="fawake">清醒时间的 ${awakePct}%</span></div><div class="bar"><i id="fbar" style="width:${pct}%"></i></div></div>
+    <div class="qgrid">${qs.map(q=>`<button class="qbtn" data-q="${q.k}"><span class="split"><b>${q.k.replace('想要改变这个感受','想要改变它')}</b><span class="c" data-c="${q.k}">${FS&&FS.rel[q.k]||''}</span></span><small>${q.d}</small></button>`).join('')}</div>
+    <p class="cap" style="text-align:center">“你会审视每一个出现的感受，看到它是想要被认同、想要控制、还是想要安全，然后让它离开。” 1983 年在圣多纳的谈话</p>
+    <section class="block" style="margin-top:8px"><h2>每隔多久提醒你觉察一次</h2><div class="links">${[0,5,10,15,30].map(m=>`<button data-every="${m}" class="${FC.every===m?'on':''}" style="${FC.every===m?'background:var(--ink);color:var(--ground)':''}">${m?m+' 分钟':'不提醒'}</button>`).join('')}</div>
+    <p class="cap">提醒时会有轻声提示和一行字：“此刻，有想要吗？”页面需要保持打开；屏幕会尽量保持常亮。</p></section>
+    <section class="block"><h2>今天的目标</h2><p class="meta">风说：每天 50% 以上的时间持续释放，释放的时间多过压抑的时间，人生就会反转。莱斯特给的节奏是一点点加上去：</p>
+    <div class="ramp">${RAMP.map(([h,l])=>`<button data-goal="${h}" class="${FC.goal===h?'on':''}"><b>${h}h</b>${l}</button>`).join('')}</div>
+    <p class="cap">“一开始可能是一天抽出一小时，然后是早上的一个小时和晚上的一个小时，接着是几个小时，然后是半天，最后你会花上一整天时间。” 私教课《没有限制 Part 2》，第 115 页。清醒 ${FC.awake} 小时的 50% 是 ${FC.awake/2} 小时。</p></section>
+    <div class="feedback"><p><b>想要＝没有。</b>每一个想要都在说“我缺这个”，所以不放干净，它就会一直想要。</p><p class="cap" style="margin-top:6px">“你设置了一个缺乏、想要、欲望去搅动你的心智，当你填补了这个欲望，心智变得安静起来，从而你仅仅是存在时，这就是你所感觉到的快乐。” The Way《Lesson 5》</p></div>
+  </div>
+  <div class="fx-foot">${FS?`<button class="btn" id="fstop">结束这段</button><a class="btn solid" href="#release">深入释放一件事</a>`:`<a class="btn" href="#release">一步步释放</a><button class="btn solid" id="fstart">开始持续释放</button>`}</div></div>`};
+function bindFlow(){const on=(id,fn)=>{const e=$(id);if(e)e.onclick=fn};
+  on('#fstart',()=>{flowStart();paintView('flow')});on('#fstop',()=>{flowStop();paintView('flow')});
+  $$('[data-q]').forEach(b=>b.onclick=()=>{flowRelease(b.dataset.q);beep(true);b.classList.add('pop');setTimeout(()=>b.classList.remove('pop'),400);
+    b.querySelector('.c').textContent=FS.rel[b.dataset.q];const o=$('#fball');o.style.setProperty('--s','110px');setTimeout(()=>o.style.setProperty('--s','150px'),700);
+    $('#fsub').textContent='放走更多、放走更多……直到没有更多。';$$('.qbtn').forEach(x=>x.classList.remove('ping'));if(!$('#fstop'))paintView('flow')});
+  $$('[data-every]').forEach(b=>b.onclick=()=>{FC.every=+b.dataset.every;store.set('flowCfg',FC);paintView('flow')});
+  $$('[data-goal]').forEach(b=>b.onclick=()=>{FC.goal=+b.dataset.goal;store.set('flowCfg',FC);paintView('flow')});}
+// one ticker for the whole app: clock on the flow screen, gentle check-ins anywhere
+setInterval(()=>{if(!FS)return;const now=Date.now();
+  const tt=$('#ftime');if(tt){tt.textContent=clock(now-FS.start);const t=flowToday();$('#ftoday').textContent=fmt(t.ms);$('#fbar').style.width=Math.min(100,t.ms/(FC.goal*36e5)*100)+'%';$('#fawake').textContent=`清醒时间的 ${Math.round(t.ms/(FC.awake*36e5)*100)}%`}
+  const ht=$('#hflow');if(ht)ht.textContent=clock(now-FS.start);
+  if(FC.every&&now-FS.ping>=FC.every*60000){FS.ping=now;FS.checks++;store.set('flowSess',FS);beep(false);
+    if($('#ftime')){$('#fsub').textContent='此刻，有想要吗？想要被认同、想要控制，还是想要安全？';$$('.qbtn').forEach(x=>x.classList.add('ping'))}
+    else{const old=$('#toast');if(old)old.remove();const t=document.createElement('div');t.id='toast';t.className='toast';t.innerHTML='此刻，有想要吗？<a href="#flow">去放掉</a>';document.body.appendChild(t);setTimeout(()=>t.remove(),9000)}}},1000);
+
 function logRow(j){
   if(j.type==='release')return `<div><span class="grow"><span class="row" style="gap:6px"><span class="tag">${esc(j.feel)}</span><span class="tag">${esc(j.want)}</span><span class="tag a">${esc(j.after)}</span>${j.before!=null&&j.afterI!=null?`<span class="tag">${j.before} → ${j.afterI}</span>`:''}</span>${j.topic?`<span>${esc(j.topic)}</span>`:''}${j.note?`<small>${esc(j.note)}</small>`:''}</span><span class="num">${j.date.slice(5)}</span></div>`;
   return `<div><span class="grow"><span>${esc(j.note)}</span></span><span class="num">${j.date.slice(5)}</span></div>`;
@@ -862,6 +975,8 @@ V.me=()=>{
     <a href="#notes"><span class="grow"><span>我的笔记</span><small>划线、笔记和 30 天回看</small></span><span class="num">${NL.length||''}</span><span class="chev"></span></a>
     <a href="#review"><span class="grow"><span>复习</span><small>今天到期 ${dueList().length} 题</small></span><span class="chev"></span></a>
     <a href="#plan"><span class="grow"><span>30 天实践</span><small>已完成 ${Object.keys(planDone).length} 天</small></span><span class="chev"></span></a></div></section>
+  ${(()=>{const days=[...Array(7)].map((_,i)=>{const k=addDays(-i);return k===today()?flowToday().ms:(FD[k]||{}).ms||0});const tot=days.reduce((a,b)=>a+b,0);if(!tot)return '';
+    return `<section><h2>持续释放</h2><div class="figs" style="grid-template-columns:repeat(3,minmax(0,1fr))"><div><b>${(days[0]/36e5).toFixed(1)}</b><span>今天（小时）</span></div><div><b>${(tot/7/36e5).toFixed(1)}</b><span>近 7 天日均（小时）</span></div><div><b>${Math.round(tot/7/(FC.awake*36e5)*100)}%</b><span>占清醒时间</span></div></div></section>`})()}
   ${(()=>{const rs=journal.filter(j=>j.type==='release');if(!rs.length)return '';const cnt=(f)=>{const m={};rs.forEach(r=>f(r).forEach(k=>m[k]=(m[k]||0)+1));return Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,3)};
     const fe=cnt(r=>[r.feel]),wa=cnt(r=>r.wants?Object.keys(r.wants):(r.want?[r.want]:[])),dr=rs.filter(r=>r.before!=null&&r.afterI!=null),avg=dr.length?(dr.reduce((a,r)=>a+(r.before-r.afterI),0)/dr.length).toFixed(1):null;
     return `<section><h2>释放的规律</h2><div class="figs" style="grid-template-columns:repeat(3,minmax(0,1fr))"><div><b>${rs.length}</b><span>次释放</span></div><div><b>${avg??'–'}</b><span>平均减轻（分）</span></div><div><b>${rs.reduce((a,r)=>a+(r.rounds||0),0)}</b><span>次放下</span></div></div>
@@ -905,15 +1020,15 @@ function gloss(g){
 }
 
 /* ---------- router ---------- */
-const TABOF={home:'home',learn:'learn',unit:'learn',sec:'learn',review:'learn',library:'learn',coll:'learn',practice:'learn',read:'learn',glossary:'learn',notes:'learn',plan:'plan',day:'plan',release:'release',me:'me'};
-const FOCUS=new Set(['sec','release','review']);
+const TABOF={home:'home',learn:'learn',unit:'learn',sec:'learn',review:'learn',library:'learn',coll:'learn',practice:'learn',read:'learn',glossary:'learn',notes:'learn',plan:'plan',day:'plan',release:'release',flow:'release',me:'me'};
+const FOCUS=new Set(['sec','release','review','flow']);
 function parse(h){let m;
   if(m=h.match(/^s-(c\d+s\d+)$/))return['sec',m[1]];
   if(m=h.match(/^(?:r|p)-(c\d+s\d+)(?:-(\d+))?$/))return['reader',m[1],m[2]!=null?+m[2]:null];
   if(m=h.match(/^u-(u\d+)$/))return['unit',m[1]];
   if(m=h.match(/^c-(c\d+)$/))return['coll',m[1]];
   if(m=h.match(/^d-(\d+)$/))return['day',m[1]];
-  if(['home','learn','review','library','practice','read','glossary','notes','plan','release','me'].includes(h))return[h];
+  if(['home','learn','review','library','practice','read','glossary','notes','plan','release','flow','me'].includes(h))return[h];
   return['home']}
 let painted=null,pageHash='#home';
 function route(){
@@ -934,6 +1049,7 @@ function bind(v,arg){
   $$('[data-start]').forEach(b=>b.onclick=()=>{resetR();R.mode='feel';R.feel=+b.dataset.start;R.step=2;location.hash='release'});
   if(v==='sec')bindLesson(arg);
   if(v==='release')rPaint();
+  if(v==='flow')bindFlow();
   if(v==='review'&&RV)rvPaint();
   if(v==='day'){const n=+arg;
     $$('[data-task]').forEach(b=>b.onclick=()=>{const t=planTasks[n]||(planTasks[n]={});t[b.dataset.task]=!t[b.dataset.task];store.set('planTasks',planTasks);touch();b.classList.toggle('on',!!t[b.dataset.task]);b.querySelector('.tick').classList.toggle('on',!!t[b.dataset.task])});
