@@ -1,0 +1,286 @@
+<title>大鹅一锅端</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;700&display=swap">
+<style>
+/* Layout: one column on a gingham table — header, round enamel pot, wooden tray, tool buttons. Single deliberate look. */
+:root{
+  --table:#F2C230; --table-line:rgba(255,255,255,.28);
+  --pot:#1F2B4D; --pot-rim:#3A4B7E; --pot-shine:#4C5F98;
+  --tile:#FFFDF6; --tile-edge:#CDBF9C;
+  --wood:#8A5A2B; --wood-light:#A9733B; --wood-dark:#5E3B19;
+  --ink:#2A1C0E; --accent:#E2483D; --mint:#2E9C7A;
+  --display:"ZCOOL KuaiLe","Noto Sans SC",system-ui,sans-serif;
+  --body:"Noto Sans SC","PingFang SC",system-ui,sans-serif;
+  color-scheme: light;
+}
+html,body{min-height:100%}
+body{
+  background-color:var(--table);
+  background-image:
+    repeating-linear-gradient(0deg,var(--table-line) 0 22px,transparent 22px 44px),
+    repeating-linear-gradient(90deg,var(--table-line) 0 22px,transparent 22px 44px);
+  color:var(--ink); font-family:var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:16px 28px;
+}
+.wrap{max-width:460px;margin:0 auto;padding-inline:14px;display:flex;flex-direction:column;gap:14px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+h1{font-family:var(--display);font-weight:400;font-size:2.1rem;margin:0;line-height:1;letter-spacing:.02em;
+   color:var(--ink);text-shadow:2px 2px 0 rgba(255,255,255,.6)}
+.meta{display:flex;gap:8px;font-variant-numeric:tabular-nums}
+.chip{background:var(--ink);color:var(--table);border-radius:999px;padding:4px 10px;font-size:.8rem;font-weight:700;white-space:nowrap}
+
+.pot{position:relative;width:100%;aspect-ratio:1;max-width:100%;border-radius:50%;container-type:inline-size;
+  background:radial-gradient(circle at 50% 42%,var(--pot-shine) 0%,var(--pot) 62%);
+  box-shadow:0 0 0 10px var(--pot-rim),0 0 0 14px var(--pot),0 18px 30px 10px rgba(60,35,0,.35),inset 0 10px 40px rgba(0,0,0,.55)}
+
+.tile{position:absolute;aspect-ratio:1;border:0;padding:0;margin:0;border-radius:18%;background:var(--tile);
+  box-shadow:0 .9cqw 0 var(--tile-edge),0 1.6cqw 2cqw rgba(0,0,0,.4);
+  display:grid;place-items:center;line-height:1;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;
+  transition:filter .2s, transform .12s}
+.pot .tile{font-size:calc(var(--s) * .62cqw)}
+.pot .tile.blocked{filter:brightness(.5) saturate(.6);cursor:default}
+.pot .tile:not(.blocked):hover{transform:translateY(-3px)}
+.tile:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.hold{display:flex;justify-content:center;gap:8px;min-height:0}
+.hold .tile,.tray .tile{position:relative;width:100%;font-size:7cqw}
+.hold{container-type:inline-size}
+.hold .slot{width:calc((100% - 48px)/7)}
+.label{font-size:.75rem;letter-spacing:.08em;color:var(--wood-dark);text-align:center;font-weight:700}
+
+.tray{container-type:inline-size;background:linear-gradient(var(--wood-light),var(--wood));border-radius:14px;padding:8px;
+  box-shadow:inset 0 -4px 0 var(--wood-dark),0 6px 12px rgba(60,35,0,.3);
+  display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.tray .slot{aspect-ratio:1;border-radius:18%;background:rgba(0,0,0,.22);box-shadow:inset 0 2px 4px rgba(0,0,0,.35)}
+.tray .tile{height:100%}
+.tray.danger{animation:shake .35s}
+.fly{z-index:50;transition:transform .28s cubic-bezier(.3,.7,.3,1.15)}
+.pop{animation:pop .22s ease-in forwards}
+@keyframes pop{to{transform:scale(1.35);opacity:0}}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tool{font-family:var(--display);font-size:1.15rem;border:0;border-radius:12px;padding:10px 6px;background:var(--ink);color:var(--table);
+  cursor:pointer;box-shadow:0 4px 0 #000;position:relative}
+.tool:active{transform:translateY(3px);box-shadow:0 1px 0 #000}
+.tool:disabled{opacity:.4;cursor:default;transform:none;box-shadow:0 4px 0 #000}
+.tool .n{position:absolute;top:-8px;right:-6px;background:var(--accent);color:#fff;font-family:var(--body);font-size:.7rem;font-weight:700;
+  border-radius:999px;min-width:20px;height:20px;display:grid;place-items:center;padding:0 5px}
+.tool:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.help{font-size:.82rem;line-height:1.6;color:var(--wood-dark);text-align:center;margin:0;text-wrap:balance}
+
+.overlay{position:fixed;inset:0;background:rgba(31,43,77,.72);display:grid;place-items:center;z-index:100;padding:20px}
+.card{background:var(--tile);border-radius:20px;padding:24px 22px;max-width:320px;width:100%;text-align:center;box-shadow:0 8px 0 var(--tile-edge)}
+.card .big{font-size:3.2rem;line-height:1}
+.card h2{font-family:var(--display);font-weight:400;font-size:1.8rem;margin:8px 0 4px}
+.card p{margin:0 0 16px;color:var(--wood-dark)}
+.card .btns{display:flex;flex-direction:column;gap:8px}
+.btn{font-family:var(--display);font-size:1.15rem;border:0;border-radius:12px;padding:10px;cursor:pointer;background:var(--accent);color:#fff;box-shadow:0 4px 0 #9b2a22}
+.btn.alt{background:var(--ink);color:var(--table);box-shadow:0 4px 0 #000}
+@media (prefers-reduced-motion:reduce){.fly{transition:none}.pop{animation-duration:.01s}.tray.danger{animation:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>大鹅一锅端</h1>
+    <div class="meta"><span class="chip" id="lv">第 1 关</span><span class="chip" id="left">剩 0</span></div>
+  </header>
+
+  <div class="pot" id="pot" aria-label="锅里的食材"></div>
+
+  <div id="holdWrap" hidden>
+    <div class="label">暂存区 · 点击放回托盘</div>
+    <div class="hold" id="hold"></div>
+  </div>
+  <div class="tray" id="tray" aria-label="托盘，7 格"></div>
+
+  <div class="tools">
+    <button class="tool" id="tOut">移出<span class="n" id="nOut">1</span></button>
+    <button class="tool" id="tUndo">撤回<span class="n" id="nUndo">2</span></button>
+    <button class="tool" id="tShuf">洗牌<span class="n" id="nShuf">1</span></button>
+  </div>
+  <p class="help">点亮着的食材放进托盘，凑齐 3 个相同的就消掉。托盘 7 格塞满就输了。把锅清空过关。</p>
+</div>
+
+<div class="overlay" id="ov" hidden>
+  <div class="card">
+    <div class="big" id="ovIcon">🪿</div>
+    <h2 id="ovTitle"></h2>
+    <p id="ovText"></p>
+    <div class="btns" id="ovBtns"></div>
+  </div>
+</div>
+
+<script>
+const ITEMS=['🥕','🍅','🌽','🍆','🥦','🧅','🍄','🥚','🧀','🍞','🥟','🍤','🐟','🥔','🍋'];
+const GOOSE='🪿';
+const $=id=>document.getElementById(id);
+const potEl=$('pot'),trayEl=$('tray'),holdEl=$('hold');
+let S=null,busy=false;
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+function cfg(n){
+  if(n===1) return {types:6,sets:1,size:17};
+  return {types:Math.min(6+n*2,16),sets:2,size:n<4?14:13};
+}
+function best(v){try{if(v!=null)localStorage.setItem('goose-best',v);return +localStorage.getItem('goose-best')||1}catch(e){return v||1}}
+
+function blockedIn(list,t,size){
+  const s=size*0.88;
+  return list.some(u=>u.alive&&u.z>t.z&&Math.abs(u.x-t.x)<s&&Math.abs(u.y-t.y)<s);
+}
+// Build a kind sequence of triples where at most `open` triples are in progress at once,
+// then hand kinds out in an order the player can actually reach. Every level is solvable.
+function kindSequence(groups,open){
+  const seq=[],act=[];groups=groups.slice();
+  while(groups.length||act.length){
+    if(groups.length&&(act.length<open&&(!act.length||Math.random()<.5))){act.push({k:groups.pop(),left:3})}
+    const g=act[Math.random()*act.length|0];seq.push(g.k);if(--g.left===0)act.splice(act.indexOf(g),1);
+  }
+  return seq;
+}
+function newLevel(n){
+  const c=cfg(n);
+  const types=[GOOSE,...shuffle(ITEMS.slice()).slice(0,c.types-1)];
+  const groups=[];types.forEach(t=>{for(let i=0;i<c.sets;i++)groups.push(t)});shuffle(groups);
+  const total=groups.length*3;
+  const R=50-c.size/2-4;
+  const tiles=[];
+  for(let i=0;i<total;i++){
+    const r=R*(1-0.45*i/total);let x,y;
+    do{x=(Math.random()*2-1)*r;y=(Math.random()*2-1)*r}while(x*x+y*y>r*r);
+    tiles.push({id:i,k:'',x:50+x-c.size/2,y:50+y-c.size/2,z:i,loc:'pot',alive:true});
+  }
+  const seq=kindSequence(groups,n===1?2:3);
+  for(const k of seq){
+    const free=tiles.filter(t=>t.alive&&!blockedIn(tiles,t,c.size));
+    const t=free[Math.random()*free.length|0];t.k=k;t.alive=false;
+  }
+  S={n,size:c.size,tiles,tray:[],hold:[],hist:[],tools:{out:1,undo:2,shuf:1}};
+  potEl.innerHTML='';
+  tiles.forEach(t=>{
+    const b=document.createElement('button');
+    b.className='tile';b.textContent=t.k;b.style.cssText=`left:${t.x}%;top:${t.y}%;width:${c.size}%;z-index:${t.z+1};--s:${c.size}`;
+    b.setAttribute('aria-label',t.k);
+    b.onclick=()=>pick(t);t.el=b;potEl.appendChild(b);
+  });
+  $('ov').hidden=true;render();
+}
+
+function blocked(t){
+  const s=S.size*0.88;
+  return S.tiles.some(u=>u.loc==='pot'&&u.z>t.z&&Math.abs(u.x-t.x)<s&&Math.abs(u.y-t.y)<s);
+}
+
+function render(fly){
+  S.tiles.forEach(t=>{
+    if(t.loc!=='pot'){t.el.hidden=true;return}
+    t.el.hidden=false;const b=blocked(t);t.el.classList.toggle('blocked',b);t.el.tabIndex=b?-1:0;
+  });
+  trayEl.innerHTML='';
+  for(let i=0;i<7;i++){
+    const slot=document.createElement('div');slot.className='slot';
+    const t=S.tray[i];
+    if(t){const b=document.createElement('div');b.className='tile';b.textContent=t.k;b.dataset.id=t.id;slot.appendChild(b)}
+    trayEl.appendChild(slot);
+  }
+  $('holdWrap').hidden=!S.hold.length;holdEl.innerHTML='';
+  S.hold.forEach(t=>{
+    const slot=document.createElement('div');slot.className='slot';
+    const b=document.createElement('button');b.className='tile';b.textContent=t.k;b.dataset.id=t.id;b.onclick=()=>pick(t);
+    slot.appendChild(b);holdEl.appendChild(slot);
+  });
+  $('lv').textContent=`第 ${S.n} 关`;
+  $('left').textContent=`剩 ${S.tiles.filter(t=>t.loc!=='gone').length}`;
+  for(const [k,id] of [['out','Out'],['undo','Undo'],['shuf','Shuf']]){$('n'+id).textContent=S.tools[k]}
+  $('tOut').disabled=!S.tools.out||!S.tray.length||S.hold.length>0;
+  $('tUndo').disabled=!S.tools.undo||!S.hist.length;
+  $('tShuf').disabled=!S.tools.shuf||!S.tiles.some(t=>t.loc==='pot');
+  if(fly){
+    const el=trayEl.querySelector(`[data-id="${fly.id}"]`);
+    if(el){const r=el.getBoundingClientRect();
+      el.style.transform=`translate(${fly.rect.left-r.left}px,${fly.rect.top-r.top}px)`;el.classList.add('fly');
+      el.getBoundingClientRect();requestAnimationFrame(()=>{el.style.transform=''});
+      setTimeout(()=>el.classList.remove('fly'),300);}
+  }
+}
+
+function insertTray(t){
+  let idx=-1;S.tray.forEach((u,i)=>{if(u.k===t.k)idx=i});
+  if(idx<0)S.tray.push(t);else S.tray.splice(idx+1,0,t);
+}
+
+function pick(t){
+  if(busy||S.tray.length>=7)return;
+  if(t.loc==='pot'&&blocked(t))return;
+  const src=t.loc==='pot'?t.el:holdEl.querySelector(`[data-id="${t.id}"]`);
+  const rect=src.getBoundingClientRect();
+  if(t.loc==='hold')S.hold=S.hold.filter(u=>u!==t);
+  S.hist.push({t,from:t.loc});t.loc='tray';insertTray(t);
+  render({id:t.id,rect});
+  busy=true;setTimeout(settle,290);
+}
+
+function settle(){
+  const counts={};S.tray.forEach(t=>counts[t.k]=(counts[t.k]||0)+1);
+  const k=Object.keys(counts).find(k=>counts[k]>=3);
+  if(k){
+    const trio=S.tray.filter(t=>t.k===k).slice(0,3);
+    trio.forEach(t=>trayEl.querySelector(`[data-id="${t.id}"]`)?.classList.add('pop'));
+    setTimeout(()=>{
+      trio.forEach(t=>t.loc='gone');
+      S.tray=S.tray.filter(t=>t.loc==='tray');
+      S.hist=S.hist.filter(h=>h.t.loc==='tray');
+      busy=false;render();
+      if(S.tiles.every(t=>t.loc==='gone'))win();
+    },220);
+    return;
+  }
+  busy=false;
+  if(S.tray.length>=7)lose();
+}
+
+function win(){
+  best(Math.max(best(),S.n+1));
+  showOv(S.n%2?'🪿':'🍲','一锅端！',`第 ${S.n} 关清空了。下一关食材更多、堆得更高。`,[
+    ['下一关',()=>newLevel(S.n+1)]
+  ]);
+}
+function lose(){
+  trayEl.classList.remove('danger');void trayEl.offsetWidth;trayEl.classList.add('danger');
+  const btns=[];
+  if(S.tools.out&&!S.hold.length)btns.push(['用「移出」腾 3 格',()=>{$('ov').hidden=true;moveOut()}]);
+  if(S.tools.undo&&S.hist.length)btns.push(['用「撤回」退一步',()=>{$('ov').hidden=true;undo()}]);
+  btns.push(['重来这一关',()=>newLevel(S.n),btns.length?'alt':'']);
+  setTimeout(()=>showOv('🫕','托盘满了',`第 ${S.n} 关，锅里还剩 ${S.tiles.filter(t=>t.loc==='pot').length} 个。`,btns),380);
+}
+function showOv(icon,title,text,btns){
+  $('ovIcon').textContent=icon;$('ovTitle').textContent=title;$('ovText').textContent=text;
+  const box=$('ovBtns');box.innerHTML='';
+  btns.forEach(([label,fn,cls])=>{const b=document.createElement('button');b.className='btn '+(cls||'');b.textContent=label;b.onclick=fn;box.appendChild(b)});
+  $('ov').hidden=false;box.firstChild?.focus();
+}
+
+function moveOut(){
+  if(busy||!S.tools.out||!S.tray.length||S.hold.length)return;
+  S.tools.out--;const out=S.tray.splice(0,3);out.forEach(t=>t.loc='hold');S.hold=out;
+  S.hist=S.hist.filter(h=>h.t.loc==='tray');render();
+}
+function undo(){
+  if(busy||!S.tools.undo||!S.hist.length)return;
+  S.tools.undo--;const {t,from}=S.hist.pop();
+  S.tray=S.tray.filter(u=>u!==t);t.loc=from;if(from==='hold')S.hold.push(t);render();
+}
+function shuf(){
+  if(busy||!S.tools.shuf)return;
+  const pot=S.tiles.filter(t=>t.loc==='pot');if(!pot.length)return;
+  S.tools.shuf--;const ks=shuffle(pot.map(t=>t.k));pot.forEach((t,i)=>{t.k=ks[i];t.el.textContent=t.k;t.el.setAttribute('aria-label',t.k)});render();
+}
+$('tOut').onclick=moveOut;$('tUndo').onclick=undo;$('tShuf').onclick=shuf;
+
+newLevel(1);
+</script>
