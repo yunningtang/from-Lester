@@ -25,8 +25,9 @@ class OpLog:
     def _file(self) -> Path:
         return self.dir / f"{_dt.date.today():%Y-%m-%d}.jsonl"
 
-    def write(self, action: str, path: str, size: int, ok: bool, error: str = "") -> None:
-        """写一条记录。写日志失败绝不能打断清理（否则会停在一半），失败的先记在内存里。"""
+    def write(self, action: str, path: str, size: int, ok: bool, error: str = "", **extra) -> None:
+        """写一条记录。写日志失败绝不能打断清理（否则会停在一半），失败的先记在内存里。
+        action：trash 移到回收站 / move 移动 / undo 撤销移动。移动还会记 dst（新位置）和 batch（批次）。"""
         rec = {
             "time": _dt.datetime.now().isoformat(timespec="seconds"),
             "action": action,
@@ -34,6 +35,7 @@ class OpLog:
             "size": size,
             "ok": ok,
             "error": error,
+            **extra,
         }
         try:
             self.dir.mkdir(parents=True, exist_ok=True)

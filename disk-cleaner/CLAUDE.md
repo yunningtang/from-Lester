@@ -5,7 +5,7 @@
 ## 安全规则（必须遵守，任何改动都不能绕过）
 
 ### 删除只有一条路
-- 只有 `core/recycle.py` 能真正动文件，只有 `core/cleaner.py` 能调用它。**禁止**在任何地方调用 `os.remove`、`os.unlink`、`shutil.rmtree`、`Path.unlink`、`send2trash` 等（测试会检查）。
+- 只有 `core/recycle.py` 能把文件移到回收站（只有 `core/cleaner.py` 能调用它），只有 `core/mover.py` 能移动文件（整理、挪到别的盘、撤销）。**禁止**在任何地方调用 `os.remove`、`os.unlink`、`shutil.rmtree`、`Path.unlink`、`send2trash` 等（测试会检查）。
 - 删除分两步：`cleaner.preflight()` 只读预检，得到 Plan（能移的、不能移的和原因、提醒）→ 界面把 Plan 给用户确认（`ui/confirm.py`）→ `cleaner.execute()` 对每一项**再查一次**后移到回收站。
 - 不要在 Windows 上直接用 send2trash：它带 FOF_NOCONFIRMATION，文件放不进回收站时 Windows 会**悄悄永久删除**。`recycle.py` 先检查（本地固定磁盘、回收站开着、不超过回收站容量），再带 FOF_WANTNUKEWARNING 调用系统，删完确认文件确实离开了原处。
 - 移到回收站**不会**腾出空间，清空回收站后才会。界面不能写“已释放”；回收站留白不替用户清空。

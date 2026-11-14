@@ -10,7 +10,7 @@
 - 内容一模一样的文件（先比大小，再比开头和结尾，最后比完整哈希）
 - 安装包、系统镜像
 - 已经解压过的压缩包（旁边有同名文件夹）
-- 很久没打开或修改过的文件
+- 很久没改动过的文件（只看修改时间，访问时间不可靠）
 """
 from __future__ import annotations
 
@@ -100,8 +100,8 @@ def _month(ts: float) -> str:
 
 
 def _last_used(st: os.stat_result) -> float:
-    # Windows 默认可能不更新“访问时间”，所以取访问和修改里更晚的那个
-    return max(st.st_mtime, getattr(st, "st_atime", 0))
+    # 只看修改时间。访问时间不可靠：Windows 常常不记录，而且我们自己比较重复文件时读一遍就会把它刷新。
+    return st.st_mtime
 
 
 def _quick_key(path: str, size: int) -> str | None:
@@ -272,11 +272,11 @@ def inspect(key: str, paths: list[str], cancel: threading.Event | None = None,
         elif low.endswith(ARCHIVE_EXT) and os.path.splitext(low)[0] in dirs_seen.get(os.path.dirname(path), set()):
             add(path, size, "maybe", "已经解压过了，旁边有同名的文件夹。", "解压出来的文件还在。")
         elif age_days < 30:
-            add(path, size, "keep", f"最近还在用（{_month(used)}）。")
+            add(path, size, "keep", f"最近改动过（{_month(used)}）。")
         elif tone["old_days"] and age_days > tone["old_days"]:
-            add(path, size, tone["old_lvl"], f"最近一次打开或修改是 {_month(used)}。", tone["then"])
+            add(path, size, tone["old_lvl"], f"{_month(used)}以后没有改动过。", tone["then"])
         elif low.endswith(MEDIA_EXT) or tone["old_lvl"] == "mine":
-            add(path, size, "mine", f"你的文件，最近一次打开或修改是 {_month(used)}。",
+            add(path, size, "mine", f"你的文件，{_month(used)}以后没有改动过。",
                 "如果 C 盘紧，可以挪到别的盘，不用删。")
         else:
             rest_count += 1

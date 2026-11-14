@@ -77,7 +77,7 @@ def test_inspect_explains_each_file(world):
     assert items["photos.zip"][0] == "maybe" and "解压" in items["photos.zip"][1]
     assert items["b.bin"][0] == "maybe" and "一模一样" in items["b.bin"][1]
     assert items.get("a.bin", ("rest",))[0] != "maybe"      # 留最早的一份，不建议移走
-    assert items["movie.mkv"][0] == "maybe" and "打开或修改" in items["movie.mkv"][1]
+    assert items["movie.mkv"][0] == "maybe" and "没有改动过" in items["movie.mkv"][1]
     assert items["new.pdf"][0] == "keep"
     p = api.inspect("projects")
     nm = [i for g in p["groups"] for i in g["items"] if i["name"] == "node_modules"]

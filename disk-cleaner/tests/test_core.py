@@ -119,7 +119,7 @@ def test_no_permanent_delete_in_source():
     for d in ("core", "ui"):
         for dirpath, _, files in os.walk(os.path.join(root, d)):
             for name in files:
-                if name.endswith(".py") and name != "recycle.py":  # 只有 recycle.py 可以真正动文件
+                if name.endswith(".py") and name not in ("recycle.py", "mover.py"):  # 见下一个测试
                     text = open(os.path.join(dirpath, name), encoding="utf-8").read()
                     for b in banned:
                         assert b not in text, f"{name} 包含永久删除调用 {b}"
@@ -179,3 +179,20 @@ def test_measure_no_double_count(tmp_path):
     assert sizes == {"wechat": 3 * MB, "docs": 5 * MB}
     keys = [b.key for b in rep.blocks(MB)]
     assert keys[-1] == "free" and "safe" in keys
+
+
+def test_mover_only_deletes_in_two_places():
+    """mover.py 里删除只允许出现在三个函数里：删掉已核对的原件、清掉自己没复制完的临时副本、
+    撤销后删掉自己建的空文件夹（os.rmdir 只能删空文件夹）。"""
+    import ast
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    tree = ast.parse(open(os.path.join(root, "core", "mover.py"), encoding="utf-8").read())
+    banned = {("os", "remove"), ("os", "unlink"), ("shutil", "rmtree"), ("os", "rmdir")}
+    allowed = {"_remove_source_after_verified_copy", "_discard_partial", "_remove_empty_dirs_we_made"}
+    for fn in ast.walk(tree):
+        if not isinstance(fn, ast.FunctionDef):
+            continue
+        for node in ast.walk(fn):
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) \
+                    and isinstance(node.func.value, ast.Name) and (node.func.value.id, node.func.attr) in banned:
+                assert fn.name in allowed, f"{fn.name} 里不能删除文件"

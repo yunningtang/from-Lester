@@ -20,7 +20,8 @@ function call(name, ...args) {
 const S = {
   st: null, version: -1,
   picked: new Set(), seen: new Set(), open: new Set(),   // 缓存：已选、见过的、展开的分组
-  focus: null, detail: null, marks: new Set(),             // 细看
+  focus: null, detail: null, marks: new Set(),             // 细看：要移到回收站的
+  moveMarks: new Set(), dupeMarks: new Set(), tidySel: null, // 要挪走的、重复文件里要移走的副本、选中的整理建议
   act: { where: null, phase: "idle", plan: null },         // 操作区：idle / checking / ask / running / done
   hover: null, cur: {}, target: {}, free: 0, freeT: 0,
   tree: null, treeKeys: "", blocks: [], t0: performance.now(),
@@ -73,6 +74,10 @@ function applyState(st) {
     S.act.phase = "done";
     if (S.focus) reloadDetail();
   }
+  if (S.focus === "dupes" || (S.focus || "").startsWith("tidy:")) {
+    // 重复文件和整理建议在后台重新算过以后，详情跟着刷新
+    if (st.organize && S.lastOrg !== JSON.stringify(st.organize)) { S.lastOrg = JSON.stringify(st.organize); if (S.act.phase !== "running") reloadDetail(); }
+  }
   render();
 }
 
@@ -103,7 +108,7 @@ function frame(now) {
   shapes = {};
   if (S.tree) {
     const raw = {}; layoutTree(S.tree, rest, raw, k => Math.max(S.cur[k] || 0, 1e-6));
-    for (const b of S.blocks) if (raw[b.key] && raw[b.key].length > 2 && S.cur[b.key] > .02) shapes[b.key] = wobble(raw[b.key], t);
+    for (const b of S.blocks) if (raw[b.key] && raw[b.key].length > 2 && S.cur[b.key] > 1e-4) shapes[b.key] = wobble(raw[b.key], t);
   }
   const unionPath = () => { ctx.beginPath(); for (const k in shapes) { shapes[k].forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath(); } };
   const picked = k => { const c = cacheKey(k); return c && S.picked.has(c); };
@@ -158,7 +163,7 @@ function frame(now) {
     const [cx, cy] = center(s), g = S.cur[b.key], ti = tierOf(g);
     const dim = S.focus && S.focus !== b.key, dark = isDark(toneOf(g, b.key)) && !dim;
     ctx.globalAlpha = dim ? .35 : 1; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    const label = `${fmtG(g)} G`;
+    const label = g >= .1 ? `${fmtG(g)} G` : `${Math.max(1, Math.round(g * 1024))} M`;
     ctx.font = `${ti < 2 ? 500 : 400} ${NAME[ti]}px "Noto Serif SC", serif`;
     if (bh > NAME[ti] * 2.6 && ctx.measureText(b.name).width < bw) {
       ctx.fillStyle = dark ? "#F7F4EC" : "#141413"; ctx.fillText(b.name, cx, cy - NAME[ti] * .62);
@@ -215,16 +220,17 @@ function renderHome() {
   const pct = st.total ? Math.round(st.used / st.total * 100) : 0;
   const drv = st.drive.replace(/[:\\/]+$/, "");
   $("meta").textContent = `${drv ? drv + " 盘" : "磁盘"} · 共 ${fmt(st.total)} · 已用 ${pct}%`;
-  // 状态：一句话说清现在是什么情况、下一步可以做什么
   const cl = st.cleanables, sel = cl.filter(c => S.picked.has(c.key));
+  const looks = lookRows(st);
+  // 一句话：现在怎么样、下一步可以做什么
   if (st.error) $("status").textContent = st.error;
   else if (st.scanning) $("status").innerHTML = `${esc(st.phase || "正在扫描…")}<span class="bar"><i></i></span>`;
-  else if (!cl.length && !st.suggest.length) $("status").textContent = "没有发现需要清理的。";
+  else if (!cl.length && !looks.length) $("status").textContent = "没有发现需要清理或整理的。";
   else $("status").innerHTML = cl.length
-    ? `有 <b>${fmt(st.safe_total)}</b> 可以放心清掉${st.suggest.length ? `，另有 ${st.suggest.length} 块值得看看` : ""}。`
-    : `能放心清的都清了。${st.suggest.length ? "下面几块值得看看。" : ""}`;
+    ? `有 <b>${fmt(st.safe_total)}</b> 可以放心清掉${looks.length ? `，另有 ${looks.length} 件事值得看看` : ""}。`
+    : `能放心清的都清了。${looks.length ? "下面几件事值得看看。" : ""}`;
 
-  // 可放心清理：按分组显示，一组一行；点“展开”看每一项
+  // 可放心清理：按分组，一组一行；“展开”看每一项
   $("safeBlock").hidden = !cl.length;
   $("safeSum").textContent = cl.length ? fmt(st.safe_total) : "";
   $("all").textContent = cl.length && cl.every(c => S.picked.has(c.key)) ? "全不选" : "全选";
@@ -237,50 +243,82 @@ function renderHome() {
       ${open ? `<div class="items">${cs.map(c => `<button class="row${S.picked.has(c.key) ? "" : " off"}" data-c="${c.key}" aria-pressed="${S.picked.has(c.key)}"><span class="dot ${S.picked.has(c.key) ? "on" : ""}"></span><span>${esc(c.name)}</span><span class="size">${fmt(c.size)}</span><span class="note">${esc(c.note)}</span></button>`).join("")}</div>` : ""}</div>`;
   }).join("");
 
-  // 值得看看：最大的几块“你的文件”
-  $("lookBlock").hidden = !st.suggest.length;
-  $("looks").innerHTML = st.suggest.map(s => `<button class="look" data-open="${s.key}"><span class="n">${esc(s.name)}</span><span class="s">${fmt(s.size)}</span>
-    <span class="h">${s.maybe === null ? "正在看里面…" : s.maybe > 0 ? `约 <b>${fmt(s.maybe)}</b> 可能不再需要` : "没发现明显不需要的"}</span></button>`).join("");
+  // 值得看看：要你来决定的事（重复文件、整理、最大的几块你的文件）
+  $("lookBlock").hidden = !looks.length;
+  $("looks").innerHTML = looks.map(l => `<button class="look" data-open="${l.key}"><span class="n">${esc(l.name)}</span><span class="s">${l.right || (l.size != null ? fmt(l.size) : "")}</span><span class="h">${l.hint}</span></button>`).join("");
 
   $("num").textContent = fmtG(S.free || st.free / GB);
   $("binLine").innerHTML = st.bin > 0 ? `回收站里有 ${fmt(st.bin)}，清空后才会空出来 · <button class="link u" data-act="openbin">打开回收站</button>` : "";
-  renderAct($("homeAct"), "home", sel.length, sel.reduce((a, c) => a + c.size, 0));
+  renderAct($("homeAct"), "home", [{ kind: "caches", label: "移到回收站", n: sel.length, bytes: sel.reduce((a, c) => a + c.size, 0) }]);
 }
 
-// ---------------------------------------------------------------- 操作区（两个视图共用）
-function renderAct(el, where, n, bytes) {
+function lookRows(st) {
+  const org = Object.fromEntries((st.organize || []).map(o => [o.key, o]));
+  const rows = [];
+  // 整理只是挪位置，不腾空间，所以右边写“多少个”，不写大小
+  const add = o => { if (!o) return; rows.push(o.pending
+    ? { key: o.key, name: o.name, size: null, hint: "正在找…" }
+    : { key: o.key, name: o.name, size: o.key.startsWith("tidy:") ? null : o.size, right: o.key.startsWith("tidy:") ? `${o.count} 个` : null, hint: esc(o.hint) }); };
+  add(org["dupes"]);
+  add(org["tidy:downloads"]);
+  for (const s of st.suggest) rows.push({ key: s.key, name: s.name, size: s.size,
+    hint: s.maybe === null ? "正在看里面…" : s.maybe > 0 ? `约 <b>${fmt(s.maybe)}</b> 可能不再需要` : "没发现明显不需要的" });
+  add(org["tidy:desktop"]);
+  return rows.slice(0, 5);
+}
+
+// ---------------------------------------------------------------- 操作区（所有视图共用）
+// buttons：[{kind, label, n, bytes}]。kind 决定调用 plan 的哪一种。
+function renderAct(el, where, buttons) {
   const a = S.act, mine = a.where === where;
   const st = S.st, job = st && st.job;
-  if (mine && a.phase === "checking") { el.innerHTML = `<div class="card"><p>正在检查每一项能不能安全地移到回收站…</p></div>`; return; }
+  if (mine && a.phase === "checking") { el.innerHTML = `<div class="card"><p>正在检查每一项…</p></div>`; return; }
   if (mine && a.phase === "ask" && a.plan) {
     const p = a.plan;
+    if (p.error) { el.innerHTML = `<div class="card"><p class="lead">${esc(p.error)}</p><div class="btns"><button class="link u" data-act="no">好</button></div></div>`; return; }
     if (!p.count) {
-      el.innerHTML = `<div class="card"><p class="lead">这些都不能移。</p>${refusedList(p)}<div class="btns"><button class="link u" data-act="no">好</button></div></div>`;
+      el.innerHTML = `<div class="card"><p class="lead">这些都不能动。</p>${refusedList(p)}<div class="btns"><button class="link u" data-act="no">好</button></div></div>`;
       return;
     }
+    const lead = p.type === "move"
+      ? (p.label === "整理" ? `整理 ${p.count} 个文件，共 <b>${fmt(p.total)}</b>。` : `把 ${p.count} 项挪走，共 <b>${fmt(p.total)}</b>。`)
+      : `把 ${p.count} 项移到回收站，共 <b>${fmt(p.total)}</b>。`;
+    const yes = p.type === "move" ? (p.label === "整理" ? "整理" : "挪走") : "确定";
     el.innerHTML = `<div class="card" role="group" aria-label="确认">
-      <p class="lead">把 ${p.count} 项移到回收站，共 <b>${fmt(p.total)}</b>。</p>
+      <p class="lead">${lead}</p>
       ${p.then.map(x => `<p>${esc(x)}</p>`).join("")}
+      ${p.type === "move" ? `<p class="fine">挪完以后可以一键撤销，放回原处。</p>` : ""}
       ${p.refused_count ? refusedList(p) : ""}
       ${p.warnings.map(w => `<p class="fine">${esc(w)}</p>`).join("")}
-      <div class="btns"><button class="yes" data-act="yes">确定</button><button class="link u" data-act="no">再想想</button></div></div>`;
+      <div class="btns"><button class="yes" data-act="yes">${yes}</button><button class="link u" data-act="no">再想想</button></div></div>`;
     return;
   }
   if (mine && job && (a.phase === "running" || a.phase === "done")) {
     if (job.running) {
       const pc = job.count ? Math.round((job.index + 1) / job.count * 100) : 0;
-      el.innerHTML = `<div class="card"><p>正在移到回收站 ${Math.min(job.index + 1, job.count)} / ${job.count}</p><div class="progress"><i style="width:${pc}%"></i></div></div>`;
-    } else {
+      const verb = job.kind === "recycle" ? "正在移到回收站" : job.kind === "undo" ? "正在放回原处" : "正在挪";
+      el.innerHTML = `<div class="card"><p>${verb} ${Math.min(job.index + 1, job.count)} / ${job.count}</p><div class="progress"><i style="width:${pc}%"></i></div></div>`;
+      return;
+    }
+    const failed = job.failed.length ? `<details><summary>${job.failed.length} 项没有动</summary><ul>${job.failed.map(([p, w]) => `<li>${esc(base(p))}：${esc(w)}</li>`).join("")}</ul></details>` : "";
+    const unsaved = job.log_unsaved ? `<p class="fine">有 ${job.log_unsaved} 条记录没写进文件。</p>` : "";
+    if (job.kind === "recycle") {
       el.innerHTML = `<div class="card"><p class="lead">已移到回收站 ${job.moved} 项，共 <b>${fmt(job.trashed)}</b>。</p>
-        <p class="fine">清空回收站后，这些空间才会空出来。想找回，也在回收站里。</p>
-        ${job.failed.length ? `<details><summary>${job.failed.length} 项没有移动</summary><ul>${job.failed.map(([p, w]) => `<li>${esc(base(p))}：${esc(w)}</li>`).join("")}</ul></details>` : ""}
-        ${job.log_unsaved ? `<p class="fine">有 ${job.log_unsaved} 条清理记录没写进文件。</p>` : ""}
+        <p class="fine">清空回收站后，这些空间才会空出来。想找回，也在回收站里。</p>${failed}${unsaved}
         <div class="btns"><button class="yes" data-act="openbin">打开回收站</button><button class="link u" data-act="ok">好</button></div></div>`;
+    } else if (job.kind === "undo") {
+      el.innerHTML = `<div class="card"><p class="lead">已放回原处 ${job.moved} 项。</p>${failed}${unsaved}
+        <div class="btns"><button class="yes" data-act="ok">好</button></div></div>`;
+    } else {
+      el.innerHTML = `<div class="card"><p class="lead">挪好了 ${job.moved} 项，共 <b>${fmt(job.trashed)}</b>。</p>
+        <p class="fine">想放回原处，点撤销；以后也可以在“清理记录”里撤销。</p>${failed}${unsaved}
+        <div class="btns">${job.undoable ? `<button class="yes" data-act="undo" data-batch="${job.batch}">撤销</button>` : ""}<button class="link u" data-act="ok">好</button></div></div>`;
     }
     return;
   }
   const busy = st && (st.scanning || (job && job.running));
-  el.innerHTML = `<button class="go" data-act="ask"${n && !busy ? "" : " disabled"}>移到回收站${n ? `（${n} 项 · ${fmt(bytes)}）` : ""}</button>`;
+  el.innerHTML = buttons.filter(b => b.n || buttons.length === 1).map(b =>
+    `<button class="go" data-act="ask" data-kind="${b.kind}"${b.n && !busy ? "" : " disabled"}>${b.label}${b.n ? `（${b.n} 项 · ${fmt(b.bytes)}）` : ""}</button>`).join("");
 }
 const base = p => p.split(/[\\/]/).filter(Boolean).pop() || p;
 // 只有文件夹名看不出是什么时（比如 “http”），带上上一级：pip / http
@@ -289,12 +327,15 @@ function refusedList(p) {
   return `<details><summary>另有 ${p.refused_count} 项不会动</summary><ul>${p.refused.map(([x, w]) => `<li>${esc(base(x))}：${esc(w)}</li>`).join("")}</ul></details>`;
 }
 
-async function askPlan() {
+async function askPlan(kind) {
   const where = S.focus ? "detail" : "home";
   S.act = { where, phase: "checking", plan: null }; render();
-  const plan = where === "home"
-    ? await call("plan", "caches", [...S.picked])
-    : await call("plan", "files", [...S.marks]);
+  let plan;
+  if (kind === "caches") plan = await call("plan", "caches", [...S.picked]);
+  else if (kind === "files") plan = await call("plan", "files", [...S.marks]);
+  else if (kind === "move") plan = await call("plan", "move", [...S.moveMarks], targetDrive().root);
+  else if (kind === "dupes") plan = await call("plan", "dupes", [...S.dupeMarks]);
+  else if (kind === "tidy") plan = await call("plan", "tidy", [...S.tidySel]);
   if (S.act.where !== where || S.act.phase !== "checking") return;   // 用户已经走开了
   S.act = { where, phase: "ask", plan }; render();
   const y = app.querySelector(".card .yes"); if (y) y.focus({ preventScroll: true });
@@ -302,19 +343,25 @@ async function askPlan() {
 async function confirmPlan() {
   const { where, plan } = S.act;
   const r = await call("execute", plan.id);
-  if (!r.started) { S.act = { where, phase: "idle", plan: null }; render(); $("status").textContent = r.why || "没有开始"; return; }
+  if (!r.started) { S.act = { where, phase: "ask", plan: { error: r.why || "没有开始" } }; render(); return; }
   S.act = { where, phase: "running", plan };
-  // 在画上标出要化开的墨
   if (where === "home") for (const k of S.picked) { const s = shapes["c:" + k]; if (s) { const [x, y] = center(s); ripples.push({ x, y, t: performance.now() }); } }
   else if (shapes[S.focus]) { const [x, y] = center(shapes[S.focus]); ripples.push({ x, y, t: performance.now() }); }
-  if (where === "detail") S.marks.clear();
+  S.marks.clear(); S.moveMarks.clear(); S.dupeMarks.clear();
   render(); poll(true);
 }
+async function startUndo(batch) {
+  const where = S.focus ? "detail" : "home";
+  const r = await call("undo", batch);
+  if (!r.started) { S.act = { where, phase: "ask", plan: { error: r.why || "没法撤销" } }; render(); return; }
+  S.act = { where, phase: "running", plan: null }; render(); poll(true);
+}
+const targetDrive = () => (S.st && S.st.drives && S.st.drives[0]) || null;
 
 // ---------------------------------------------------------------- 细看
 async function openDetail(key) {
-  S.focus = key; S.detail = null; S.marks.clear();
-  if (S.act.where === "detail") S.act = { where: null, phase: "idle", plan: null };
+  S.focus = key; S.detail = null; S.marks.clear(); S.moveMarks.clear(); S.dupeMarks.clear(); S.tidySel = null;
+  if (S.act.where === "detail" && S.act.phase !== "running") S.act = { where: null, phase: "idle", plan: null };
   $("home").hidden = true; const d = $("detail"); d.hidden = false; d.classList.remove("enter"); void d.offsetWidth; d.classList.add("enter");
   render(); $("back").focus({ preventScroll: true });
   const res = await call("inspect", key);
@@ -322,30 +369,37 @@ async function openDetail(key) {
   S.detail = res; render();
 }
 async function reloadDetail() {
-  if (!S.focus || S.focus === "history") return;
+  if (!S.focus) return;
+  if (S.focus === "history") { S.detail = await call("history"); render(); return; }
   const res = await call("inspect", S.focus);
-  S.detail = res; render();
+  S.detail = res; S.tidySel = null; render();
 }
 function closeDetail() {
-  S.focus = null; S.detail = null; S.marks.clear();
+  S.focus = null; S.detail = null; S.marks.clear(); S.moveMarks.clear(); S.dupeMarks.clear();
   if (S.act.where === "detail" && S.act.phase !== "running") S.act = { where: null, phase: "idle", plan: null };
   $("detail").hidden = true; const h = $("home"); h.hidden = false; h.classList.remove("enter"); void h.offsetWidth; h.classList.add("enter");
   render();
+}
+
+function detailHeader(d) {
+  const where = d.paths && d.paths.length ? ` · ${d.paths[0]}${d.paths.length > 1 ? ` 等 ${d.paths.length} 处` : ""}` : "";
+  $("dname").textContent = d.name || "";
+  $("dmeta").innerHTML = `<bdi>${esc(fmt(d.size) + where)}</bdi>`;
 }
 
 const OPEN_BY_DEFAULT = new Set(["maybe", "mine"]);
 function renderDetail() {
   const d = S.detail, b = blockOf(S.focus);
   if (S.focus === "history") return renderHistory();
-  $("dname").textContent = (d && d.name) || (b && b.name) || "";
   if (!d) {
+    $("dname").textContent = (b && b.name) || ({ dupes: "重复文件", "tidy:downloads": "整理下载", "tidy:desktop": "整理桌面" }[S.focus] || "");
     $("dmeta").textContent = b ? fmt(b.size) : "";
     $("dsum").textContent = ""; $("dbody").innerHTML = `<div class="loading">正在看里面有什么…</div>`; $("detailAct").innerHTML = ""; return;
   }
   if (d.missing) { $("dbody").innerHTML = `<div class="loading">这一块已经不在了。</div>`; $("dsum").textContent = ""; $("detailAct").innerHTML = ""; return; }
-  const where = d.paths && d.paths.length ? ` · ${d.paths[0]}${d.paths.length > 1 ? ` 等 ${d.paths.length} 处` : ""}` : "";
-  // 路径太长时从左边省略，留住最后的文件夹名
-  $("dmeta").innerHTML = `<bdi>${esc(fmt(d.size) + where)}</bdi>`;
+  detailHeader(d);
+  if (d.kind === "dupes") return renderDupes(d);
+  if (d.kind === "tidy") return renderTidy(d);
   if (!d.groups.length) {
     $("dsum").textContent = "";
     $("dbody").innerHTML = `<div class="info">${(d.info || "").split(/\n+/).map(p => `<p>${esc(p)}</p>`).join("")}
@@ -356,49 +410,90 @@ function renderDetail() {
   }
   $("dsum").innerHTML = d.maybe > 0 ? `约 <b>${fmt(d.maybe)}</b> 可能不再需要。` : "没发现明显不需要的东西。";
   const body = $("dbody"), keep = body.scrollTop;
+  const drive = targetDrive();
   body.innerHTML = d.groups.map(g => {
     const open = OPEN_BY_DEFAULT.has(g.lvl) || S.open.has("d:" + g.lvl);
     const allMarked = g.lvl === "maybe" && g.items.every(f => S.marks.has(f.id));
     const right = g.lvl === "maybe" ? `<button class="link u" data-allmarks="1">${allMarked ? "全不移" : "全部移走"}</button>`
       : `<button class="link" data-dopen="${g.lvl}">${open ? "收起" : "展开"}</button>`;
     return `<div class="gh"><span>${g.title}</span><span class="gs">${g.items.length} 项 · ${fmt(g.size)}</span>${right}</div>` +
-      (open ? g.items.map(f => fileRow(f, g.lvl)).join("") : "");
+      (open ? g.items.map(f => fileRow(f, g.lvl, drive)).join("") : "");
   }).join("") + (d.rest && d.rest.count ? `<div class="rest">其余 ${d.rest.count} 个文件 · ${fmt(d.rest.size)} · 都不大，或者看不出该怎么处理</div>` : "");
   body.scrollTop = keep;
-  const sel = d.groups.flatMap(g => g.items).filter(f => S.marks.has(f.id));
-  // 有可以移走的，或者刚移完（要显示结果），就显示操作区
-  if (d.groups.some(g => g.lvl === "maybe") || S.act.where === "detail") renderAct($("detailAct"), "detail", sel.length, sel.reduce((a, f) => a + f.size, 0));
+  const items = d.groups.flatMap(g => g.items);
+  const sel = items.filter(f => S.marks.has(f.id)), mv = items.filter(f => S.moveMarks.has(f.id));
+  const buttons = [{ kind: "files", label: "移到回收站", n: sel.length, bytes: sel.reduce((a, f) => a + f.size, 0) }];
+  if (drive) buttons.push({ kind: "move", label: `挪到 ${drive.label}`, n: mv.length, bytes: mv.reduce((a, f) => a + f.size, 0) });
+  if (d.groups.some(g => g.lvl === "maybe" || g.lvl === "mine") || S.act.where === "detail") renderAct($("detailAct"), "detail", buttons);
   else $("detailAct").innerHTML = "";
 }
-function fileRow(f, lvl) {
-  const marked = S.marks.has(f.id);
-  const acts = lvl === "maybe"
-    ? `<button class="link${marked ? " on" : ""}" data-mark="${f.id}" aria-pressed="${marked}">移走</button><button class="link" data-keep="${f.id}">留着</button>`
-    : "";
-  return `<div class="file${lvl === "keep" || lvl === "lock" ? " muted" : ""}${marked ? " marked" : ""}">
+function fileRow(f, lvl, drive) {
+  const marked = S.marks.has(f.id), moving = S.moveMarks.has(f.id);
+  let acts = "";
+  if (lvl === "maybe") acts = `<button class="link${marked ? " on" : ""}" data-mark="${f.id}" aria-pressed="${marked}">移走</button><button class="link" data-keep="${f.id}">留着</button>`;
+  if (lvl === "mine" && drive) acts = `<button class="link${moving ? " on" : ""}" data-move="${f.id}" aria-pressed="${moving}">挪到 ${esc(drive.label)}</button>`;
+  return `<div class="file${lvl === "keep" || lvl === "lock" ? " muted" : ""}${marked || moving ? " marked" : ""}">
     <div class="l1"><span title="${esc(f.path)}">${esc(f.name)}</span><span>${fmt(f.size)}</span></div>
     <div class="why">${esc(f.why)}</div>
     <div class="do">${acts}<button class="link" data-reveal="${esc(f.path)}">在文件夹中显示</button></div></div>`;
 }
 
-// 清理记录
+// 重复文件：每组一块，写明留哪一份
+function renderDupes(d) {
+  const gs = d.dupes || [];
+  const copies = gs.flatMap(g => g.files.filter(f => !f.keeper));
+  $("dsum").innerHTML = gs.length ? `${gs.length} 组一模一样的文件，副本共 <b>${fmt(d.size)}</b>。每组都会留一份。` : "没有找到一模一样的文件。";
+  const allOn = copies.length && copies.every(f => S.dupeMarks.has(f.id));
+  const body = $("dbody"), keep = body.scrollTop;
+  body.innerHTML = (gs.length ? `<div class="gh"><span>按占用从大到小</span><span class="gs">${gs.length} 组</span><button class="link u" data-alldupes="1">${allOn ? "全不选" : "选上所有副本"}</button></div>` : "") +
+    gs.map(g => `<div class="dgroup"><div class="l1"><span>${esc(g.name)}</span><span>${fmt(g.size)} × ${g.files.length}</span></div>` +
+      g.files.map(f => f.keeper
+        ? `<div class="drow keep"><span class="tag">留下</span><span class="w" title="${esc(f.path)}">${esc(f.where)} › ${esc(f.name)}</span><button class="link" data-reveal="${esc(f.path)}">显示</button></div>`
+        : `<div class="drow${S.dupeMarks.has(f.id) ? " on" : ""}"><button class="link${S.dupeMarks.has(f.id) ? " on" : ""}" data-dupe="${f.id}" aria-pressed="${S.dupeMarks.has(f.id)}">移走</button><span class="w" title="${esc(f.path)}">${esc(f.where)} › ${esc(f.name)}</span><button class="link" data-keeper="${g.id}" data-file="${f.id}">改留这份</button></div>`).join("") +
+      `</div>`).join("");
+  body.scrollTop = keep;
+  const sizeOf = Object.fromEntries(gs.flatMap(g => g.files.map(f => [f.id, g.size])));
+  const sel = copies.filter(f => S.dupeMarks.has(f.id)), size = sel.reduce((a, f) => a + sizeOf[f.id], 0);
+  renderAct($("detailAct"), "detail", [{ kind: "dupes", label: "移到回收站", n: sel.length, bytes: size }]);
+}
+
+// 整理：几条建议，默认都选上（只是挪位置，可以撤销）
+function renderTidy(d) {
+  const ps = d.proposals || [];
+  if (S.tidySel === null) S.tidySel = new Set(ps.map(p => p.id));
+  $("dsum").innerHTML = ps.length ? "按下面的方式分好放。只是挪位置，不删除，挪完可以撤销。" : "这里已经很整齐了。";
+  $("dbody").innerHTML = ps.map(p => {
+    const on = S.tidySel.has(p.id);
+    return `<div class="prop"><button class="row${on ? "" : " off"}" data-tidy="${p.id}" aria-pressed="${on}"><span class="dot ${on ? "on" : ""}"></span><span>${esc(p.title)}<span class="sub">${p.count} 个</span></span><span class="size">${fmt(p.size)}</span></button>
+      <div class="how">${esc(p.how)}</div><div class="samples">${p.samples.map(esc).join("、")}${p.count > p.samples.length ? " ……" : ""}</div></div>`;
+  }).join("");
+  const sel = ps.filter(p => S.tidySel.has(p.id));
+  renderAct($("detailAct"), "detail", [{ kind: "tidy", label: "整理", n: sel.reduce((a, p) => a + p.count, 0), bytes: sel.reduce((a, p) => a + p.size, 0) }]);
+}
+
+// 清理记录：最近几批移动可以撤销
 async function openHistory() {
   S.focus = "history"; S.detail = null;
+  if (S.act.where === "detail" && S.act.phase !== "running") S.act = { where: null, phase: "idle", plan: null };
   $("home").hidden = true; $("detail").hidden = false;
   render();
   S.detail = await call("history"); render();
 }
 function renderHistory() {
   $("dname").textContent = "清理记录";
-  const recs = (S.detail && S.detail.records) || [];
-  const ok = recs.filter(r => r.ok);
-  $("dmeta").textContent = recs.length ? `移到回收站 ${ok.length} 项 · ${fmt(ok.reduce((a, r) => a + (r.size || 0), 0))}` : "";
-  $("dsum").textContent = recs.length ? "想找回，到回收站里右键“还原”。" : "";
-  $("dbody").innerHTML = S.detail ? (recs.length ? recs.map(r => `<div class="file${r.ok ? "" : " muted"}">
+  const recs = (S.detail && S.detail.records) || [], batches = (S.detail && S.detail.batches) || [];
+  const trashed = recs.filter(r => r.ok && r.action === "trash");
+  $("dmeta").textContent = recs.length ? `移到回收站 ${trashed.length} 项 · ${fmt(trashed.reduce((a, r) => a + (r.size || 0), 0))}` : "";
+  $("dsum").textContent = recs.length ? "移到回收站的，到回收站里右键“还原”；挪走和整理的，可以在这里撤销。" : "";
+  const verb = r => !r.ok ? "没有动：" + esc(r.error) : r.action === "trash" ? "移到回收站" : r.action === "undo" ? "放回原处" : "挪到 " + esc(base2(r.dst || ""));
+  $("dbody").innerHTML = !S.detail ? `<div class="loading">正在读取…</div>` : !recs.length ? `<div class="loading">还没有清理过。</div>` :
+    (batches.length ? `<div class="gh"><span>最近的挪动</span></div>` + batches.map(x => `<div class="file"><div class="l1"><span>${esc((x.time || "").replace("T", " "))}</span><span>${x.count} 项 · ${fmt(x.size)}</span></div>
+      <div class="do">${x.undoable ? `<button class="link u" data-act="undo" data-batch="${x.batch}">撤销这一批</button>` : `<span class="muted">已撤销</span>`}</div></div>`).join("") : "") +
+    `<div class="gh"><span>每一项</span></div>` + recs.map(r => `<div class="file${r.ok ? "" : " muted"}">
       <div class="l1"><span title="${esc(r.path)}">${esc(base2(r.path))}</span><span>${r.size ? fmt(r.size) : ""}</span></div>
-      <div class="why">${esc((r.time || "").replace("T", " "))} · ${r.ok ? "移到回收站" : "没有移动：" + esc(r.error)}</div></div>`).join("") : `<div class="loading">还没有清理过。</div>`)
-    : `<div class="loading">正在读取…</div>`;
-  $("detailAct").innerHTML = recs.length ? `<button class="go" data-act="openbin">打开回收站</button>` : "";
+      <div class="why">${esc((r.time || "").replace("T", " "))} · ${verb(r)}</div></div>`).join("");
+  renderAct($("detailAct"), "detail", []);
+  if (!S.act.where) $("detailAct").innerHTML = recs.length ? `<button class="go" data-act="openbin">打开回收站</button>` : "";
 }
 
 function render() {
@@ -431,9 +526,10 @@ cv.addEventListener("click", e => {
 function togglePick(keys, on) {
   const all = on ?? !keys.every(k => S.picked.has(k));
   keys.forEach(k => all ? S.picked.add(k) : S.picked.delete(k));
-  if (S.act.where === "home" && S.act.phase !== "running") S.act = { where: null, phase: "idle", plan: null };
+  if (S.act.where === "home" && S.act.phase === "ask") S.act = { where: null, phase: "idle", plan: null };
   render();
 }
+const toggleIn = (set, id) => { set.has(id) ? set.delete(id) : set.add(id); resetDetailAct(); render(); };
 
 document.addEventListener("click", e => {
   const more = e.target.closest("[data-more]");
@@ -444,12 +540,18 @@ document.addEventListener("click", e => {
   if (d.c) { togglePick([d.c]); return; }
   if (d.open) { openDetail(d.open); return; }
   if (d.dopen) { const k = "d:" + d.dopen; S.open.has(k) ? S.open.delete(k) : S.open.add(k); render(); return; }
-  if (d.mark) { S.marks.has(d.mark) ? S.marks.delete(d.mark) : S.marks.add(d.mark); resetDetailAct(); render(); return; }
+  if (d.mark) { S.moveMarks.delete(d.mark); toggleIn(S.marks, d.mark); return; }
+  if (d.move) { S.marks.delete(d.move); toggleIn(S.moveMarks, d.move); return; }
+  if (d.dupe) { toggleIn(S.dupeMarks, d.dupe); return; }
+  if (d.tidy) { toggleIn(S.tidySel, d.tidy); return; }
+  if (d.alldupes) { const ids = S.detail.dupes.flatMap(g => g.files.filter(f => !f.keeper).map(f => f.id)); const all = ids.every(i => S.dupeMarks.has(i)); ids.forEach(i => all ? S.dupeMarks.delete(i) : S.dupeMarks.add(i)); resetDetailAct(); render(); return; }
+  if (d.keeper) { S.dupeMarks.delete(d.file); call("set_keeper", d.keeper, d.file).then(reloadDetail); return; }
   if (d.allmarks) { const g = S.detail.groups.find(g => g.lvl === "maybe"); const all = g.items.every(f => S.marks.has(f.id)); g.items.forEach(f => all ? S.marks.delete(f.id) : S.marks.add(f.id)); resetDetailAct(); render(); return; }
   if (d.keep) { S.marks.delete(d.keep); call("set_keep", d.keep, true).then(reloadDetail); return; }
   if (d.reveal) { call("reveal", d.reveal); return; }
-  if (d.act === "ask") askPlan();
+  if (d.act === "ask") askPlan(d.kind);
   else if (d.act === "yes") confirmPlan();
+  else if (d.act === "undo") startUndo(d.batch);
   else if (d.act === "no") { S.act = { where: null, phase: "idle", plan: null }; render(); }
   else if (d.act === "ok") { S.act = { where: null, phase: "idle", plan: null }; call("clear_job"); render(); }
   else if (d.act === "openbin") call("open_recycle_bin");
@@ -459,6 +561,7 @@ function resetDetailAct() { if (S.act.where === "detail" && S.act.phase === "ask
 $("all").addEventListener("click", () => togglePick(S.st.cleanables.map(c => c.key)));
 $("back").addEventListener("click", closeDetail);
 $("mRescan").addEventListener("click", () => { S.act = { where: null, phase: "idle", plan: null }; if (S.focus) closeDetail(); call("scan").then(() => poll(true)); });
+// 后台的整理、撤销完成后，清理记录页也刷新
 $("mHistory").addEventListener("click", openHistory);
 $("bMin").addEventListener("click", () => call("win_minimize"));
 $("bMax").addEventListener("click", async () => {

@@ -146,3 +146,19 @@ button { font-family: inherit; }
 .slip .tip { color: var(--ink3); font-size: 11.5px; display: block; margin-top: 2px; }
 
 @media (prefers-reduced-motion: reduce) { .view.enter, .status .bar i { animation: none; } }
+
+/* 重复文件 */
+.dgroup { padding: 12px 0; border-bottom: 1px solid var(--rule); display: grid; gap: 4px; }
+.dgroup .l1 { display: flex; justify-content: space-between; gap: 12px; font-size: 14.5px; font-variant-numeric: tabular-nums; }
+.dgroup .l1 span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.drow { display: grid; grid-template-columns: 3.2em minmax(0, 1fr) auto; gap: 8px; align-items: baseline; font-size: 11.5px; color: var(--ink2); }
+.drow .w { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.drow .tag { color: var(--ink); font-weight: 600; }
+.drow.on .w { text-decoration: line-through; text-decoration-color: rgba(22,22,22,.45); }
+.drow .link.on { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+/* 整理建议 */
+.prop { padding: 4px 0 12px; border-bottom: 1px solid var(--rule); }
+.prop .row { font-size: 14.5px; grid-template-columns: 14px minmax(0, 1fr) auto; }
+.prop .how { margin-left: 22px; font-size: 13px; color: var(--ink2); }
+.prop .samples { margin-left: 22px; font-size: 11.5px; color: var(--ink3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.act .go + .go { margin-top: 4px; }

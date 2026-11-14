@@ -17,7 +17,7 @@ from core.api import Api
 
 WEB = Path(__file__).resolve().parent / "webui"
 api = Api()
-ALLOWED = {"state", "scan", "cancel", "inspect", "set_keep", "plan", "execute", "clear_job",
+ALLOWED = {"state", "scan", "cancel", "inspect", "set_keep", "set_keeper", "plan", "execute", "undo", "clear_job",
            "history", "open_recycle_bin", "reveal", "open_storage_settings", "win_minimize", "win_toggle_max", "win_close"}
 
 
