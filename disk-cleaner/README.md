@@ -27,7 +27,7 @@
 ## 在 Windows 上运行
 
 1. 安装 [Python 3.10+](https://www.python.org/downloads/)，安装时勾选 “Add python.exe to PATH”
-2. 在这个文件夹里打开终端（PowerShell）：
+2. 在这个文件夹里打开 PowerShell：
 
 ```bash
 python -m venv .venv
@@ -45,10 +45,12 @@ pip install -r requirements.txt
 python main.py
 ```
 
-命令行版本（只读，方便排查）：
+第一次在真实电脑上用之前，请先按 `docs/安全与流程.md` 最后的清单试一遍。
+
+在浏览器里开发界面（后端是真的，会真的移动文件，请把 HOME / USERPROFILE 指向一个测试文件夹）：
 
 ```bash
-python cli.py large D:\Downloads --min 100MB --top 50
+python devserver.py
 ```
 
 运行测试：
@@ -68,10 +70,10 @@ pip install pyinstaller
 ```
 
 ```bash
-pyinstaller --noconfirm --windowed --name 磁盘清理 --collect-data customtkinter main.py
+pyinstaller --noconfirm --windowed --name 留白 --add-data "webui;webui" --collect-data customtkinter main.py
 ```
 
-生成的程序在 `dist\磁盘清理\磁盘清理.exe`，整个 `dist\磁盘清理` 文件夹可以拷给别人用。日志写在 exe 旁边的 `logs` 文件夹。
+生成的程序在 `dist\留白\留白.exe`。清理记录和设置存在 `%LOCALAPPDATA%\Liubai\`。
 
 ## 项目结构
 

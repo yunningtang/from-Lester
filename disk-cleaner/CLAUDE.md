@@ -29,21 +29,22 @@
 
 ## 结构
 
-- `core/`：不依赖界面的逻辑（扫描、安全检查、删除、日志、格式化），可单独测试
-- `ui/app.py`：主窗口，左侧 150px 导航 + 右侧内容区
-- `ui/pages/`：每个页面一个类，继承 `BasePage`
-- `ui/pebble_layout.py`：石头地图的几何（不依赖 tk，可测试）；`ui/pebble_map.py`：画在 Canvas 上
-- `core/space.py`：统计空间分类；`core/cleanables.py`：查找和清理可放心清理的项目
-- `cli.py`：命令行版本，方便排查
-- `tests/`：pytest 测试
+- `main.py`：入口。优先用 pywebview 打开 `webui/`；没装 pywebview 时退回旧的 CustomTkinter 界面（`--tk` 也可以强制用旧界面）。
+- `webui/`：新界面（HTML/CSS/JS）。`ink.js` 是纸和墨的几何与纹理，`app.js` 是界面逻辑。界面只调用后端，从不直接删文件。
+- `core/api.py`：界面和后端之间唯一的接口，不依赖 pywebview，可直接测试。耗时的事都在后台线程，界面轮询 `state()`。
+- `devserver.py`：开发用，在浏览器里打开界面，后端是真的 `Api`（会真的移动文件，请用假的主目录）。
+- `core/`：扫描（scanner、space）、建议（inspect）、安全（safety）、删除（cleaner → recycle）、日志（oplog）、偏好（prefs）。
+- `ui/`：旧的 CustomTkinter 界面，作为备用。
+- `tests/`：pytest。`test_safety_flow.py` 一条安全规则一个测试；`test_api.py` 是完整流程。
 
-## 视觉风格
+## 视觉风格（留白）
 
-日式极简：墨黑、石灰、米色，颜色都在 `ui/theme.py` 和 `ui/stone_theme.json`。
-- 不加新颜色。唯一的强调色是危险操作的暗红 `DANGER`。
-- 石头颜色按类别：你的文件=墨黑，程序=深灰，缓存=浅灰，系统=米灰，可用空间=等高线。
-- tk.Canvas 不认 (浅色, 深色) 元组，用 `theme.pick()` 取颜色。
-- 大数字用细字重，正文 12–13 号，界面上不用图标和 emoji。
+- 只有纸和墨，没有彩色。纸色、墨色、字号都在 `webui/app.css` 开头。
+- 墨色分五级，按占用大小：40 G 以上、20–40 G、8–20 G、3–8 G、3 G 以下。
+- 可用空间是纸，所有文字写在纸上。标题栏透明，右上角按钮按底下的墨色自动变深浅。
+- 信息层级：全貌 = 磁盘状态 → 可放心清理（按组）→ 值得看看（最大的三块你的文件）→ 回收站；
+  细看 = 这是什么、多大、在哪 → 约多少可能不再需要 → 分组的文件 → 操作。
+- 文字说人话，不说路径和扩展名；每个建议都写“为什么”，后果在确认时说。
 
 ## 约定
 

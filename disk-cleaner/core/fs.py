@@ -68,6 +68,8 @@ def folder_size(path: str, cancel: threading.Event | None = None,
                     if e.is_dir(follow_symlinks=False):
                         stack.append(e.path)
                     else:
+                        if exclude and os.path.normcase(os.path.abspath(e.path)) in exclude:
+                            continue   # 单独统计的文件（比如 WSL 的虚拟磁盘）
                         st = e.stat(follow_symlinks=False)
                         if not is_cloud_placeholder(st):
                             total += st.st_size

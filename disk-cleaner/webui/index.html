@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>留白</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="app" id="app">
+  <canvas id="cv" aria-label="磁盘空间水墨图：每块墨是一类文件，墨越深占得越多，空白处是可用空间"></canvas>
+
+  <!-- 标题栏：透明，盖在画上；空白处可以拖动窗口 -->
+  <header class="titlebar pywebview-drag-region" id="titlebar">
+    <span class="tb-title">留白</span>
+    <nav class="tb-menu">
+      <button id="mRescan">重新扫描</button>
+      <button id="mHistory">清理记录</button>
+    </nav>
+    <div class="tb-ctrl" id="tbCtrl">
+      <button id="bMin" aria-label="最小化"><svg viewBox="0 0 10 10"><path d="M0 5.5h10"/></svg></button>
+      <button id="bMax" aria-label="最大化"><svg viewBox="0 0 10 10" id="maxIcon"><rect x=".5" y=".5" width="9" height="9"/></svg></button>
+      <button id="bClose" class="x" aria-label="关闭"><svg viewBox="0 0 10 10"><path d="M0 0l10 10M10 0L0 10"/></svg></button>
+    </div>
+  </header>
+
+  <div class="paper" id="paper">
+
+    <!-- 全貌 -->
+    <section class="view" id="home" aria-label="全貌">
+      <div class="meta" id="meta">C 盘</div>
+      <div class="hero"><span class="num" id="num">—</span><span class="unit">G 留白</span></div>
+      <div class="status" id="status" aria-live="polite"></div>
+
+      <div class="block" id="safeBlock" hidden>
+        <div class="bh"><span class="bt">可放心清理</span><span class="bs" id="safeSum"></span><button class="link u" id="all">全选</button></div>
+        <div class="groups scroll" id="groups"></div>
+        <div class="act" id="homeAct"></div>
+      </div>
+
+      <div class="block" id="lookBlock" hidden>
+        <div class="bh"><span class="bt">值得看看</span><span class="bs muted">你的文件，要你来决定</span></div>
+        <div id="looks"></div>
+      </div>
+
+      <div class="foot">
+        <div class="binline" id="binLine"></div>
+        <div class="legend" id="legend" aria-label="墨色深浅代表占用大小"></div>
+      </div>
+    </section>
+
+    <!-- 细看 -->
+    <section class="view" id="detail" hidden aria-live="polite">
+      <button class="link back" id="back">← 全貌</button>
+      <h1 class="dname" id="dname"></h1>
+      <div class="meta" id="dmeta"></div>
+      <div class="summary" id="dsum"></div>
+      <div class="scroll" id="dbody"></div>
+      <div class="act" id="detailAct"></div>
+    </section>
+
+  </div>
+  <div class="slip" id="slip" role="tooltip"></div>
+</div>
+<script src="ink.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

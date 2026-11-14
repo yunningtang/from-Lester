@@ -102,6 +102,8 @@ class SafeCache:
     patterns: tuple[str, ...] = ("*",)  # 只清理名字匹配的子项
     min_age_days: float = 0         # 只清理多少天没改过的
     default: bool = True            # 默认是否勾选
+    note: str = ""                  # 给用户看：这是什么、清了会怎样
+    group: str = "系统"             # 界面分组：系统 / 浏览器 / 聊天和办公 / 开发工具
 
 
 def _home(*parts) -> str:
@@ -112,6 +114,10 @@ def _local(*parts) -> str:
     return os.path.join(_env("LOCALAPPDATA"), *parts) if _env("LOCALAPPDATA") else ""
 
 
+def _appdata(*parts) -> str:
+    return os.path.join(_env("APPDATA"), *parts) if _env("APPDATA") else ""
+
+
 def _chromium(base: str) -> tuple[str, ...]:
     return tuple(os.path.join(base, "User Data", "*", d) for d in ("Cache", "Code Cache", "GPUCache")) if base else ()
 
@@ -120,29 +126,63 @@ def _build_safe_caches() -> list[SafeCache]:
     tmp = tempfile.gettempdir()
     if WINDOWS:
         caches = [
-            SafeCache("temp", "临时文件", (tmp,), min_age_days=1),
-            SafeCache("chrome", "Chrome 缓存", _chromium(_local("Google", "Chrome"))),
-            SafeCache("edge", "Edge 缓存", _chromium(_local("Microsoft", "Edge"))),
-            SafeCache("npm", "npm 缓存", (_local("npm-cache", "_cacache"),)),
-            SafeCache("pip", "pip 缓存", (_local("pip", "Cache"),)),
-            SafeCache("uv", "uv 缓存", (_local("uv", "cache"),)),
-            SafeCache("yarn", "Yarn 缓存", (_local("Yarn", "Cache"),)),
-            SafeCache("crashdumps", "崩溃转储", (_local("CrashDumps"),)),
+            SafeCache("temp", "临时文件", (tmp,), min_age_days=1,
+                      note="程序运行时留下的临时文件，只清一天以上没动过的", group="系统"),
+            SafeCache("crashdumps", "崩溃转储", (_local("CrashDumps"),),
+                      note="程序崩溃时留下的内存记录，已经没用了", group="系统"),
             SafeCache("wer", "错误报告", (_local("Microsoft", "Windows", "WER", "ReportArchive"),
-                                         _local("Microsoft", "Windows", "WER", "ReportQueue"))),
+                                         _local("Microsoft", "Windows", "WER", "ReportQueue")),
+                      note="发给微软的错误报告的本地副本", group="系统"),
+            SafeCache("thumbs", "缩略图缓存", (_local("Microsoft", "Windows", "Explorer"),),
+                      patterns=("thumbcache_*.db",),
+                      note="图片的小预览图，会自动重新生成。资源管理器开着时大多会跳过", group="系统"),
+            SafeCache("chrome", "Chrome 缓存", _chromium(_local("Google", "Chrome")),
+                      note="网页图片和脚本的缓存。不影响登录、书签和历史记录", group="浏览器"),
+            SafeCache("edge", "Edge 缓存", _chromium(_local("Microsoft", "Edge")),
+                      note="网页缓存。不影响登录、收藏夹和历史记录", group="浏览器"),
+            SafeCache("firefox", "Firefox 缓存", (_local("Mozilla", "Firefox", "Profiles", "*", "cache2"),),
+                      note="网页缓存。不影响登录、书签和历史记录", group="浏览器"),
+            SafeCache("wxcache", "微信缓存",
+                      (_home("Documents", "WeChat Files", "*", "FileStorage", "Cache"),
+                       _home("Documents", "xwechat_files", "*", "cache")),
+                      default=False,
+                      note="看过的图片和视频的缓存，不含聊天记录和收到的文件。清掉后再看会重新加载",
+                      group="聊天和办公"),
+            SafeCache("teams", "Teams 缓存",
+                      tuple(_appdata("Microsoft", "Teams", d) for d in ("Cache", "Code Cache", "GPUCache")),
+                      note="经典版 Teams 的网页缓存。不含聊天记录", group="聊天和办公"),
+            SafeCache("vscode", "VS Code 缓存",
+                      tuple(_appdata("Code", d) for d in ("Cache", "CachedData", "Code Cache", "GPUCache", "logs")),
+                      note="编辑器的缓存和旧日志。不影响设置和插件", group="开发工具"),
+            SafeCache("npm", "npm 缓存", (_local("npm-cache", "_cacache"),),
+                      note="下载过的 JavaScript 包，需要时会重新下载", group="开发工具"),
+            SafeCache("pip", "pip 缓存", (_local("pip", "Cache"),),
+                      note="下载过的 Python 包，需要时会重新下载", group="开发工具"),
+            SafeCache("uv", "uv 缓存", (_local("uv", "cache"),),
+                      note="下载过的 Python 包，需要时会重新下载", group="开发工具"),
+            SafeCache("yarn", "Yarn 缓存", (_local("Yarn", "Cache"),),
+                      note="下载过的 JavaScript 包，需要时会重新下载", group="开发工具"),
+            SafeCache("gradle", "Gradle 缓存", (_home(".gradle", "caches"),), default=False,
+                      note="安卓和 Java 项目的依赖。下次编译会重新下载，可能要很久", group="开发工具"),
         ]
     else:
         caches = [
-            SafeCache("pip", "pip 缓存", (_home(".cache", "pip"),)),
-            SafeCache("npm", "npm 缓存", (_home(".npm", "_cacache"),)),
-            SafeCache("uv", "uv 缓存", (_home(".cache", "uv"),)),
-            SafeCache("chrome", "Chrome 缓存", (_home(".cache", "google-chrome", "*", "Cache"),)),
+            SafeCache("pip", "pip 缓存", (_home(".cache", "pip"),),
+                      note="下载过的 Python 包，需要时会重新下载", group="开发工具"),
+            SafeCache("npm", "npm 缓存", (_home(".npm", "_cacache"),),
+                      note="下载过的 JavaScript 包，需要时会重新下载", group="开发工具"),
+            SafeCache("uv", "uv 缓存", (_home(".cache", "uv"),),
+                      note="下载过的 Python 包，需要时会重新下载", group="开发工具"),
+            SafeCache("chrome", "Chrome 缓存", (_home(".cache", "google-chrome", "*", "Cache"),),
+                      note="网页缓存。不影响登录、书签和历史记录", group="浏览器"),
         ]
     # 只认名字像安装包的；直接从下载里运行的便携程序（比如 xxx.exe）不算。默认不勾选。
     caches.append(SafeCache("installers", "下载里的旧安装包", (_home("Downloads"),),
                             patterns=("*.msi", "*setup*.exe", "*install*.exe", "*installer*.exe",
                                       "*.dmg", "*.pkg"),
-                            min_age_days=30, default=False))
+                            min_age_days=30, default=False,
+                            note="下载文件夹里 30 天前、名字像安装包的文件（setup、install、.msi）。程序装好以后就用不到了",
+                            group="系统"))
     return [c for c in caches if all(c.roots)]
 
 
