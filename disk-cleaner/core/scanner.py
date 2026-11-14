@@ -8,7 +8,7 @@ import time
 from dataclasses import dataclass, field
 from typing import Callable
 
-from .fs import is_link_or_junction as _is_link_or_junction
+from .fs import is_cloud_placeholder, is_link_or_junction as _is_link_or_junction
 from .safety import is_protected
 
 
@@ -17,6 +17,11 @@ class FileEntry:
     path: str
     size: int
     mtime: float
+    hardlinked: bool = False   # 有别的硬链接：删掉这一个不会腾出空间
+
+    @property
+    def stamp(self) -> tuple[int, float]:
+        return (self.size, self.mtime)
 
 
 @dataclass
@@ -75,6 +80,8 @@ def scan_large_files(
                         stack.append(entry.path)
                     elif entry.is_file(follow_symlinks=False):
                         st = entry.stat(follow_symlinks=False)
+                        if is_cloud_placeholder(st):   # 只在云端，不占硬盘
+                            continue
                         prog.files += 1
                         prog.bytes += st.st_size
                         if st.st_size >= min_size:
@@ -90,7 +97,12 @@ def scan_large_files(
             last_report = now
             on_progress(prog)
 
-    result.files = [FileEntry(p, s, m) for s, p, m in sorted(heap, reverse=True)]
+    def nlink(p: str) -> int:
+        try:  # DirEntry.stat 在 Windows 上没有 st_nlink，要单独 stat
+            return os.stat(p, follow_symlinks=False).st_nlink
+        except OSError:
+            return 1
+    result.files = [FileEntry(p, s, m, nlink(p) > 1) for s, p, m in sorted(heap, reverse=True)]
     result.seconds = time.monotonic() - start
     if on_progress:
         on_progress(prog)

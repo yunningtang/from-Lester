@@ -9,20 +9,24 @@ from pathlib import Path
 
 
 def default_log_dir() -> Path:
-    # 打包成 exe 后写到 exe 旁边，开发时写到项目根目录
-    base = Path(sys.executable).parent if getattr(sys, "frozen", False) else Path(__file__).resolve().parent.parent
-    return base / "logs"
+    """打包后写到 %LOCALAPPDATA%\\Liubai\\logs（装在 Program Files 时 exe 旁边不能写）；
+    开发时写到项目根目录的 logs。"""
+    if getattr(sys, "frozen", False):
+        base = os.environ.get("LOCALAPPDATA") or str(Path.home())
+        return Path(base) / "Liubai" / "logs"
+    return Path(__file__).resolve().parent.parent / "logs"
 
 
 class OpLog:
     def __init__(self, log_dir: Path | str | None = None):
         self.dir = Path(log_dir) if log_dir else default_log_dir()
+        self.unsaved: list[dict] = []  # 写不进文件的记录先留在内存里，界面可以提示
 
     def _file(self) -> Path:
         return self.dir / f"{_dt.date.today():%Y-%m-%d}.jsonl"
 
     def write(self, action: str, path: str, size: int, ok: bool, error: str = "") -> None:
-        self.dir.mkdir(parents=True, exist_ok=True)
+        """写一条记录。写日志失败绝不能打断清理（否则会停在一半），失败的先记在内存里。"""
         rec = {
             "time": _dt.datetime.now().isoformat(timespec="seconds"),
             "action": action,
@@ -31,8 +35,12 @@ class OpLog:
             "ok": ok,
             "error": error,
         }
-        with open(self._file(), "a", encoding="utf-8") as f:
-            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+        try:
+            self.dir.mkdir(parents=True, exist_ok=True)
+            with open(self._file(), "a", encoding="utf-8") as f:
+                f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+        except OSError:
+            self.unsaved.append(rec)
 
     def read_all(self) -> list[dict]:
         out: list[dict] = []

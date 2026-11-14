@@ -9,13 +9,13 @@ from tkinter import filedialog, messagebox
 
 import customtkinter as ctk
 
-from core.cleaner import move_to_trash
+from core.cleaner import Entry, execute, preflight
 from core.oplog import open_in_explorer
 from core.safety import is_protected
 from core.scanner import FileEntry, scan_large_files
 from core.utils import format_time, human_size
 
-from .. import theme
+from .. import confirm, theme
 from .base import BasePage
 
 SIZE_OPTIONS = {"50 MB": 50, "100 MB": 100, "500 MB": 500, "1 GB": 1024}
@@ -143,6 +143,9 @@ class LargeFilesPage(BasePage):
                     self._scan_stopped()
                     self._set_status(f"扫描出错：{data}")
                     return
+                elif kind == "planned":
+                    self._planned(data)
+                    return
                 elif kind == "trashed":
                     self._trash_finished(data)
                     return
@@ -192,7 +195,8 @@ class LargeFilesPage(BasePage):
                          anchor="e").grid(row=0, column=1, rowspan=2, padx=(0, 12))
             ctk.CTkLabel(row, text=os.path.basename(f.path), font=theme.font(13), anchor="w").grid(
                 row=0, column=2, sticky="ew")
-            ctk.CTkLabel(row, text=f"{self._short(os.path.dirname(f.path), 60)}  ·  修改于 {format_time(f.mtime)}",
+            extra = "  ·  有硬链接，删掉不会腾出空间" if f.hardlinked else ""
+            ctk.CTkLabel(row, text=f"{self._short(os.path.dirname(f.path), 60)}  ·  修改于 {format_time(f.mtime)}{extra}",
                          font=theme.font(11), text_color=theme.MUTED_TEXT, anchor="w").grid(
                 row=1, column=2, sticky="ew")
             if os.name == "nt":
@@ -221,24 +225,36 @@ class LargeFilesPage(BasePage):
 
     # ---------- 移到回收站 ----------
     def _trash_selected(self):
+        """先在后台预检（带上扫描时的指纹，文件变了就不动），确认后再执行。"""
         sel = self._selected()
         if not sel:
             return
-        preview = "\n".join(self._short(f.path, 80) for f in sel[:8])
-        if len(sel) > 8:
-            preview += f"\n……等共 {len(sel)} 个文件"
-        if not messagebox.askyesno(
-                "确认移到回收站",
-                f"将把 {len(sel)} 个文件（共 {human_size(sum(f.size for f in sel))}）移到回收站：\n\n"
-                f"{preview}\n\n可以从回收站恢复。确定吗？",
-                icon="warning", default="no"):
-            return
-        self.trash_btn.configure(state="disabled", text="正在移动…")
+        self.trash_btn.configure(state="disabled", text="正在检查…")
         self.scan_btn.configure(state="disabled")
-        paths = [f.path for f in sel]
+        entries = [Entry(f.path, f.size, f.stamp) for f in sel]
 
         def work():
-            self._queue.put(("trashed", move_to_trash(paths)))
+            self._queue.put(("planned", preflight(entries)))
+
+        self._worker = threading.Thread(target=work, daemon=True)
+        self._worker.start()
+        self.after(100, self._poll)
+
+    def _planned(self, plan):
+        if self._worker:
+            self._worker.join(timeout=2)
+        if not confirm.ask(plan, f"{len(plan.go)} 个文件"):
+            self.trash_btn.configure(text="移到回收站")
+            self.scan_btn.configure(state="normal")
+            self._update_selection()
+            self._set_status("已取消，没有移动任何文件。")
+            return
+        self.trash_btn.configure(text="正在移动…")
+
+        def work():
+            rep = execute(plan)
+            rep.failed = plan.refused + rep.failed
+            self._queue.put(("trashed", rep))
 
         self._worker = threading.Thread(target=work, daemon=True)
         self._worker.start()
@@ -250,12 +266,10 @@ class LargeFilesPage(BasePage):
         moved = set(report.moved)
         remaining = [f for f, _, _ in self._rows if f.path not in moved]
         self._show_rows(remaining)
-        msg = f"已把 {len(report.moved)} 个文件移到回收站，释放 {human_size(report.freed)}。"
+        self._set_status(confirm.summary(report).replace("\n", " "))
         if report.failed:
-            msg += f" {len(report.failed)} 个失败（详见操作日志）。"
-            messagebox.showwarning("部分文件未移动",
+            messagebox.showwarning("有些文件没有移动",
                                    "\n".join(f"{self._short(p, 60)}：{r}" for p, r in report.failed[:10]))
-        self._set_status(msg)
 
     # ---------- 工具 ----------
     def _set_status(self, text):

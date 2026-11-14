@@ -4,17 +4,27 @@
 
 ## 安全规则（必须遵守，任何改动都不能绕过）
 
-- 所有删除都通过 `core/cleaner.py` 的 `move_to_trash()`，它用 send2trash 移到回收站。**禁止**在任何地方调用 `os.remove`、`os.unlink`、`shutil.rmtree`、`Path.unlink` 等永久删除函数。
-- 任何删除前必须先显示列表让用户确认（UI 里弹确认框，写明数量和总大小）。
-- 默认只扫描和预览（dry run）。扫描代码只读，不写、不移动任何文件。
-- 禁止操作系统目录：判断统一用 `core/safety.py`，扫描时跳过、删除时 `can_delete()` 再检查一次。三层规则：
-  - HARD（Windows、Program Files、ProgramData、pagefile.sys 等）：任何情况都不删。
-  - SOFT（AppData）：默认不删，只有 `SAFE_CACHES` 名单里的缓存目录 *里面* 的内容可以移到回收站，缓存目录本身保留。
-  - 新增受保护目录、新增可清理缓存，都只改 `safety.py`。
-- 只读统计大小（`core/fs.py` 的 `folder_size`）可以进入 AppData 等目录，因为它只读文件大小，不列出也不删除。
-- 回收站只显示大小，不提供"清空"（那是永久删除）。
-- 每次删除操作写日志到 `logs/` 文件夹（JSON Lines，一行一个文件），记录时间、路径、大小、结果。
-- 不跟随符号链接和目录联接（junction），避免扫到别处或循环。
+### 删除只有一条路
+- 只有 `core/recycle.py` 能真正动文件，只有 `core/cleaner.py` 能调用它。**禁止**在任何地方调用 `os.remove`、`os.unlink`、`shutil.rmtree`、`Path.unlink`、`send2trash` 等（测试会检查）。
+- 删除分两步：`cleaner.preflight()` 只读预检，得到 Plan（能移的、不能移的和原因、提醒）→ 界面把 Plan 给用户确认（`ui/confirm.py`）→ `cleaner.execute()` 对每一项**再查一次**后移到回收站。
+- 不要在 Windows 上直接用 send2trash：它带 FOF_NOCONFIRMATION，文件放不进回收站时 Windows 会**悄悄永久删除**。`recycle.py` 先检查（本地固定磁盘、回收站开着、不超过回收站容量），再带 FOF_WANTNUKEWARNING 调用系统，删完确认文件确实离开了原处。
+- 移到回收站**不会**腾出空间，清空回收站后才会。界面不能写“已释放”；回收站留白不替用户清空。
+
+### 什么不能删（`core/safety.py`，新增规则只改这个文件）
+- HARD：Windows、Program Files、ProgramData、pagefile.sys 等，任何情况都不删。
+- SOFT：AppData。只有 `SAFE_CACHES` 名单里的缓存目录*里面*的内容可以删。
+- KEEP：主目录、桌面、文档、下载等文件夹**本身**以及它们的上级（如 C:\Users）不能删，里面的文件可以。
+- CLOUD：OneDrive 里的文件不删（删除会同步到云端和其他设备）。
+- 链接和目录联接本身不删，也不跟随。路径的字面形式和解析后的真实形式都要通过检查。
+- 缓存目录要通过 `_sane_cache_root`：不能是磁盘根目录、主目录或重要文件夹的上级；“临时文件”目录必须叫 Temp/tmp（防止 TEMP 环境变量被改成别处）。
+- 扫描后文件变了（大小或修改时间不同），这次就不删，提示重新扫描。缓存项删除前重新核对名字和时间条件。
+
+### 其他
+- 默认只扫描和预览。扫描代码只读。
+- 你的文件（大文件、重复文件）从不默认选中；旧安装包只认名字像安装包的，且默认不选。
+- 只读统计大小可以进入 AppData；OneDrive“仅在线”的占位文件不占硬盘，不计入。
+- 每一项都写日志（JSON Lines）。打包后日志在 %LOCALAPPDATA%\Liubai\logs。写日志失败不能打断清理。
+- 一项失败不影响其他项。
 - 测试只在临时文件夹里进行，不要拿真实磁盘开刀。
 
 ## 结构
@@ -39,5 +49,5 @@
 
 - 耗时操作（扫描、计算哈希）必须放后台线程，通过 `queue` + `after()` 把进度送回界面，界面不能卡死，并且可以取消。
 - 界面文字用中文。删除按钮写"移到回收站"，不写"删除"。
-- 安全的项目（临时文件、旧安装包）默认勾选；有风险的（大文件、重复文件）默认不勾选。
+- 缓存类默认勾选；旧安装包、微信缓存和所有你的文件默认不勾选。
 - 改完运行 `python -m pytest tests`。

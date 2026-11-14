@@ -7,10 +7,10 @@ import threading
 import time
 from dataclasses import dataclass, field
 
-from .cleaner import TrashReport, move_to_trash
+from .cleaner import Entry, Plan, TrashReport, execute, preflight
 from .fs import folder_size, is_link_or_junction
 from .oplog import OpLog
-from .safety import SAFE_CACHES, SafeCache, safe_cache_roots
+from .safety import SAFE_CACHES, SafeCache, _norm, is_link, safe_cache_roots
 
 
 @dataclass
@@ -18,6 +18,7 @@ class Cleanable:
     key: str
     name: str
     default: bool
+    cache: SafeCache | None = None
     items: list[tuple[str, int]] = field(default_factory=list)  # (路径, 大小)
 
     @property
@@ -26,7 +27,7 @@ class Cleanable:
 
 
 def find_one(cache: SafeCache, cancel: threading.Event | None = None) -> Cleanable:
-    c = Cleanable(cache.key, cache.name, cache.default)
+    c = Cleanable(cache.key, cache.name, cache.default, cache)
     cutoff = time.time() - cache.min_age_days * 86400
     for root in safe_cache_roots(cache):
         try:
@@ -39,9 +40,7 @@ def find_one(cache: SafeCache, cancel: threading.Event | None = None) -> Cleanab
             try:
                 if is_link_or_junction(e):
                     continue
-                if not any(fnmatch.fnmatch(e.name.lower(), p.lower()) for p in cache.patterns):
-                    continue
-                if cache.min_age_days and e.stat(follow_symlinks=False).st_mtime > cutoff:
+                if not _matches(cache, e.name, e.stat(follow_symlinks=False).st_mtime, cutoff):
                     continue
                 size = folder_size(e.path, cancel) if e.is_dir(follow_symlinks=False) \
                     else e.stat(follow_symlinks=False).st_size
@@ -58,6 +57,42 @@ def find_all(caches: list[SafeCache] | None = None,
     return sorted((c for c in out if c.size > 0), key=lambda c: -c.size)
 
 
+def _matches(cache: SafeCache, name: str, mtime: float, cutoff: float) -> bool:
+    if not any(fnmatch.fnmatch(name.lower(), p.lower()) for p in cache.patterns):
+        return False
+    return not (cache.min_age_days and mtime > cutoff)
+
+
+def still_matches(cache: SafeCache, path: str) -> bool:
+    """清理前再确认一次：还在缓存目录里、还符合名字和时间条件、不是链接。"""
+    if not os.path.lexists(path) or is_link(path):
+        return False
+    if _norm(os.path.dirname(os.path.abspath(path))) not in set(safe_cache_roots(cache)):
+        return False
+    try:
+        mtime = os.stat(path, follow_symlinks=False).st_mtime
+    except OSError:
+        return False
+    return _matches(cache, os.path.basename(path), mtime, time.time() - cache.min_age_days * 86400)
+
+
+def plan(items: list[Cleanable]) -> Plan:
+    """给界面确认用的预检结果。"""
+    entries, gone = [], []
+    for c in items:
+        for p, size in c.items:
+            if c.cache is None or still_matches(c.cache, p):
+                entries.append(Entry(p, size))
+            else:
+                gone.append((p, "扫描之后有变化（被用过或已经没了），这次不动它"))
+    pl = preflight(entries)
+    pl.refused = gone + pl.refused
+    return pl
+
+
 def clean(items: list[Cleanable], log: OpLog | None = None) -> TrashReport:
-    """把这些项目里的文件移到回收站（每个文件仍会经过 safety.can_delete 检查）。"""
-    return move_to_trash([p for c in items for p, _ in c.items], log=log)
+    """预检 + 移到回收站（每一项移动前还会再查一次）。"""
+    pl = plan(items)
+    report = execute(pl, log=log)
+    report.failed = pl.refused + report.failed
+    return report

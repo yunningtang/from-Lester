@@ -7,11 +7,11 @@ from tkinter import messagebox
 
 import customtkinter as ctk
 
-from core import cleanables, space
+from core import cleanables, cleaner, space
 from core.space import Category, SpaceReport
 from core.utils import human_size
 
-from .. import theme
+from .. import confirm, theme
 from ..pebble_map import PebbleMap
 from .base import BasePage
 
@@ -171,6 +171,9 @@ class OverviewPage(BasePage):
                     self.status.configure(text=f"统计出错：{data}")
                     self.rescan_btn.configure(state="normal")
                     return
+                elif kind == "planned":
+                    self._planned(data)
+                    return
                 elif kind == "cleaned":
                     self._clean_finished(data)
                     return
@@ -255,32 +258,48 @@ class OverviewPage(BasePage):
 
     # ---------- 清理 ----------
     def _clean(self):
+        """先在后台预检，再把结果给用户确认，确认后再在后台执行。"""
         sel = self._selected()
         if not sel:
             return
-        total = sum(c.size for c in sel)
-        names = "\n".join(f"· {c.name}  {human_size(c.size)}（{len(c.items)} 个文件或文件夹）" for c in sel)
-        if not messagebox.askyesno("确认移到回收站",
-                                   f"将把下面这些移到回收站，共 {human_size(total)}：\n\n{names}\n\n"
-                                   "可以从回收站恢复。正在使用的文件会自动跳过。确定吗？",
-                                   icon="warning", default="no"):
+        self.clean_btn.configure(state="disabled", text="正在检查…")
+        self.rescan_btn.configure(state="disabled")
+        self.status.configure(text="正在检查每一项能不能安全地移到回收站…")
+        n = sum(len(c.items) for c in sel)
+
+        def work():
+            try:
+                self._queue.put(("planned", (cleanables.plan(sel), n)))
+            except Exception as e:  # noqa: BLE001
+                self._queue.put(("error", str(e)))
+
+        self._worker = threading.Thread(target=work, daemon=True)
+        self._worker.start()
+        self.after(80, self._poll)
+
+    def _planned(self, data):
+        if self._worker:
+            self._worker.join(timeout=2)
+        plan, n = data
+        if not confirm.ask(plan, f"{len(plan.go)} 项缓存"):
+            self.status.configure(text="已取消，没有移动任何文件。")
+            self.rescan_btn.configure(state="normal")
+            self._update_numbers()
             return
         self.clean_btn.configure(state="disabled", text="正在移动…")
-        self.rescan_btn.configure(state="disabled")
         self.status.configure(text="正在移到回收站…")
 
         def work():
-            self._queue.put(("cleaned", cleanables.clean(sel)))
+            rep = cleaner.execute(plan)
+            rep.failed = plan.refused + rep.failed
+            self._queue.put(("cleaned", rep))
 
         self._worker = threading.Thread(target=work, daemon=True)
         self._worker.start()
         self.after(80, self._poll)
 
     def _clean_finished(self, rep):
-        msg = f"已把 {len(rep.moved)} 项移到回收站，释放 {human_size(rep.freed)}。"
-        if rep.failed:
-            msg += f"{len(rep.failed)} 项正在使用或无法移动，已跳过（详见操作日志）。"
-        messagebox.showinfo("完成", msg)
+        messagebox.showinfo("完成", confirm.summary(rep))
         self.rescan()
 
     def _open_block(self, b: Category):

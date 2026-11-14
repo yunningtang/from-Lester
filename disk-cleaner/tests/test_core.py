@@ -83,17 +83,30 @@ def test_safety_rules(tmp_path):
     assert not safety.is_protected(tmp_path / "protect_me_not")
 
 
+def fake_bin(monkeypatch, tmp_path):
+    """测试用回收站：把文件挪到临时目录里，记录挪了什么。"""
+    import shutil
+    from core import recycle
+    bin_dir = tmp_path / "_bin"
+    bin_dir.mkdir(exist_ok=True)
+    moved = []
+    def fake(p):
+        moved.append(p)
+        shutil.move(p, bin_dir / (str(len(moved)) + "_" + os.path.basename(p)))
+    monkeypatch.setattr(recycle, "_recycle_other", fake)
+    return moved
+
+
 def test_move_to_trash_uses_send2trash_and_logs(tmp_path, monkeypatch):
-    trashed = []
-    monkeypatch.setattr(cleaner, "send2trash", lambda p: (trashed.append(p), os.remove(p)))
+    trashed = fake_bin(monkeypatch, tmp_path)
     f = make(tmp_path / "big.bin", 3 * MB)
     safety.add_protected(tmp_path / "locked")
     g = make(tmp_path / "locked" / "nope.bin", MB)
     log = OpLog(tmp_path / "logs")
     rep = cleaner.move_to_trash([str(f), str(g), str(tmp_path / "missing")], log=log)
     assert trashed == [str(f)]
-    assert rep.freed == 3 * MB
-    assert [p for p, _ in rep.failed] == [str(g), str(tmp_path / "missing")]
+    assert rep.trashed == 3 * MB
+    assert sorted(p for p, _ in rep.failed) == sorted([str(g), str(tmp_path / "missing")])
     assert g.exists()
     recs = log.read_all()
     assert len(recs) == 3 and recs[0]["ok"] and not recs[1]["ok"]
@@ -102,11 +115,11 @@ def test_move_to_trash_uses_send2trash_and_logs(tmp_path, monkeypatch):
 
 def test_no_permanent_delete_in_source():
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    banned = ["os.remove(", "os.unlink(", "shutil.rmtree(", ".unlink(", "os.rmdir("]
+    banned = ["os.remove(", "os.unlink(", "shutil.rmtree(", ".unlink(", "os.rmdir(", "send2trash("]
     for d in ("core", "ui"):
         for dirpath, _, files in os.walk(os.path.join(root, d)):
             for name in files:
-                if name.endswith(".py"):
+                if name.endswith(".py") and name != "recycle.py":  # 只有 recycle.py 可以真正动文件
                     text = open(os.path.join(dirpath, name), encoding="utf-8").read()
                     for b in banned:
                         assert b not in text, f"{name} 包含永久删除调用 {b}"
@@ -146,11 +159,10 @@ def test_cleanables_find_and_clean(tmp_path, monkeypatch):
             SafeCache("i", "旧安装包", (str(dl),), patterns=("*.exe",), min_age_days=30)]
     found = cleanables.find_all(defs)
     assert [(c.key, c.size) for c in found] == [("c", 3 * MB), ("i", MB)]
-    trashed = []
-    monkeypatch.setattr(cleaner, "send2trash", lambda p: trashed.append(p))
+    trashed = fake_bin(monkeypatch, tmp_path)
     rep = cleanables.clean(found, log=OpLog(tmp_path / "logs"))
     assert sorted(os.path.basename(p) for p in trashed) == ["a", "b.bin", "old.exe"]
-    assert rep.freed == 4 * MB
+    assert rep.trashed == 4 * MB
 
 
 def test_measure_no_double_count(tmp_path):
