@@ -7,6 +7,7 @@ from typing import Callable, Iterable
 
 from send2trash import send2trash
 
+from .fs import folder_size
 from .oplog import OpLog
 from .safety import can_delete
 
@@ -33,7 +34,7 @@ def move_to_trash(
         size = 0
         if ok:
             try:
-                size = os.path.getsize(p) if os.path.isfile(p) else 0
+                size = folder_size(p)  # 文件或文件夹的大小
                 send2trash(p)
             except Exception as e:  # noqa: BLE001 - 记录任何失败
                 ok, reason = False, str(e)

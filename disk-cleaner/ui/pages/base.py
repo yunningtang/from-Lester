@@ -13,6 +13,8 @@ class BasePage(ctk.CTkFrame):
         super().__init__(master, fg_color="transparent", **kw)
         self.app = app
         self.grid_columnconfigure(0, weight=1)
+        if not self.title:
+            return
         header = ctk.CTkFrame(self, fg_color="transparent")
         header.grid(row=0, column=0, sticky="ew", padx=24, pady=(20, 8))
         ctk.CTkLabel(header, text=self.title, font=theme.font(22, "bold"), anchor="w").pack(fill="x")

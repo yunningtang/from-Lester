@@ -1,4 +1,5 @@
 """主窗口：左侧 150px 导航栏 + 右侧内容区。"""
+import tkinter as tk
 from tkinter import messagebox
 
 import customtkinter as ctk
@@ -31,12 +32,12 @@ NAV = [
 
 class App(ctk.CTk):
     def __init__(self):
-        super().__init__()
         ctk.set_appearance_mode("system")
-        ctk.set_default_color_theme("blue")
+        ctk.set_default_color_theme(theme.THEME_FILE)  # 必须在创建窗口前设置
+        super().__init__()
         self.title("磁盘清理")
-        self.geometry("980x640")
-        self.minsize(820, 520)
+        self.geometry("1200x740")
+        self.minsize(980, 600)
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
@@ -45,8 +46,12 @@ class App(ctk.CTk):
         self.sidebar.grid(row=0, column=0, sticky="nsw")
         self.sidebar.grid_propagate(False)
         self.sidebar.grid_columnconfigure(0, weight=1)
-        ctk.CTkLabel(self.sidebar, text="磁盘清理", font=theme.font(17, "bold")).grid(
-            row=0, column=0, pady=(20, 16))
+        brand = ctk.CTkFrame(self.sidebar, fg_color="transparent")
+        brand.grid(row=0, column=0, sticky="w", padx=18, pady=(22, 18))
+        self.logo = tk.Canvas(brand, width=22, height=22, highlightthickness=0, bd=0)
+        self.logo.pack(side="left")
+        ctk.CTkLabel(brand, text="磁盘清理", font=theme.font(16, "bold")).pack(side="left", padx=(8, 0))
+        self._draw_logo()
 
         self.content = ctk.CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.content.grid(row=0, column=1, sticky="nsew")
@@ -62,9 +67,9 @@ class App(ctk.CTk):
                 self.sidebar.grid_rowconfigure(row, weight=1)
                 row += 1
                 continue
-            btn = ctk.CTkButton(self.sidebar, text=label, anchor="w", height=36, corner_radius=8,
+            btn = ctk.CTkButton(self.sidebar, text=label, anchor="w", height=34, corner_radius=8,
                                 font=theme.font(14), fg_color="transparent",
-                                text_color=("gray15", "gray85"), hover_color=theme.ROW_HOVER,
+                                text_color=theme.INK, hover_color=theme.ROW_HOVER,
                                 command=lambda k=key: self.show_page(k))
             btn.grid(row=row, column=0, sticky="ew", padx=10, pady=2)
             self.buttons[key] = btn
@@ -82,11 +87,19 @@ class App(ctk.CTk):
             page.grid(row=0, column=0, sticky="nsew")
             self.pages[key] = page
         for k, btn in self.buttons.items():
-            btn.configure(fg_color=theme.CARD_BG if k == key else "transparent",
+            btn.configure(fg_color=theme.BG if k == key else "transparent",
                           font=theme.font(14, "bold" if k == key else "normal"))
         self.pages[key].tkraise()
         self.current = key
         self.pages[key].on_show()
+        return self.pages[key]
+
+    def _draw_logo(self):
+        """一块小石头：圆角的不规则三角形。"""
+        from .pebble_layout import rounded
+        pts = rounded([(3, 19), (11, 3), (20, 17)], 5)
+        self.logo.configure(bg=theme.pick(theme.SIDEBAR_BG))
+        self.logo.create_polygon(*[c for p in pts for c in p], fill=theme.pick(theme.INK), outline="")
 
     def _on_close(self):
         if any(p.is_busy() for p in self.pages.values()):

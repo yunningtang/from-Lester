@@ -110,3 +110,60 @@ def test_no_permanent_delete_in_source():
                     text = open(os.path.join(dirpath, name), encoding="utf-8").read()
                     for b in banned:
                         assert b not in text, f"{name} 包含永久删除调用 {b}"
+
+
+def test_soft_protected_needs_safe_cache(tmp_path):
+    from core import safety
+    appdata = tmp_path / "AppData"
+    cache = appdata / "SomeApp" / "Cache"
+    f = make(cache / "blob.bin", 10)
+    other = make(appdata / "SomeApp" / "settings.json", 10)
+    safety._SOFT.append(safety._norm(appdata))
+    try:
+        assert not safety.can_delete(f)[0]
+        safety.add_safe_root(cache)
+        assert safety.can_delete(f)[0]
+        assert not safety.can_delete(other)[0]   # 同一个程序的其他文件仍然受保护
+        assert not safety.can_delete(cache)[0]   # 缓存目录本身不删
+    finally:
+        safety._SOFT.pop()
+
+
+def test_cleanables_find_and_clean(tmp_path, monkeypatch):
+    import time
+    from core import cleanables
+    from core.safety import SafeCache
+    cache = tmp_path / "cache"
+    make(cache / "a" / "x.bin", 2 * MB)
+    make(cache / "b.bin", MB)
+    dl = tmp_path / "dl"
+    old = make(dl / "old.exe", MB)
+    make(dl / "new.exe", MB)
+    make(dl / "keep.pdf", MB)
+    t = time.time() - 40 * 86400
+    os.utime(old, (t, t))
+    defs = [SafeCache("c", "缓存", (str(cache),)),
+            SafeCache("i", "旧安装包", (str(dl),), patterns=("*.exe",), min_age_days=30)]
+    found = cleanables.find_all(defs)
+    assert [(c.key, c.size) for c in found] == [("c", 3 * MB), ("i", MB)]
+    trashed = []
+    monkeypatch.setattr(cleaner, "send2trash", lambda p: trashed.append(p))
+    rep = cleanables.clean(found, log=OpLog(tmp_path / "logs"))
+    assert sorted(os.path.basename(p) for p in trashed) == ["a", "b.bin", "old.exe"]
+    assert rep.freed == 4 * MB
+
+
+def test_measure_no_double_count(tmp_path):
+    from core import space
+    from core.space import Category
+    docs = tmp_path / "Documents"
+    make(docs / "a.bin", 5 * MB)
+    make(docs / "WeChat" / "chat.bin", 3 * MB)
+    make(docs / "cache" / "junk.bin", MB)
+    defs = [Category("wechat", "微信", "user", [str(docs / "WeChat")]),
+            Category("docs", "文档", "user", [str(docs)])]
+    rep = space.measure(str(tmp_path), defs=defs, subtract=[(str(docs / "cache"), MB)])
+    sizes = {c.key: c.size for c in rep.categories}
+    assert sizes == {"wechat": 3 * MB, "docs": 5 * MB}
+    keys = [b.key for b in rep.blocks(MB)]
+    assert keys[-1] == "free" and "safe" in keys

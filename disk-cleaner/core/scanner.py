@@ -3,12 +3,12 @@ from __future__ import annotations
 
 import heapq
 import os
-import stat
 import threading
 import time
 from dataclasses import dataclass, field
 from typing import Callable
 
+from .fs import is_link_or_junction as _is_link_or_junction
 from .safety import is_protected
 
 
@@ -34,19 +34,6 @@ class ScanResult:
     skipped: list[str] = field(default_factory=list)   # 受保护或无权限的目录
     cancelled: bool = False
     seconds: float = 0.0
-
-
-def _is_link_or_junction(entry: os.DirEntry) -> bool:
-    if entry.is_symlink():
-        return True
-    is_junction = getattr(entry, "is_junction", None)  # Python 3.12+
-    if is_junction and is_junction():
-        return True
-    try:
-        attrs = getattr(entry.stat(follow_symlinks=False), "st_file_attributes", 0)
-        return bool(attrs & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400))
-    except OSError:
-        return True
 
 
 def scan_large_files(
