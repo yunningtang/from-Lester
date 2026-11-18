@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#16685a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="释放随身">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<style>[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>释放随身</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&display=swap">
+<style>
+/* Layout: a single phone-sized column; the orb is the centre of gravity. Glass only on the floating tab bar and the check-in banner. */
+:root{
+  --ground:#f6f6f3; --surface:#ffffff; --ink:#151a17; --ink-2:#5b645f; --ink-3:#8b938e; --line:rgba(21,26,23,.09); --wash:rgba(21,26,23,.05);
+  --accent:#16685a; --accent-ink:#ffffff; --accent-wash:rgba(22,104,90,.10); --tile:#dfeee6; --tile-ink:#1b4a3c;
+  --orb-2:#5fae9c; --orb-3:#16685a; --bad:#b4392f;
+  --glass:rgba(255,255,255,.72); --glass-edge:rgba(255,255,255,.9); --shade:rgba(21,26,23,.10); --scrim:rgba(10,14,12,.32);
+  --serif:"Noto Serif SC","Songti SC","STSong",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ground:#0f1211; --surface:#181c1b; --ink:#e9eeeb; --ink-2:#a3aca7; --ink-3:#737c77; --line:rgba(233,238,235,.10); --wash:rgba(233,238,235,.06);
+  --accent:#63c2ab; --accent-ink:#0b1311; --accent-wash:rgba(99,194,171,.13); --tile:#1b2b26; --tile-ink:#bfe6d8;
+  --orb-2:#3f8d7b; --orb-3:#8fd8c5; --bad:#f08a80;
+  --glass:rgba(30,35,33,.72); --glass-edge:rgba(255,255,255,.10); --shade:rgba(0,0,0,.35); --scrim:rgba(0,0,0,.5); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ground:#0f1211; --surface:#181c1b; --ink:#e9eeeb; --ink-2:#a3aca7; --ink-3:#737c77; --line:rgba(233,238,235,.10); --wash:rgba(233,238,235,.06);
+  --accent:#63c2ab; --accent-ink:#0b1311; --accent-wash:rgba(99,194,171,.13); --tile:#1b2b26; --tile-ink:#bfe6d8;
+  --orb-2:#3f8d7b; --orb-3:#8fd8c5; --bad:#f08a80;
+  --glass:rgba(30,35,33,.72); --glass-edge:rgba(255,255,255,.10); --shade:rgba(0,0,0,.35); --scrim:rgba(0,0,0,.5); color-scheme:dark}
+*{box-sizing:border-box}
+html,body{background:var(--ground);color:var(--ink)}
+body{margin:0;font-family:var(--sans);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--ground)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:10px}
+h1,h2,h3,p{margin:0}
+h1,h2,h3{font-family:var(--serif);font-weight:700;text-wrap:balance}
+h1{font-size:30px;line-height:1.3}
+h2{font-size:21px;line-height:1.4}
+.serif{font-family:var(--serif)}
+.meta{font-size:14.5px;color:var(--ink-2)}
+.cap{font-size:13px;color:var(--ink-3)}
+main{max-width:560px;margin:0 auto;padding-block:20px 120px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.split{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border-radius:999px;font-size:15px;font-weight:600;background:var(--wash);transition:transform .15s,background .2s}
+.btn:active{transform:scale(.96)}
+.btn.solid{background:var(--ink);color:var(--ground)}
+.btn.acc{background:var(--accent);color:var(--accent-ink)}
+.btn.sm{min-height:36px;padding:0 14px;font-size:13.5px}
+.btn:disabled{opacity:.35}
+.card{background:var(--surface);border-radius:22px;padding:18px;box-shadow:inset 0 0 0 1px var(--line)}
+.bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:3px;background:var(--accent);transition:width .6s var(--ease)}
+
+/* header + today */
+.top{display:flex;justify-content:space-between;align-items:center}
+.streak{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:14px;color:var(--ink-2)}
+.streak svg{width:16px;height:16px;color:#c2581d}
+.today{background:var(--tile);color:var(--tile-ink);border-radius:26px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.today .big{font-family:var(--serif);font-weight:900;font-size:40px;line-height:1;font-variant-numeric:tabular-nums}
+.today .bar{background:color-mix(in srgb,var(--tile-ink) 18%,transparent)}
+.today .bar i{background:var(--tile-ink)}
+.today .k{font-size:13.5px;font-weight:600;opacity:.8}
+.live{display:inline-flex;align-items:center;gap:8px;font-variant-numeric:tabular-nums;font-weight:700}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--tile-ink)}
+.today .btn{background:var(--tile-ink);color:var(--tile)}
+.today .btn.ghost{background:color-mix(in srgb,var(--tile-ink) 12%,transparent);color:var(--tile-ink)}
+
+/* orb */
+.orbbox{display:grid;place-items:center;padding:6px 0}
+.orbbtn{width:min(52vw,200px);aspect-ratio:1;border-radius:50%;position:relative;display:grid;place-items:center;transition:transform .4s var(--ease)}
+.orbbtn:active{transform:scale(.95)}
+.orb{position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.85),rgba(255,255,255,0) 38%),radial-gradient(circle at 50% 60%,var(--orb-2),var(--orb-3) 72%);
+  box-shadow:inset 0 -14px 28px rgba(0,0,0,.18),inset 0 2px 0 rgba(255,255,255,.4),0 12px 16px rgba(21,26,23,.12)}
+.orbbtn .lbl{position:relative;font-family:var(--serif);font-weight:700;font-size:21px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.2);text-align:center;line-height:1.4}
+.orbbtn .lbl small{display:block;font-family:var(--sans);font-size:12.5px;font-weight:500;opacity:.9}
+.breathe{animation:breathe 7s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(.95)}50%{transform:scale(1.03)}}
+
+/* quick release */
+.quick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.q{background:var(--surface);border-radius:20px;padding:15px 16px;text-align:left;display:flex;flex-direction:column;gap:2px;box-shadow:inset 0 0 0 1px var(--line);transition:transform .15s var(--ease),background .25s;position:relative;min-height:84px}
+.q:active{transform:scale(.96)}
+.q b{font-family:var(--serif);font-size:18px}
+.q small{font-size:12.5px;color:var(--ink-2);line-height:1.5}
+.q .n{position:absolute;right:14px;top:12px;font-family:var(--serif);font-weight:900;font-size:22px;color:var(--accent);font-variant-numeric:tabular-nums}
+.q.pop{background:var(--accent-wash)}
+.quote{font-family:var(--serif);font-weight:500;font-size:19px;line-height:1.8;text-align:left}
+
+/* tab bar */
+.dock{position:fixed;left:0;right:0;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;justify-content:center;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));pointer-events:none}
+.tabs{pointer-events:auto;display:flex;gap:2px;padding:5px;border-radius:999px;width:100%;max-width:420px;background:var(--glass);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:inset 0 1px 0 var(--glass-edge),inset 0 0 0 .5px var(--line),0 6px 14px var(--shade)}
+.tabs button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 2px;border-radius:999px;font-size:12px;font-weight:600;color:var(--ink-2)}
+.tabs svg{width:21px;height:21px}
+.tabs .on{background:var(--ink);color:var(--ground)}
+
+/* full-screen guided release */
+.fx{position:fixed;inset:0;z-index:40;background:var(--ground);display:flex;flex-direction:column;animation:up .35s var(--ease) both}
+@keyframes up{from{transform:translateY(24px);opacity:0}}
+.fx-top{display:flex;align-items:center;gap:12px;padding:calc(10px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+.fx-top .segs{flex:1}
+.iconbtn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--ink-2);flex:none}
+.iconbtn svg{width:20px;height:20px}
+.segs{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:5px}
+.segs i{height:4px;border-radius:2px;background:var(--line);transition:background .4s}
+.segs i.on{background:var(--accent)}
+.fx-body{flex:1;overflow:auto;padding:10px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.fx-in{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:18px;animation:swap .3s var(--ease) both}
+@keyframes swap{from{opacity:0;transform:translateX(12px)}}
+.fx-foot{display:flex;gap:10px;justify-content:space-between;align-items:center;padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));border-top:1px solid var(--line);background:var(--ground)}
+.fx-foot>*{max-width:560px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:8px 14px;border-radius:999px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);font-size:14px;font-weight:600}
+.chip.on{background:var(--ink);color:var(--ground);box-shadow:none}
+input[type=text],input[type=search],textarea{width:100%;font:inherit;color:var(--ink);background:var(--surface);border:0;border-radius:16px;padding:13px 16px;box-shadow:inset 0 0 0 1px var(--line)}
+textarea{min-height:90px;resize:vertical}
+input::placeholder,textarea::placeholder{color:var(--ink-3)}
+.meter{background:var(--surface);border-radius:18px;padding:14px 16px;box-shadow:inset 0 0 0 1px var(--line);display:flex;flex-direction:column;gap:4px}
+.meter input{width:100%;accent-color:var(--accent);height:28px}
+.mnum{font-family:var(--serif);font-weight:900;font-size:30px;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
+.emo{display:flex;flex-direction:column;gap:12px}
+.lv{display:grid;grid-template-columns:4.6em minmax(0,1fr);gap:8px;align-items:start}
+.lv>b{font-family:var(--serif);padding-top:5px;font-size:15px}
+.lv>b small{display:block;font-family:var(--sans);font-weight:500;font-size:11.5px;color:var(--ink-3)}
+.lv.dim{opacity:.3}
+.words{display:flex;flex-wrap:wrap;gap:6px}
+.words button{padding:6px 11px;border-radius:999px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);font-size:14px}
+.words button.hit{background:var(--accent-wash);color:var(--accent);box-shadow:none;font-weight:700}
+.wcard{width:100%;background:var(--surface);border-radius:20px;padding:16px 18px;text-align:left;display:flex;flex-direction:column;gap:8px;box-shadow:inset 0 0 0 1px var(--line)}
+.wcard:active{box-shadow:inset 0 0 0 2px var(--accent)}
+.wcard .h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.wcard .h b{font-family:var(--serif);font-size:19px}
+.wcard ul{margin:0;padding-left:1.1em;font-size:14px;line-height:1.65}
+.say{display:flex;flex-wrap:wrap;gap:6px}
+.say span{font-size:12.5px;padding:3px 10px;border-radius:999px;background:var(--wash);color:var(--ink-2)}
+.badge{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--accent);color:var(--accent-ink);flex:none}
+.stage{display:flex;flex-direction:column;align-items:center;gap:20px;padding:8px 0}
+.ball{width:var(--s,220px);height:var(--s,220px);position:relative;opacity:var(--o,1);transition:width 1.1s var(--ease),height 1.1s var(--ease),opacity 1.1s}
+.say-big{font-family:var(--serif);font-weight:500;font-size:21px;line-height:1.8;text-align:center}
+.note{border-radius:16px;padding:14px 16px;background:var(--accent-wash);font-size:14px;line-height:1.7}
+.levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.levels button{padding:10px 4px;border-radius:14px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);font-family:var(--serif);font-weight:700;font-size:15px}
+.levels button.cap-l{color:var(--accent)}
+.levels button.on{background:var(--ink);color:var(--ground);box-shadow:none}
+.done-num{font-family:var(--serif);font-weight:900;font-size:60px;line-height:1;text-align:center;font-variant-numeric:tabular-nums}
+
+/* check-in banner */
+.ping{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:50;width:min(560px,calc(100% - 24px));border-radius:22px;padding:14px;
+  background:var(--glass);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:inset 0 1px 0 var(--glass-edge),inset 0 0 0 .5px var(--line),0 8px 16px var(--shade);display:flex;flex-direction:column;gap:10px;animation:down .35s var(--ease) both}
+@keyframes down{from{transform:translate(-50%,-16px);opacity:0}}
+.ping .pq{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.ping .pq button{padding:9px 2px;border-radius:12px;background:var(--surface);font-size:13px;font-weight:700;box-shadow:inset 0 0 0 1px var(--line)}
+
+/* records */
+.figs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.figs div{display:flex;flex-direction:column}
+.figs b{font-family:var(--serif);font-size:28px;font-weight:900;line-height:1.15;font-variant-numeric:tabular-nums}
+.figs span{font-size:12.5px;color:var(--ink-2)}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;align-items:end;height:130px}
+.week div{display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.week i{display:block;width:100%;border-radius:8px 8px 3px 3px;background:var(--accent);min-height:3px}
+.week i.goal{background:var(--accent-wash);box-shadow:inset 0 0 0 1px var(--accent)}
+.week span{font-size:11.5px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.list{background:var(--surface);border-radius:20px;overflow:hidden;box-shadow:inset 0 0 0 1px var(--line)}
+.list>*{display:flex;gap:12px;align-items:center;padding:12px 16px;position:relative}
+.list>*+*::before{content:"";position:absolute;top:0;left:16px;right:0;border-top:1px solid var(--line)}
+.list .grow{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.list small{font-size:12.5px;color:var(--ink-2)}
+.time{font-variant-numeric:tabular-nums;font-size:13px;color:var(--ink-3);flex:none;width:3em}
+.tag{font-size:12px;padding:2px 9px;border-radius:999px;background:var(--wash);color:var(--ink-2);font-weight:600}
+.tag.a{background:var(--accent-wash);color:var(--accent)}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opts button{padding:8px 14px;border-radius:999px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);font-size:14px;font-weight:600}
+.opts button.on{background:var(--ink);color:var(--ground);box-shadow:none}
+.ref{display:flex;flex-direction:column;gap:10px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .orbbtn .lbl{color:#0b1311;text-shadow:none}}
+:root[data-theme="dark"] .orbbtn .lbl{color:#0b1311;text-shadow:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<main id="main"></main>
+<div class="dock"><nav class="tabs" id="tabs" aria-label="主导航"></nav></div>
+<div id="layer"></div>
+
+<script>
+(function(){
+const QUOTES=[{"q":"最基本的就是持续释放。","c":"The Way","t":"Lesson 2 · 2-2","p":9},{"q":"你们有没有特别注意去持续释放欲望，放走更多、放走更多、放走更多，直到没有更多？","c":"The Right Path","t":"开篇","p":45},{"q":"你会审视每一个出现的感受，看到它是想要被认同、想要控制、还是想要安全，然后让它离开。","c":"百年纪念","t":"1983 年在圣多纳的谈话","p":243},{"q":"所以当你去做，这是非常轻松容易的，它们就像波浪一样浮现并离开，直到波浪停止，你也就完成了。","c":"The Way","t":"Lesson 1","p":1},{"q":"从现在开始，任何你想要的东西，都通过释放来得到它。","c":"The Way","t":"Lesson 1","p":1},{"q":"一开始可能是一天抽出一小时，然后是早上的一个小时和晚上的一个小时，接着是几个小时，然后是半天，最后你会花上一整天时间。","c":"莱斯特·利文森的私教课","t":"没有限制 Part 2","p":115},{"q":"让心智完全安静下来，就是这么简单。","c":"莱斯特·利文森的私教课","t":"释放对自由的抗拒 Part 1","p":95},{"q":"当它开始浮现，请让它离开。","c":"The Way","t":"Lesson 4","p":18},{"q":"你现在就是完全自由的，你是全能的，你是全知的，你是全在的。","c":"The Way","t":"Lesson 5","p":22},{"q":"如果你觉得累了，就释放“想要改变疲惫”，你就会恢复精力。","c":"莱斯特·利文森静修会","t":"2-2","p":140},{"q":"释放“想要改变这个模糊不清的感受”","c":"The Way","t":"Lesson 1","p":1},{"q":"当你释放了那些，在它们底端的“对死亡的恐惧”，就会自然地、明显可察觉地浮现出来，给你去释放。","c":"The Way","t":"Lesson 1","p":1},{"q":"你设置了一个缺乏、想要、欲望去搅动你的心智，当你填补了这个欲望，心智变得安静起来，从而你仅仅是存在时，这就是你所感觉到的快乐","c":"The Way","t":"Lesson 5","p":22},{"q":"你必须想要自由超过你想要这个世界。","c":"The Way","t":"Lesson 1","p":1},{"q":"无论你想要什么，仅仅通过释放来得到，我把“仅仅”这个词划重点。","c":"The Way","t":"Lesson 1","p":1},{"q":"感受并不会咬你、不会对你开枪、不会击中你的头。","c":"The Way","t":"Lesson 1","p":1},{"q":"抛出这些“为什么”实际上是在刻意逃避做释放。","c":"The Way","t":"Lesson 1","p":1},{"q":"当你释放了，你会体验到自己不是行为者的感觉。","c":"The Way","t":"Lesson 3","p":14},{"q":"这不是强迫自己，而是一种放手，让它是的感觉。","c":"The Way","t":"Lesson 3","p":14},{"q":"因为每一分被压抑的感受都在压力下想要消耗它自己。","c":"The Way","t":"Lesson 4","p":18},{"q":"你必须想要自由超过你想要世界。","c":"The Way","t":"Lesson 5","p":22},{"q":"横在你和你的终极幸福之间的唯一事物就是被压抑着的感受。","c":"The Way","t":"Lesson 6 · 6-1","p":28},{"q":"每一个关于爱的感受都是“非爱的感受”。","c":"The Way","t":"Lesson 6 · 6-1","p":28},{"q":"心智是你构建起来的东西，它是你所有念头和感受的总和。","c":"The Way","t":"Lesson 6 · 6-1","p":28},{"q":"所以，我们再一次想要它的事实证明了我们从未满足过它。","c":"The Way","t":"Lesson 6 · 6-3","p":38},{"q":"如果我真的想要它，我会放下一切，并只管去做。","c":"The Way","t":"Lesson 6 · 6-3","p":38},{"q":"但感受只是程序而已，是我们对外部世界做出反应的潜意识自动化程序。","c":"The Right Path","t":"与莱斯特的谈话 第一卷","p":55},{"q":"每一个感受都是为了维持身体的生存而作为一种生存程序被植入的。","c":"The Right Path","t":"与莱斯特的谈话 第一卷","p":55},{"q":"每一个不可能，无论多么不可能，当我们对它完全释放时，都会立即变成可能","c":"The Right Path","t":"与莱斯特的谈话 第一卷","p":55},{"q":"以无欲为目标，以释放你所有的欲望为目标","c":"The Right Path","t":"与莱斯特的谈话 第一卷","p":55},{"q":"欲望是一种匮乏的痛苦，放下对拥有它的欲望，这会暂时让我们的心智安静下来，在那一刻，我们只是存在。","c":"The Right Path","t":"与莱斯特的谈话 第二卷","p":62},{"q":"无论你想要什么，在这里实现的最慢。","c":"The Right Path","t":"第三、四卷 · 分离","p":76},{"q":"随着你放手，随着你释放，随着你脱离身体，你的存在会不断扩展，直到最终，你仅仅只是你的存在。","c":"The Right Path","t":"第三、四卷 · 分离","p":76},{"q":"每一个感受都是为了这个物理身体，作为生存程序被放入的，但是每个感受实际上都是反生存的。","c":"The Right Path","t":"第三、四卷 · 获得自由","p":79},{"q":"不再有感受，你的心智就安静了，你的真我就会显现。","c":"The Right Path","t":"第三、四卷 · 获得自由","p":79},{"q":"对死亡的恐惧也仅仅只是一种感受罢了，事实是你不会死。","c":"The Right Path","t":"第三、四卷 · 给予","p":81},{"q":"释放对死亡的恐惧，下一步释放与“一”的分离感就没那么困难了。","c":"The Right Path","t":"第三、四卷 · 小我","p":83},{"q":"大多数人释放是为了把这个世界变成一个更好的世界","c":"The Right Path","t":"第三、四卷 · 通往顶端的路","p":83},{"q":"不是因为那个人帮你满足了你的欲望，所以你的心智变得安静了，而是心智安静下来了，这就是快乐。","c":"庆祝莱斯特 100 周年纪念日","t":"开篇","p":85},{"q":"你必须想要自由超过想要世界上的任何其他事物。","c":"庆祝莱斯特 100 周年纪念日","t":"开篇","p":85},{"q":"不要再到它所不在的地方寻找了，发现你的快乐是什么——当你的心智安静下来，你就只是存在。","c":"庆祝莱斯特 100 周年纪念日","t":"想要自由","p":87},{"q":"你释放得越多，你就能释放越多，你就越能往下深入并拉出更沉重的垃圾","c":"庆祝莱斯特 100 周年纪念日","t":"想要自由","p":87},{"q":"我们的垃圾闻起来很香，我们已经习惯了，我们不想释放它","c":"庆祝莱斯特 100 周年纪念日","t":"自由状态","p":87},{"q":"所以，好好利用这个世界的沉重吧，释放它，直到没有任何沉重。","c":"庆祝莱斯特 100 周年纪念日","t":"自由状态","p":87},{"q":"如果你想知道它是什么样子，释放所有的限制，你就会看到。","c":"庆祝莱斯特 100 周年纪念日","t":"全在","p":90},{"q":"一天 24 小时，你都在为了生存而处于守卫状态，当你想要生存时，你的心智永远都不会安静下来，一直都是生死攸关。","c":"庆祝莱斯特 100 周年纪念日","t":"身体和心智","p":91},{"q":"真正的底线是对死亡的恐惧，当这些感受出现时，释放它们，直到不再有任何对死亡的恐惧。","c":"庆祝莱斯特 100 周年纪念日","t":"对死亡的恐惧","p":91},{"q":"如果你被淹没了，释放认同和控制，直到你能够面对你对死亡的恐惧。","c":"庆祝莱斯特 100 周年纪念日","t":"对死亡的恐惧","p":91},{"q":"释放它，你就超越了业力，你不是在解决它。","c":"庆祝莱斯特 100 周年纪念日","t":"关于业力","p":92},{"q":"你只是纯粹地想让他们得到他们想要的","c":"庆祝莱斯特 100 周年纪念日","t":"家人与释放","p":92},{"q":"你必须想要它超过你想要世界上的任何事","c":"庆祝莱斯特 100 周年纪念日","t":"获得自由","p":93},{"q":"每个人都拥有他或她想要的东西，你喜欢自己所拥有的吗？","c":"庆祝莱斯特 100 周年纪念日","t":"获得自由","p":93},{"q":"它是你的心智，是你让它变得嘈杂，你可以让它安静下来。","c":"莱斯特·利文森的私教课","t":"释放对自由的抗拒 Part 1","p":95},{"q":"心智永远无法让心智安静。因为心智是错误地寻求生存、安全、认同和控制的机制","c":"莱斯特·利文森的私教课","t":"释放对自由的抗拒 Part 2","p":96},{"q":"让感受浮现出来，觉察它们下面的想要被认同或想要控制，然后让它们出去。","c":"莱斯特·利文森的私教课","t":"释放对自由的抗拒 Part 2","p":96},{"q":"心智是一个非常简单的东西，它就是我们所有念头和感受的总和。","c":"莱斯特·利文森的私教课","t":"释放对自由的抗拒 Part 3","p":98},{"q":"释放获取知识的尝试，所有的知识都是分离的。真正的知识不是知识，是存在。","c":"莱斯特·利文森的私教课","t":"你能做任何事 Part 2","p":101},{"q":"你所有的想要都必须集中于“想要自由”，那么，你会在几个月内得到它。","c":"莱斯特·利文森的私教课","t":"你能做任何事 Part 3","p":102},{"q":"你怎样让心智安静呢？通过释放心智的驱动，也就是感受。","c":"莱斯特·利文森的私教课","t":"你不是身体和心智 Part 1","p":104},{"q":"在你释放相当的认同和控制之前，你无法直面自己对死亡的恐惧，它在你的内心是如此深沉、如此沉重。","c":"莱斯特·利文森的私教课","t":"你不是身体和心智 Part 3","p":107},{"q":"你利用这个世界来激起、带出感受，这样你就能释放它们。","c":"莱斯特·利文森的私教课","t":"获得自由 Part 1","p":109},{"q":"针对你的目标做释放是好的，不是为了追逐它们，而是为了让阻碍的感受浮现出来，这样你就可以释放那些感受。","c":"莱斯特·利文森的私教课","t":"获得自由 Part 1","p":109},{"q":"你生命中所做的每一件事都是在浪费时间，除了释放。","c":"莱斯特·利文森的私教课","t":"获得自由 Part 1","p":109},{"q":"问问你自己“为什么我不让它持续，并在几周内走完全程呢？”","c":"莱斯特·利文森的私教课","t":"获得自由 Part 2","p":111},{"q":"如果你释放那些障碍、那些感受，你能够拥有、成为、做任何你想做或想要的。","c":"莱斯特·利文森的私教课","t":"获得自由 Part 3","p":112},{"q":"你要做的是认识到你有多不想要这个自由状态，这是你必须做的第一件事，你必须面对它。","c":"莱斯特·利文森的私教课","t":"终极自由 Part 2","p":120},{"q":"而唯一能让你活在当下的方式就是不带有任何感受。","c":"莱斯特·利文森静修会","t":"1-1","p":125},{"q":"身体只不过是一台垃圾制造机，每个人都知道它不会永远运转下去，但我们都在试图让它无限期地持续下去。","c":"莱斯特·利文森静修会","t":"1-2","p":129},{"q":"这很简单，摆脱你的感受，你就会一直处于顶端。","c":"莱斯特·利文森静修会","t":"1-2","p":129},{"q":"所以我说，停止追逐彩虹，停止创造匮乏，这就是所谓的“欲望”，立刻释放那个匮乏的痛苦，只是做你自己。","c":"莱斯特·利文森静修会","t":"2-1","p":135},{"q":"安静心智就是摆脱思考的驱动，即感受。","c":"莱斯特·利文森静修会","t":"2-1","p":135},{"q":"现在释放这些程序其实是在解除小我程序。小我是我们所有程序的总和。","c":"莱斯特·利文森静修会","t":"3-1","p":145},{"q":"正如我们所知道的，控制并不是一个不好的词，也不是一件坏事情，“想要”才是。","c":"莱斯特·利文森静修会","t":"3-2","p":151},{"q":"更具体地说，业力就是程序。基本的程序是感受，而最基本的程序就是分离的感受。","c":"莱斯特·利文森静修会","t":"3-2","p":151},{"q":"倾向是一种惯性、是一种感受，它是一种感受，倾向从时间伊始就建立起来了","c":"与莱斯特的炉边漫谈","t":"寻找幸福 2","p":159},{"q":"你必须释放 “我不能”，因为如果你认为自己做不到，事情就会如你所想的那样发展。","c":"与莱斯特的炉边漫谈","t":"寻找幸福 3","p":160},{"q":"引导员的技能是让他们处理一个感受，让那个感受浮现出来","c":"与莱斯特的炉边漫谈","t":"活在当下 1","p":162},{"q":"如果你陷入低谷时，直面那个感受","c":"与莱斯特的炉边漫谈","t":"活在当下 1","p":162},{"q":"通过直面我的感受，引发焦虑的根源就很清晰地呈现出来了，根本不需要思考探究它","c":"与莱斯特的炉边漫谈","t":"活在当下 1","p":162},{"q":"直面一个感受就是将一个感受追溯到一个更基本的感受，直到你感受到根源的感受——想要控制或想要被认同。","c":"与莱斯特的炉边漫谈","t":"活在当下 2","p":163},{"q":"在心智中坚持你想要的，然后带着它已经完成了的感觉放手。","c":"与莱斯特的炉边漫谈","t":"贪恋与厌恶 Attachments and Aversions 1","p":165},{"q":"当你放下想法时，那种存在的感觉一直在那里，是想法覆盖了它。","c":"与莱斯特的炉边漫谈","t":"贪恋与厌恶 Attachments and Aversions 2","p":167},{"q":"除了缺乏爱的感受以外，不存在任何情绪，仅此而已。","c":"与莱斯特的炉边漫谈","t":"摆脱自身限制 Riding Yourself of Limitations 2","p":171},{"q":"一个人只有去爱，才能感受到爱。","c":"与莱斯特的炉边漫谈","t":"沟通与爱 3","p":177},{"q":"所以，（完全释放)之前我们是感受的奴隶，之后感受是我们的奴隶。","c":"与莱斯特的炉边漫谈","t":"关于释放","p":181},{"q":"通过触及它背后的基础感受，并消除基础感受，因此，通过切断根","c":"与莱斯特的炉边漫谈","t":"关于释放","p":181},{"q":"我们基本的固有的本质都是爱，仅仅是爱，它被我们压抑的感受覆盖和抑制了。","c":"与莱斯特的炉边漫谈","t":"关于释放","p":181},{"q":"你的心智是你所有想法和感受的总和。","c":"与莱斯特的炉边漫谈","t":"展示波澜不惊 1","p":182},{"q":"让它们上来，然后真正地把它们倒掉。","c":"与莱斯特的炉边漫谈","t":"展示波澜不惊 1","p":182},{"q":"当潜意识感受不再阻碍我们时，我们就能完全掌控自己的感受。","c":"与莱斯特的炉边漫谈","t":"展示波澜不惊 2","p":185},{"q":"我已经使用了释放法，我到达了生活中没有任何问题的状态","c":"与莱斯特的炉边漫谈","t":"展示波澜不惊 3","p":187},{"q":"思考是由强迫引发的。我们的感受驱动了我们的想法。","c":"与莱斯特的炉边漫谈","t":"展示波澜不惊 5","p":191},{"q":"当你的心智是平静到没有任何想法时，这就是终极状态，除非你想要放入一个想法。","c":"与莱斯特的炉边漫谈","t":"展示波澜不惊 5","p":191},{"q":"爱其实是我们最基本的天性，所有这些潜意识的感受掩盖了它。","c":"与莱斯特的炉边漫谈","t":"展示波澜不惊 5","p":191},{"q":"我们的思考是由我们的感受驱动的","c":"百年纪念","t":"发展释放法","p":197},{"q":"测试意味着怀疑，而只要有任何怀疑存在，任何怀疑都会让它失效。","c":"百年纪念","t":"莱斯特的觉醒","p":203},{"q":"每一个幸福的感受都是在感受真我，真我是唯一存在的幸福。","c":"百年纪念","t":"主人身份","p":212},{"q":"她想要的不过是让我说出那个能解决她世俗问题的咒语，我无法做到，也没人能做到。","c":"百年纪念","t":"老师和学生","p":215},{"q":"真正要做的是——释放对事物、对人的渴望。","c":"百年纪念","t":"积极的想法和欲望","p":219},{"q":"每次我们这么做，我们把潜意识的想法变成有意识的，然后有意识地释放它。","c":"百年纪念","t":"我是谁","p":235},{"q":"所以方法就是让“我是什么？”那个问题继续下去，当干扰的念头出现时，看着它，然后释放它。","c":"百年纪念","t":"自由的时间","p":237},{"q":"现在我释放了它，因为我发现我的安全在于我有随时创造财富的能力。","c":"百年纪念","t":"实现丰盛（屁股系统）","p":239},{"q":"我的建议是你现在就这么做，想一想就让事情发生，就像你找到一个停车位一样，在你想要的一切上去实践。","c":"百年纪念","t":"冲突","p":240},{"q":"每一个感受都是一个对生存的驱动程序。","c":"百年纪念","t":"1983 年在圣多纳的谈话","p":243},{"q":"其实很容易，除非你让它变得困难。","c":"百年纪念","t":"动能","p":245},{"q":"当你首先意识到你真的不接受它，如果你直面这一点，你就能更好地释放它。","c":"百年纪念","t":"动能","p":245},{"q":"但区别在于感受不会再运作你，而是你运作着感受。","c":"百年纪念","t":"莱斯特关于心智","p":248},{"q":"每一个不可能，无论多么不可能，当你对任何事物完全释放之后，都会立即变成可能。","c":"百年纪念","t":"医学","p":256},{"q":"无论你想要的是什么，当你不再担心它的时候，你就知道你已经完全释放了。","c":"百年纪念","t":"医学","p":256},{"q":"无论多么不可能，相信我，无论情况多么不可能，当你完全释放时，它会立即成为可能。","c":"百年纪念","t":"显化物质","p":259},{"q":"所以我们告诉你，设定你的目标，摆脱障碍，摆脱阻碍你实现目标的那些感受，并释放它们","c":"百年纪念","t":"大师与古茹","p":259},{"q":"要知道，想要被认同、控制、安全是导致所有思考的根源。","c":"百年纪念","t":"负起责任","p":261},{"q":"释放一个单位的认同或控制就是释放那个单位之下的每一个感受。","c":"百年纪念","t":"负起责任","p":261},{"q":"你释放了对死亡的恐惧，你就结束了，你离成功很近了，快完成了。","c":"百年纪念","t":"对死亡的恐惧","p":262},{"q":"看看你们的心智有多嘈杂，所以专注于释放认同、控制，这是唯一能帮到你的事情。","c":"百年纪念","t":"不做奴隶","p":265},{"q":"但如果你在我和你说话的时候释放认同和控制，你就能继续前进。","c":"百年纪念","t":"不做奴隶","p":265},{"q":"我会把第一步从“你必须想要自由超过想要被认同和想要控制”改成“你必须想要自由超过想要这个世界上的任何其他东西”。","c":"百年纪念","t":"莱斯特最后的话","p":265},{"q":"所做的事很简单——每一个感受，觉察它，让它出去。","c":"百年纪念","t":"莱斯特最后的话","p":265},{"q":"释放你对死亡的恐惧，你会发现你是永恒的，你完全掌控着你的宇宙。","c":"百年纪念","t":"莱斯特最后的话","p":265},{"q":"如果我是无限的“一”，我便什么也不想要，我是一切。","c":"终极目标第一卷","t":"终极真理 2","p":270},{"q":"所有幸福都是你内在真我的感受，幸福就是如此。","c":"终极目标第一卷","t":"体验真理 1","p":272},{"q":"一、看到我们所是的这个无限存在；二、看到我们强加在它之上的限制，并释放它们。","c":"终极目标第一卷","t":"释放小我 1","p":275},{"q":"所以成长仅仅在于释放我们的小我。","c":"终极目标第一卷","t":"释放小我 2","p":277},{"q":"每当我们被小我驱动时，如果我们释放它，我们就是在释放一点小我。","c":"终极目标第一卷","t":"释放小我 2","p":277},{"q":"每当你感受到幸福的时候，你或多或少都是在感受你的真我","c":"终极目标第一卷","t":"完美的身体 1","p":280},{"q":"带着一个放手的意愿，仅仅是带着放手的意愿，你就释放了一点小我。","c":"终极目标第一卷","t":"心镜 1","p":284},{"q":"所以我说，我们感受到的所有快乐都源于真我，我们感受到的所有痛苦都源于小我。","c":"终极目标第一卷","t":"心镜 2","p":286},{"q":"想着你想要的，你就只会得到你想要的。","c":"终极目标第一卷","t":"创造你想要的一切 2","p":295},{"q":"我们应该放手，让上帝接手，让无限找到把我们想要的东西带给我们的方式。","c":"终极目标第一卷","t":"创造你想要的一切 3","p":296},{"q":"任何带有未来概念的显化行为，都会让它永远地停留在未来。","c":"终极目标第一卷","t":"创造你想要的一切 3","p":296},{"q":"如果我们想要完全觉醒，就必须对发生在我们身上的一切负起全部责任。","c":"终极目标第一卷","t":"静默、爱和恩典 3","p":305},{"q":"我们必须变得更加普世，我们应该放下我们自己的生活，到我们能更多地为他人而活的程度。","c":"终极目标第一卷","t":"拥有一切 1","p":306},{"q":"完全接纳这个宇宙就是完全的自由，这意味着接纳它本来的样子，让它是它所是的样子，除了你自己，不想改变任何东西。","c":"终极目标第一卷","t":"个人达成自由的关键 3","p":312},{"q":"我相信如果我能做到，任何人都可以做到，只要他们有强烈的想要。","c":"终极目标第一卷","t":"莱斯特的发现 1","p":313},{"q":"我们所有的感受都被自动设定为维持我们生存下去的程序","c":"终极目标第一卷","t":"莱斯特的发现 2","p":316},{"q":"仅仅只是因为，为了感受到爱，你必须去爱，这是一扇通往幸福的奇妙之门。","c":"终极目标第二卷","t":"幸福就是爱 1","p":319},{"q":"只有在你停止思考的瞬间，你才能感受到你的真我。","c":"终极目标第二卷","t":"答案一直在这里 2","p":339},{"q":"持续出离的方法就是每天释放小我，并且每天更多地处于真我的觉知中。","c":"终极目标第二卷","t":"答案一直在这里 2","p":339},{"q":"如果我们说我们无法放手，那是因为我们真的不想放手，释放痛苦的渴望还不够强烈。","c":"终极目标第二卷","t":"不存在任何问题 1","p":343},{"q":"所以释放认同或控制的效果比仅仅释放愤怒要强数百倍。","c":"终极目标第二卷","t":"不存在任何问题 2","p":349},{"q":"因为欲望是无法满足的，只有释放它才行得通。","c":"终极目标第二卷","t":"不存在任何问题 2","p":349},{"q":"当你释放时，你就是在上升；当垃圾起作用时，你就会陷进去。","c":"终极目标第二卷","t":"成为你之所是的步骤 1","p":355},{"q":"满足欲望是不可能的，释放它才是完全可行的。","c":"终极目标第二卷","t":"成为你之所是的步骤 1","p":355},{"q":"所以如果你能养成一种习惯，即：留意到你体验到的所有幸福的感受，都出现在你安静下来并只是存在的时候。","c":"终极目标第二卷","t":"成为你之所是的步骤 2","p":359},{"q":"但请记住，当你释放时，你并没有放弃任何东西，反而收获更多。","c":"终极目标第二卷","t":"存在 Beingness 1","p":363},{"q":"这一点你应该用大写字母写在你的笔记里：在高处时释放，升到高处继续释放。","c":"终极目标第二卷","t":"存在 Beingness 2","p":369},{"q":"这就是我想要表达的重点，当你是和谐的，一切就都是完美的。","c":"莱斯特的存在课程第一卷","t":"摆脱错觉","p":374},{"q":"因为你想要认同的原因是为了让自己感到安全，那么你就不会死。","c":"莱斯特的存在课程第一卷","t":"对死亡的恐惧","p":387},{"q":"而且它只是一个感受，但你现在却把它等同于死亡本身，这就是为什么你不允许它出现的原因。","c":"莱斯特的存在课程第一卷","t":"对死亡的恐惧","p":387},{"q":"成长只有一种单一的方式，那就是放下我们的小我。","c":"莱斯特的存在课程第一卷","t":"目标","p":390},{"q":"当你入睡时，你放下了这个世界，对你而言，它消失了。","c":"莱斯特杂谈","t":"关于睡眠与觉醒 Part 1","p":432},{"q":"本课程的第一条警句是：放下所有的欲望等同于放下所有的想法。","c":"莱斯特杂谈","t":"放下欲望","p":436},{"q":"只想着你想要的，你就会一直得到你想要的。","c":"莱斯特杂谈","t":"莱斯特谈意愿力量 1","p":437},{"q":"别做一具身体，认同你的存在，你说“你是”，认同这一点，放下对身体的认同，这就是它的全部了。","c":"莱斯特杂谈","t":"超越欲望","p":467},{"q":"你可以不用得到那个人或物就能释放掉那些念头，然后你就会立即快乐起来。","c":"莱斯特杂谈","t":"幸福在哪里","p":469},{"q":"幸福不过是感受你真正无限的真我，仅此而已。","c":"莱斯特杂谈","t":"莱斯特谈悲伤 1","p":484},{"q":"当你试图逃避疼痛的时候，反而让它变得更真实了。","c":"莱斯特杂谈","t":"莱斯特谈疼痛是什么 1","p":490},{"q":"但我会做的是，我会深入其中去感受它，然后当你感受到它的那一刻，它便消失了。","c":"莱斯特杂谈","t":"莱斯特谈疼痛是什么 1","p":490},{"q":"但我向你保证，如果你感受这个疼痛，它会消失。","c":"莱斯特杂谈","t":"莱斯特谈疼痛是什么 2（有引导）","p":491},{"q":"我们所感受到的疼痛存在于我们的心智之中，它完全是心理上的。","c":"莱斯特杂谈","t":"莱斯特谈疼痛是什么 2（有引导）","p":491},{"q":"如果我不想要香蕉，而我的心智中正抓着香蕉不放，那么我会得到香蕉。","c":"莱斯特杂谈","t":"莱斯特谈疼痛是什么 3","p":493},{"q":"无论你害怕什么，你都会让它降临到自己身上。","c":"莱斯特杂谈","t":"莱斯特谈疼痛是什么 3","p":493}];
+const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const store={get(k,d){try{const v=localStorage.getItem('rel:'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('rel:'+k,JSON.stringify(v))}catch(e){}}};
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today=()=>ymd(new Date());const addDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return ymd(d)};
+const hm=d=>String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+const fmt=ms=>{const m=Math.floor(ms/60000),h=Math.floor(m/60);return h?`${h} 小时 ${m%60} 分`:`${m} 分钟`};
+const clock=ms=>{const t=Math.max(0,Math.floor(ms/1000));return [Math.floor(t/3600),Math.floor(t/60)%60,t%60].map(x=>String(x).padStart(2,'0')).join(':')};
+
+/* ---------- content ---------- */
+const FEEL=[{k:'万念俱灰',en:'Apathy'},{k:'悲苦',en:'Grief'},{k:'恐惧',en:'Fear'},{k:'贪求',en:'Lust'},{k:'愤怒',en:'Anger'},{k:'自尊自傲',en:'Pride'}];
+const CAP=[{k:'无畏',en:'Courageousness'},{k:'接纳',en:'Acceptance'},{k:'平和',en:'Peace'}];
+// 情绪词：参考 1992 年圣多纳课程的情绪表整理（不是《莱斯特合集》原文）
+const EMO=[
+  ['无聊','麻木','绝望','无力','没用','放弃','疲惫','冷漠','心灰意冷','提不起劲','无所谓','被困住','迷失','拖延','懒得动'],
+  ['委屈','伤心','失落','孤独','心痛','被抛弃','遗憾','后悔','无助','自怜','想哭','被误解','思念','愧疚','受伤'],
+  ['焦虑','担心','紧张','害怕','不安','慌张','恐慌','怀疑','尴尬','害羞','警惕','怕出错','怕失去','怯场','多疑'],
+  ['渴望','贪心','急切','执着','上瘾','迫不及待','嫉妒','非要不可','想占有','羡慕','不满足','强求','索取','计较','馋'],
+  ['烦躁','生气','恼火','怨恨','不耐烦','嫌弃','愤慨','讨厌','叛逆','挑剔','暴躁','不服','敌意','抓狂','想反击'],
+  ['优越','看不起','评判','固执','自以为是','要面子','不屑','清高','自满','傲慢','不肯认错','炫耀','虚荣','爱比较','觉得自己对']];
+const CAPW=[['自信','有干劲','清晰','乐于行动','有创造力'],['温暖','感恩','包容','喜悦','平衡'],['宁静','完整','轻盈','自在','合一']];
+const WANTS=['想要被认同','想要控制','想要安全'];
+const CHANGE='想要改变它';
+const WANTP=[
+  {ask:['我想让别人喜欢我、认可我吗？','我在意他会怎么看我吗？','我想被爱、被照顾、被理解吗？','我觉得自己不够好吗？'],say:['他们会怎么看我','我做得够好吗','为什么没人懂我','我得证明自己','他不在乎我']},
+  {ask:['我想改变这件事或这个人吗？','我想让事情按我的方式来吗？','我想弄明白、想要一个答案吗？','我在抗拒正在发生的事吗？'],say:['应该 / 不应该','必须','怎么还不……','我得想办法','凭什么']},
+  {ask:['我担心会失去什么吗？','我怕受伤、怕出事吗？','我觉得没有它就活不下去吗？','我在为将来担心吗？'],say:['万一……怎么办','我会失去……','我撑不住了','不安全','来不及了']}];
+const HINT=[[2],[0,2],[2],[1,0],[1],[0,1]]; // 每层感受常见的想要（参考，不是规则）
+const QUICK=[{k:'想要被认同',s:'“他会怎么看我”'},{k:'想要控制',s:'“应该 / 必须”'},{k:'想要安全',s:'“万一……怎么办”'},{k:CHANGE,s:'卡住、说不清、累'}];
+const RAMP=[[1,'一天一小时'],[2,'早晚各一小时'],[4,'几个小时'],[8,'半天'],[16,'一整天']];
+const ICON={
+  orb:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/>',
+  eye:'<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+  chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/>',
+  close:'<path d="M6 6l12 12M18 6 6 18"/>',
+  flame:'<path d="M12 21c-3.9 0-6.5-2.6-6.5-6.1 0-3.2 2.3-5 3.6-7.4.4 1.7 1.3 2.7 2.4 3.2C11.3 7.6 12.6 4.6 15 3c-.2 3 2.2 4.8 3.2 7 .9 1.9 1.3 3.2 1.3 4.8C19.5 18.4 16 21 12 21z"/>'};
+const icon=(k,f)=>`<svg viewBox="0 0 24 24" fill="${f?'currentColor':'none'}" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${ICON[k]}</svg>`;
+const qsrc=q=>`${esc(q.c)}《${esc(q.t)}》，第 ${q.p} 页`;
+
+/* ---------- state ---------- */
+let CFG=store.get('cfg',{every:10,goal:2,awake:16});
+let SESS=store.get('sess',null);      // continuous-release session {start, ping}
+let DAYS=store.get('days',{});        // {date:{ms, quick:{want:n}}}
+let LOG=store.get('log',[]);          // [{date,time,kind,...}]
+let ACTIVE=store.get('active',{});
+const save=()=>{store.set('cfg',CFG);store.set('sess',SESS);store.set('days',DAYS);store.set('log',LOG);store.set('active',ACTIVE)};
+const day=k=>DAYS[k]||(DAYS[k]={ms:0,quick:{}});
+function touch(){ACTIVE[today()]=1}
+function streak(){let n=0;const d=new Date();if(!ACTIVE[ymd(d)])d.setDate(d.getDate()-1);while(ACTIVE[ymd(d)]){n++;d.setDate(d.getDate()-1)}return n}
+function msToday(){let ms=(DAYS[today()]||{}).ms||0;if(SESS){const m=new Date();m.setHours(0,0,0,0);ms+=Date.now()-Math.max(SESS.start,m.getTime())}return ms}
+function quickToday(){return (DAYS[today()]||{}).quick||{}}
+function nToday(){return Object.values(quickToday()).reduce((a,b)=>a+b,0)+LOG.filter(l=>l.date===today()&&l.kind==='flow').length}
+function startSess(){SESS={start:Date.now(),ping:Date.now()};touch();save();lockOn();chime(true)}
+function stopSess(){if(!SESS)return;const m=new Date();m.setHours(0,0,0,0);const d=day(today());d.ms+=Date.now()-Math.max(SESS.start,m.getTime());
+  LOG.push({date:today(),time:hm(new Date(SESS.start)),kind:'sess',ms:Date.now()-SESS.start});SESS=null;save();lockOff()}
+function quick(k){const d=day(today());d.quick[k]=(d.quick[k]||0)+1;LOG.push({date:today(),time:hm(new Date()),kind:'quick',want:k});if(SESS)SESS.ping=Date.now();touch();save();chime(true)}
+
+/* sound, vibration, screen awake */
+let AC=null;function chime(soft){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=soft?528:660;
+  g.gain.setValueAtTime(.0001,AC.currentTime);g.gain.exponentialRampToValueAtTime(soft?.04:.12,AC.currentTime+.05);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+1.6);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+1.7)}catch(e){}
+  try{navigator.vibrate&&navigator.vibrate(soft?25:[60,80,60])}catch(e){}}
+let WL=null;async function lockOn(){try{WL=await navigator.wakeLock.request('screen')}catch(e){}}function lockOff(){try{WL&&WL.release()}catch(e){}WL=null}
+document.addEventListener('visibilitychange',()=>{if(SESS&&document.visibilityState==='visible'&&!WL)lockOn()});
+
+/* ---------- screens ---------- */
+let TAB='home';
+const TABS=[['home','释放','orb'],['know','识别','eye'],['log','记录','chart'],['set','设置','gear']];
+const V={};
+V.home=()=>{const ms=msToday(),gp=Math.min(100,ms/(CFG.goal*36e5)*100),aw=Math.round(ms/(CFG.awake*36e5)*100),qt=quickToday(),st=streak(),n=new Date();
+  const q=QUOTES.length?QUOTES[(n.getDate()*7+n.getHours())%QUOTES.length]:null;
+  return `<div class="top"><span class="meta">${n.getMonth()+1} 月 ${n.getDate()} 日 · 今天释放 ${nToday()} 次</span><span class="streak">${st?icon('flame',1)+'连续 '+st+' 天':''}</span></div>
+  <section class="today"><div class="split"><span class="k">今天的释放时间 · 目标 ${CFG.goal} 小时</span>${SESS?`<span class="live k"><i class="breathe"></i><span id="clock">${clock(Date.now()-SESS.start)}</span></span>`:''}</div>
+    <div class="split" style="align-items:flex-end"><span class="big" id="todayms">${fmt(ms)}</span><span class="k" id="awake">清醒时间的 ${aw}%</span></div>
+    <div class="bar"><i id="gbar" style="width:${gp}%"></i></div>
+    <div class="row">${SESS?`<button class="btn ghost" id="stop">结束这段</button><span class="k">开着的时间都计入。觉察到想要，就点下面放掉。</span>`:`<button class="btn" id="start">开始持续释放</button><span class="k">工作、走路、做家务时开着</span>`}</div></section>
+  <section style="display:flex;flex-direction:column;gap:10px"><div class="split"><h2>觉察到想要，点一下放掉</h2></div>
+    <div class="quick">${QUICK.map(x=>`<button class="q" data-q="${x.k}"><b>${x.k}</b><small>${x.s}</small><span class="n" data-n="${x.k}">${qt[x.k]||''}</span></button>`).join('')}</div>
+    <p class="cap">“你会审视每一个出现的感受，看到它是想要被认同、想要控制、还是想要安全，然后让它离开。” 1983 年在圣多纳的谈话</p></section>
+  <div class="orbbox"><button class="orbbtn" id="open" aria-label="一步一步释放一件事"><span class="orb breathe"></span><span class="lbl">释放一件事<small>一步一步，放到 0</small></span></button></div>
+  ${q?`<button class="card" id="nextq" style="text-align:left;display:flex;flex-direction:column;gap:8px"><p class="quote">${esc(q.q)}</p><span class="cap">${qsrc(q)} · 点一下换一句</span></button>`:''}`};
+
+V.know=()=>`<h1>识别</h1><p class="meta">感受升起时，先说出它是什么，再看它底下是哪一个想要。</p>
+  <section class="ref"><h2>三大想要</h2><p class="cap">“AGFLAP 来自于两个，被称作想要被认同、想要控制，这两个又来自于一个，称为想要安全/想要生存。” 私教课，第 95 页</p>
+  ${WANTS.map((w,i)=>`<div class="wcard"><span class="h"><b>${w}</b></span><ul>${WANTP[i].ask.map(a=>`<li>${a}</li>`).join('')}</ul><span class="say">${WANTP[i].say.map(t=>`<span>“${t}”</span>`).join('')}</span></div>`).join('')}
+  <div class="wcard"><span class="h"><b>卡住、说不清的时候</b></span><p style="font-size:14px">释放“想要改变这个感受”。不管它是什么，让想要改变它的那股劲离开。</p><p class="cap">“释放“想要改变这个模糊不清的感受”——不管它是什么。” The Way《Lesson 1》</p></div></section>
+  <section class="ref"><h2>情绪表</h2><p class="cap">参考 1992 年圣多纳课程的情绪表整理。下面六种合称 AGFLAP，放下它们，就上升到无畏、接纳、平和（CAP）。</p>
+  <div class="emo">${CAP.map((x,i)=>`<div class="lv"><b style="color:var(--accent)">${x.k}<small>${x.en}</small></b><div class="words">${CAPW[i].map(w=>`<button disabled style="color:var(--accent)">${w}</button>`).join('')}</div></div>`).reverse().join('')}
+  ${FEEL.map((x,i)=>`<div class="lv"><b>${x.k}<small>${x.en}</small></b><div class="words">${EMO[i].map(w=>`<button data-go="${i}" data-w="${w}">${w}</button>`).join('')}</div></div>`).reverse().join('')}</div>
+  <p class="cap">点一个词，直接从它开始释放。</p></section>`;
+
+V.log=()=>{const days=[...Array(7)].map((_,i)=>{const k=addDays(i-6);return{k,ms:k===today()?msToday():(DAYS[k]||{}).ms||0}});const mx=Math.max(CFG.goal*36e5,...days.map(d=>d.ms));
+  const fl=LOG.filter(l=>l.kind==='flow'),dr=fl.filter(l=>l.before!=null&&l.after!=null),avg=dr.length?(dr.reduce((a,l)=>a+(l.before-l.after),0)/dr.length).toFixed(1):'–';
+  const cnt=f=>{const m={};LOG.forEach(l=>f(l).forEach(k=>m[k]=(m[k]||0)+1));return Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,3)};
+  const fe=cnt(l=>l.kind==='flow'&&l.word?[l.word]:[]),wa=cnt(l=>l.kind==='quick'?[l.want]:(l.kind==='flow'?Object.keys(l.wants||{}):[]));
+  const total=LOG.filter(l=>l.kind==='quick').length+fl.reduce((a,l)=>a+(l.rounds||0),0);
+  const todayLog=LOG.filter(l=>l.date===today()).slice().reverse();
+  return `<h1>记录</h1>
+  <section class="card" style="display:flex;flex-direction:column;gap:14px"><div class="split"><h2>近 7 天释放时间</h2><span class="cap">目标 ${CFG.goal} 小时 / 天</span></div>
+    <div class="week">${days.map(d=>`<div><i style="height:${Math.max(2,d.ms/mx*100)}%"></i><span>${d.k.slice(8)}日</span></div>`).join('')}</div>
+    <div class="figs"><div><b>${(days[6].ms/36e5).toFixed(1)}</b><span>今天（小时）</span></div><div><b>${(days.reduce((a,d)=>a+d.ms,0)/7/36e5).toFixed(1)}</b><span>日均（小时）</span></div><div><b>${Math.round(days.reduce((a,d)=>a+d.ms,0)/7/(CFG.awake*36e5)*100)}%</b><span>占清醒时间</span></div></div></section>
+  <section class="figs"><div><b>${total}</b><span>累计放下</span></div><div><b>${fl.length}</b><span>完整释放</span></div><div><b>${avg}</b><span>平均减轻（分）</span></div></section>
+  <section class="list"><div><span class="grow"><span>最常放下的想要</span><small>${wa.map(([k,n])=>k+' ×'+n).join('、')||'还没有'}</small></span></div><div><span class="grow"><span>最常出现的感受</span><small>${fe.map(([k,n])=>k+' ×'+n).join('、')||'还没有'}</small></span></div></section>
+  <section style="display:flex;flex-direction:column;gap:10px"><h2>今天</h2>${todayLog.length?`<div class="list">${todayLog.slice(0,60).map(row).join('')}</div>`:'<p class="meta">今天还没有记录。</p>'}</section>
+  <div class="row"><button class="btn sm" id="copy">复制全部记录</button><span class="cap" id="msg"></span></div>`};
+function row(l){
+  if(l.kind==='quick')return `<div><span class="time">${l.time}</span><span class="grow"><span>放下${esc(l.want)}</span></span></div>`;
+  if(l.kind==='sess')return `<div><span class="time">${l.time}</span><span class="grow"><span>持续释放 ${fmt(l.ms)}</span></span></div>`;
+  return `<div><span class="time">${l.time}</span><span class="grow"><span>${esc(l.word||l.mode)}${l.topic?' · '+esc(l.topic):''}</span><small>${Object.entries(l.wants||{}).map(([k,n])=>k+' ×'+n).join('、')}</small></span>${l.before!=null?`<span class="tag a">${l.before} → ${l.after}</span>`:''}</div>`}
+
+V.set=()=>`<h1>设置</h1>
+  <section class="card" style="display:flex;flex-direction:column;gap:10px"><h2>每隔多久提醒你觉察一次</h2><div class="opts">${[0,5,10,15,30,60].map(m=>`<button data-every="${m}" class="${CFG.every===m?'on':''}">${m?m+' 分钟':'不提醒'}</button>`).join('')}</div>
+    <p class="cap">只在持续释放开着、这个页面开着时提醒：轻响一声、手机轻震，顶部出现“此刻，有想要吗？”，可以直接在提醒里点掉。锁屏或切到别的 App 时浏览器会暂停提醒。</p></section>
+  <section class="card" style="display:flex;flex-direction:column;gap:10px"><h2>每天的释放时间目标</h2><div class="opts">${RAMP.map(([h,l])=>`<button data-goal="${h}" class="${CFG.goal===h?'on':''}">${h} 小时 · ${l}</button>`).join('')}</div>
+    <p class="cap">“一开始可能是一天抽出一小时，然后是早上的一个小时和晚上的一个小时，接着是几个小时，然后是半天，最后你会花上一整天时间。” 私教课《没有限制 Part 2》，第 115 页</p>
+    <p class="cap">风说：每天 50% 以上的时间持续释放，释放的时间多过压抑的时间，人生就会反转。</p></section>
+  <section class="card" style="display:flex;flex-direction:column;gap:10px"><h2>一天清醒多少小时</h2><div class="opts">${[14,15,16,17,18].map(h=>`<button data-awake="${h}" class="${CFG.awake===h?'on':''}">${h} 小时</button>`).join('')}</div><p class="cap">用来算“占清醒时间”的比例。清醒 ${CFG.awake} 小时的 50% 是 ${CFG.awake/2} 小时。</p></section>
+  <section class="card" style="display:flex;flex-direction:column;gap:8px"><h2>想要＝没有</h2><p style="font-size:14.5px">每一个想要都在说“我缺这个”。不释放干净，它就会一直想要。</p><p class="cap">“你设置了一个缺乏、想要、欲望去搅动你的心智，当你填补了这个欲望，心智变得安静起来，从而你仅仅是存在时，这就是你所感觉到的快乐。” The Way《Lesson 5》</p></section>
+  <p class="cap">所有数据只保存在这台设备的浏览器里。</p>`;
+
+/* ---------- guided release (full screen) ---------- */
+let F=null;
+const newF=()=>({step:1,mode:'feel',topic:'',lvl:null,word:null,before:6,cur:null,wants:{},rounds:0,deep:false,after:null,state:null,saved:null});
+function openFlow(pre){F=Object.assign(newF(),pre||{});paintF()}
+function closeFlow(){F=null;$('#layer').innerHTML='';render()}
+const curName=()=>F.cur==='change'?CHANGE:WANTS[F.cur];
+function paintF(){
+  const st=Math.min(F.step,4);let h='',b='',f='';
+  if(F.step===1){h=F.mode==='goal'?'想到这件事，升起了什么感受？':'此刻，你感受到了什么？';
+    b=`<div class="chips"><button class="chip ${F.mode==='feel'?'on':''}" data-mode="feel">一个感受</button><button class="chip" data-mode="stuck">卡住了，说不清</button><button class="chip ${F.mode==='goal'?'on':''}" data-mode="goal">一件想要的事</button></div>
+    <input type="text" id="topic" value="${esc(F.topic)}" placeholder="${F.mode==='goal'?'想要的是什么？':'关于什么事？可以不填'}" aria-label="关于什么事">
+    <div class="meter"><div class="split"><span class="meta">先给它打个分</span><b class="mnum" id="bv">${F.before}</b></div><input type="range" id="before" min="0" max="10" value="${F.before}" aria-label="强度"><div class="split cap"><span>0 很轻</span><span>10 非常强</span></div></div>
+    <input type="search" id="find" placeholder="找一个词：委屈、烦躁、焦虑……" aria-label="找一个词">
+    <div class="emo" id="emo">${FEEL.map((x,i)=>`<div class="lv" data-l="${i}"><b>${x.k}<small>${x.en}</small></b><div class="words">${EMO[i].map(w=>`<button data-lvl="${i}" data-word="${w}">${w}</button>`).join('')}</div></div>`).join('')}</div>`;
+    f=`<span class="cap">点一个最贴近的词</span><button class="btn" data-lvl="-1">说不清，直接放</button>`}
+  if(F.step===2){h='它底下想要的是什么？';
+    b=`<p class="meta">看着这份「${esc(F.word||FEEL[F.lvl].k)}」，读下面的问题，哪一组让你心里一动。</p>
+    ${WANTS.map((w,i)=>`<button class="wcard" data-want="${i}"><span class="h"><b>${w}</b>${F.lvl!=null&&HINT[F.lvl].includes(i)?`<span class="badge">${FEEL[F.lvl].k}常见</span>`:''}</span><ul>${WANTP[i].ask.map(a=>`<li>${a}</li>`).join('')}</ul><span class="say">${WANTP[i].say.map(t=>`<span>“${t}”</span>`).join('')}</span></button>`).join('')}
+    <button class="wcard" data-want="change"><span class="h"><b>看不清</b></span><span style="font-size:14px">那就释放“想要改变这个感受”</span></button>`;
+    f=`<button class="btn" data-step="1">上一步</button><span class="cap">点一项就会继续</span>`}
+  if(F.step===3){h=F.cur==='change'?'释放想要改变它':'允许它浮现，然后放下';
+    const sz=Math.max(64,220-F.rounds*28),op=Math.max(.32,1-F.rounds*.09);
+    const word=F.rounds===0?(F.cur==='change'?'不管它是什么，<br>让“想要改变它”的那股劲离开。':`感受这份${curName()}。<br>允许它完全浮现上来，<br>然后让它离开。`):(F.rounds<3?'还有剩下的吗？<br>有的话，再放一次。':'像波浪一样，浮现，离开，<br>直到波浪停止。');
+    const deep=!F.deep&&F.rounds>=3&&(F.wants['想要被认同']||F.wants['想要控制'])&&F.cur!==2;
+    b=`<div class="stage"><div class="ball" id="ball" style="--s:${sz}px;--o:${op}"><span class="orb breathe"></span></div><p class="say-big" id="words">${word}</p>
+      <p class="cap" id="tally">${Object.entries(F.wants).map(([k,n])=>k+' ×'+n).join(' · ')||'还没放下'}</p>
+      <div class="row" style="justify-content:center"><button class="btn sm" id="other">底下还有别的想要</button><button class="btn sm" id="stuck">卡住了</button></div></div>
+      ${deep?`<div class="note"><p>当你释放了那些，在它们底端的“对死亡的恐惧”，就会自然地、明显可察觉地浮现出来，给你去释放。</p><p class="cap" style="margin:4px 0 10px">The Way《Lesson 1》</p><button class="btn sm" id="deep">往下看一层：想要安全</button></div>`:''}`;
+    f=`<button class="btn solid" id="let" style="flex:1">放下了</button><button class="btn" id="tocheck" ${F.rounds?'':'disabled'}>轻了</button>`}
+  if(F.step===4){h='还剩几分？';if(F.after==null)F.after=Math.max(0,F.before-3);
+    b=`<div class="meter"><div class="split"><span class="meta">之前是 ${F.before}</span><b class="mnum" id="av">${F.after}</b></div><input type="range" id="after" min="0" max="10" value="${F.after}" aria-label="现在的强度"><div class="split cap"><span>0 干净了</span><span>10</span></div></div>
+    <div class="note" id="clean" ${F.after>0?'':'hidden'}><p>还剩一点，说明想要还在。想要的感觉就是“没有”，留着它就会一直想要。</p><p class="cap" style="margin:4px 0 10px">“你们有没有特别注意去持续释放欲望，放走更多、放走更多、放走更多，直到没有更多？” The Right Path 开篇</p><button class="btn sm acc" id="more">继续放到 0</button></div>
+    <p class="meta">现在最接近哪一种？（可不选）</p>
+    <div class="levels">${[...CAP.slice().reverse().map(x=>[x.k,1]),...FEEL.slice().reverse().map(x=>[x.k,0])].map(([k,c])=>`<button class="${c?'cap-l':''} ${F.state===k?'on':''}" data-state="${k}">${k}</button>`).join('')}</div>`;
+    f=`<button class="btn" id="back3">再放一轮</button><button class="btn solid" id="save">完成</button>`}
+  if(F.step===5){const s=F.saved,d=s.before-s.after;h=d>0?`轻了 ${d} 分`:'记下来了';
+    b=`<div class="stage"><div class="ball" style="--s:${Math.max(56,130-d*9)}px"><span class="orb"></span></div><p class="done-num">${s.before} → ${s.after}</p>
+      <p class="meta" style="text-align:center">${esc(s.word||'')}${s.topic?' · '+esc(s.topic):''}${s.state?' → '+esc(s.state):''}</p><p class="cap" style="text-align:center">放下了 ${s.rounds} 次：${Object.entries(s.wants).map(([k,n])=>k+' ×'+n).join('、')}</p></div>
+      <div class="note">“从现在开始，任何你想要的东西，都通过释放来得到它。” <span class="cap">The Way《Lesson 1》</span></div>`;
+    f=`<button class="btn" id="again">再释放一件事</button><button class="btn solid" id="close2">回到主页</button>`}
+  $('#layer').innerHTML=`<div class="fx" role="dialog" aria-label="释放一件事"><div class="fx-top"><button class="iconbtn" id="x" aria-label="关闭">${icon('close')}</button><div class="segs">${[1,2,3,4].map(k=>`<i class="${k<=st||F.step===5?'on':''}"></i>`).join('')}</div><span class="cap" style="width:2.6em;text-align:right">${['','看见','辨认','放下','回看','完成'][F.step]}</span></div>
+    <div class="fx-body"><div class="fx-in"><h1>${h}</h1>${b}</div></div><div class="fx-foot">${f}</div></div>`;
+  bindF()}
+function go(s){F.step=s;paintF()}
+function bindF(){const on=(id,fn)=>{const e=$(id);if(e)e.onclick=fn};
+  on('#x',closeFlow);on('#close2',closeFlow);on('#again',()=>openFlow());
+  $$('[data-mode]').forEach(b=>b.onclick=()=>{const m=b.dataset.mode;if(m==='stuck'){F.mode='stuck';F.cur='change';F.word='卡住';go(3)}else{F.mode=m;paintF()}});
+  const t=$('#topic');if(t)t.oninput=()=>F.topic=t.value;
+  const bf=$('#before');if(bf)bf.oninput=()=>{F.before=+bf.value;$('#bv').textContent=bf.value};
+  const fd=$('#find');if(fd)fd.oninput=()=>{const q=fd.value.trim();$$('#emo .lv').forEach(l=>{let any=false;l.querySelectorAll('[data-word]').forEach(b=>{const m=q&&b.dataset.word.includes(q);b.classList.toggle('hit',!!m);any=any||m});l.classList.toggle('dim',!!q&&!any)})};
+  $$('[data-lvl]').forEach(b=>b.onclick=()=>{const v=+b.dataset.lvl;if(v<0){F.lvl=null;F.word='说不清';F.cur='change';go(3)}else{F.lvl=v;F.word=b.dataset.word;go(2)}});
+  $$('[data-step]').forEach(b=>b.onclick=()=>go(+b.dataset.step));
+  $$('[data-want]').forEach(b=>b.onclick=()=>{F.cur=b.dataset.want==='change'?'change':+b.dataset.want;go(3)});
+  on('#let',()=>{F.rounds++;const k=curName();F.wants[k]=(F.wants[k]||0)+1;touch();save();chime(true);
+    if(F.rounds===3&&!F.deep&&(F.wants['想要被认同']||F.wants['想要控制'])){paintF();return}
+    const o=$('#ball');o.style.setProperty('--s',Math.max(64,220-F.rounds*28)+'px');o.style.setProperty('--o',Math.max(.32,1-F.rounds*.09));
+    $('#words').innerHTML=F.rounds<3?'还有剩下的吗？<br>有的话，再放一次。':'像波浪一样，浮现，离开，<br>直到波浪停止。';
+    $('#tally').textContent=Object.entries(F.wants).map(([k,n])=>k+' ×'+n).join(' · ');$('#tocheck').disabled=false});
+  on('#other',()=>{if(F.lvl==null)F.lvl=2;go(2)});on('#stuck',()=>{F.cur='change';paintF()});on('#deep',()=>{F.deep=true;F.cur=2;paintF()});
+  on('#tocheck',()=>go(4));
+  const af=$('#after');if(af)af.oninput=()=>{F.after=+af.value;$('#av').textContent=af.value;$('#clean').hidden=!(F.after>0)};
+  on('#more',()=>{if(F.orig==null)F.orig=F.before;F.before=F.after;F.after=null;go(F.cur==='change'||F.lvl==null?3:2)});
+  on('#back3',()=>{F.after=null;go(3)});
+  $$('[data-state]').forEach(b=>b.onclick=()=>{F.state=F.state===b.dataset.state?null:b.dataset.state;$$('[data-state]').forEach(x=>x.classList.toggle('on',x.dataset.state===F.state))});
+  on('#save',()=>{const rec={date:today(),time:hm(new Date()),kind:'flow',mode:F.mode,topic:F.topic,word:F.word||(F.lvl!=null?FEEL[F.lvl].k:''),level:F.lvl!=null?FEEL[F.lvl].k:'',before:F.orig??F.before,after:F.after,state:F.state,rounds:F.rounds,wants:F.wants};
+    LOG.push(rec);touch();save();F.saved=rec;go(5)});
+}
+
+/* ---------- check-in banner ---------- */
+function ping(){chime(false);const old=$('#ping');if(old)old.remove();const p=document.createElement('div');p.id='ping';p.className='ping';p.setAttribute('role','alert');
+  p.innerHTML=`<div class="split"><b class="serif">此刻，有想要吗？</b><button class="cap" id="pno">没有，平静</button></div><div class="pq">${QUICK.map(x=>`<button data-pq="${x.k}">${x.k.replace('想要','')}</button>`).join('')}</div>`;
+  document.body.appendChild(p);
+  p.querySelectorAll('[data-pq]').forEach(b=>b.onclick=()=>{quick(b.dataset.pq);p.remove();if(!F)render()});
+  $('#pno').onclick=()=>{p.remove()};setTimeout(()=>p.remove(),60000)}
+setInterval(()=>{if(!SESS)return;const now=Date.now();
+  const c=$('#clock');if(c){c.textContent=clock(now-SESS.start);const ms=msToday();$('#todayms').textContent=fmt(ms);$('#gbar').style.width=Math.min(100,ms/(CFG.goal*36e5)*100)+'%';$('#awake').textContent=`清醒时间的 ${Math.round(ms/(CFG.awake*36e5)*100)}%`}
+  if(CFG.every&&now-SESS.ping>=CFG.every*60000){SESS.ping=now;save();ping()}},1000);
+
+/* ---------- render ---------- */
+function render(){
+  $('#main').innerHTML=V[TAB]();
+  $('#tabs').innerHTML=TABS.map(([k,t,i])=>`<button data-tab="${k}" class="${TAB===k?'on':''}">${icon(i)}<span>${t}</span></button>`).join('');
+  $$('[data-tab]').forEach(b=>b.onclick=()=>{TAB=b.dataset.tab;render();scrollTo(0,0)});
+  const on=(id,fn)=>{const e=$(id);if(e)e.onclick=fn};
+  on('#start',()=>{startSess();render()});on('#stop',()=>{stopSess();render()});on('#open',()=>openFlow());
+  $$('[data-q]').forEach(b=>b.onclick=()=>{quick(b.dataset.q);b.classList.add('pop');setTimeout(()=>b.classList.remove('pop'),350);b.querySelector('[data-n]').textContent=quickToday()[b.dataset.q];
+    const t=$('.top .meta');if(t)t.textContent=t.textContent.replace(/今天释放 \d+ 次/,`今天释放 ${nToday()} 次`)});
+  let qi=0;on('#nextq',()=>{if(!QUOTES.length)return;qi=(qi+1+Math.floor(Math.random()*QUOTES.length))%QUOTES.length;const q=QUOTES[qi];$('#nextq').innerHTML=`<p class="quote">${esc(q.q)}</p><span class="cap">${qsrc(q)} · 点一下换一句</span>`});
+  $$('[data-go]').forEach(b=>b.onclick=()=>openFlow({lvl:+b.dataset.go,word:b.dataset.w,step:2}));
+  $$('[data-every]').forEach(b=>b.onclick=()=>{CFG.every=+b.dataset.every;save();render()});
+  $$('[data-goal]').forEach(b=>b.onclick=()=>{CFG.goal=+b.dataset.goal;save();render()});
+  $$('[data-awake]').forEach(b=>b.onclick=()=>{CFG.awake=+b.dataset.awake;save();render()});
+  on('#copy',()=>{const txt=JSON.stringify({LOG,DAYS},null,1),m=$('#msg');(navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>m.textContent='已复制').catch(()=>{m.textContent='无法自动复制，请手动复制下方内容';const t=document.createElement('textarea');t.value=txt;m.after(t);t.select()})});
+}
+render();
+if(SESS)lockOn();
+if('serviceWorker' in navigator&&location.protocol==='https:'&&!/claude/.test(location.host)){try{navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}}
+})();
+</script>
+
+</body>
+</html>
