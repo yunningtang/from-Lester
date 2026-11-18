@@ -19,27 +19,27 @@
 /* Layout: one phone column of frosted glass over a calm, slowly drifting warm-stone backdrop.
    The amber orb is the one bold visual: tap it to affirm, it carries every step of the practice. */
 :root{
-  --w0:#f1f0ec; --w1:#e4d6bb; --w2:#d3ddd3; --w3:#e9e0cf; --w4:#d9d6cc;
-  --g:rgba(255,255,255,.44); --g-2:rgba(255,255,255,.34); --g-strong:rgba(250,249,246,.66); --edge:rgba(255,255,255,.78); --edge-2:rgba(255,255,255,.35);
-  --gshadow:0 1px 1px rgba(0,0,0,.03),0 8px 16px rgba(70,55,25,.07); --blur:blur(24px) saturate(170%);
-  --label:#17140f; --label-2:rgba(60,55,45,.72); --label-3:rgba(60,55,45,.5); --fill:rgba(120,110,95,.13); --fill-2:rgba(120,110,95,.08);
-  --tint:#8a5d14; --tint-ink:#ffffff; --tint-fill:rgba(160,110,30,.13); --cell-solid:#ffffff;
+  --w0:#eef1f3; --w1:#c3d4e3; --w2:#d3e0dc; --w3:#dbe2ea; --w4:#cad7e1;
+  --g:rgba(255,255,255,.44); --g-2:rgba(255,255,255,.34); --g-strong:rgba(247,249,251,.66); --edge:rgba(255,255,255,.78); --edge-2:rgba(255,255,255,.35);
+  --gshadow:0 1px 1px rgba(0,0,0,.03),0 8px 16px rgba(25,45,70,.07); --blur:blur(24px) saturate(170%);
+  --label:#11151a; --label-2:rgba(55,62,72,.72); --label-3:rgba(55,62,72,.5); --fill:rgba(110,120,135,.13); --fill-2:rgba(110,120,135,.08);
+  --tint:#2f6690; --tint-ink:#ffffff; --tint-fill:rgba(47,102,144,.12); --cell-solid:#ffffff;
   --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
   --serif:"Noto Serif SC","Songti SC","STSong",serif;
   --spring:cubic-bezier(.32,1.25,.5,1); --ease:cubic-bezier(.22,1,.36,1); color-scheme:light;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --w0:#070605; --w1:#3a2c14; --w2:#16261d; --w3:#2a2114; --w4:#1a1915;
-  --g:rgba(255,255,255,.075); --g-2:rgba(255,255,255,.06); --g-strong:rgba(20,18,15,.66); --edge:rgba(255,255,255,.15); --edge-2:rgba(255,255,255,.06);
+  --w0:#05070a; --w1:#132a40; --w2:#11231f; --w3:#161d28; --w4:#0f1d2b;
+  --g:rgba(255,255,255,.075); --g-2:rgba(255,255,255,.06); --g-strong:rgba(15,18,22,.66); --edge:rgba(255,255,255,.15); --edge-2:rgba(255,255,255,.06);
   --gshadow:0 1px 1px rgba(0,0,0,.3),0 8px 18px rgba(0,0,0,.35);
-  --label:#f6f2ea; --label-2:rgba(240,232,220,.66); --label-3:rgba(240,232,220,.42); --fill:rgba(160,150,135,.2); --fill-2:rgba(160,150,135,.12);
-  --tint:#e3b766; --tint-ink:#1c1405; --tint-fill:rgba(227,183,102,.15); --cell-solid:#26231e; color-scheme:dark}}
+  --label:#eef3f8; --label-2:rgba(225,235,245,.66); --label-3:rgba(225,235,245,.42); --fill:rgba(140,155,175,.2); --fill-2:rgba(140,155,175,.12);
+  --tint:#8fbbe6; --tint-ink:#06121e; --tint-fill:rgba(143,187,230,.15); --cell-solid:#1e232a; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --w0:#070605; --w1:#3a2c14; --w2:#16261d; --w3:#2a2114; --w4:#1a1915;
-  --g:rgba(255,255,255,.075); --g-2:rgba(255,255,255,.06); --g-strong:rgba(20,18,15,.66); --edge:rgba(255,255,255,.15); --edge-2:rgba(255,255,255,.06);
+  --w0:#05070a; --w1:#132a40; --w2:#11231f; --w3:#161d28; --w4:#0f1d2b;
+  --g:rgba(255,255,255,.075); --g-2:rgba(255,255,255,.06); --g-strong:rgba(15,18,22,.66); --edge:rgba(255,255,255,.15); --edge-2:rgba(255,255,255,.06);
   --gshadow:0 1px 1px rgba(0,0,0,.3),0 8px 18px rgba(0,0,0,.35);
-  --label:#f6f2ea; --label-2:rgba(240,232,220,.66); --label-3:rgba(240,232,220,.42); --fill:rgba(160,150,135,.2); --fill-2:rgba(160,150,135,.12);
-  --tint:#e3b766; --tint-ink:#1c1405; --tint-fill:rgba(227,183,102,.15); --cell-solid:#26231e; color-scheme:dark}
+  --label:#eef3f8; --label-2:rgba(225,235,245,.66); --label-3:rgba(225,235,245,.42); --fill:rgba(140,155,175,.2); --fill-2:rgba(140,155,175,.12);
+  --tint:#8fbbe6; --tint-ink:#06121e; --tint-fill:rgba(143,187,230,.15); --cell-solid:#1e232a; color-scheme:dark}
 *{box-sizing:border-box}
 html{background:var(--w0)}
 body{margin:0;background:transparent;color:var(--label);font-family:var(--sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
@@ -69,12 +69,12 @@ main{max-width:560px;margin:0 auto;padding-block:18px 128px;padding-left:max(16p
 /* glass surfaces */
 .card,.list,.figs div,.meter,.tile,.fx-foot,.seg,.ping,.sheet{background:var(--g);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);box-shadow:inset 0 1px 0 var(--edge),inset 0 0 0 .5px var(--edge-2),var(--gshadow)}
 .card{border-radius:22px;padding:18px}
-.focus{background:linear-gradient(160deg,rgba(176,124,40,.16),rgba(176,124,40,.05));border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:12px;-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);box-shadow:inset 0 1px 0 var(--edge),var(--gshadow)}
+.focus{background:linear-gradient(160deg,rgba(47,102,144,.14),rgba(47,102,144,.04));border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:12px;-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);box-shadow:inset 0 1px 0 var(--edge),var(--gshadow)}
 .focus .stmt{font-family:var(--serif);font-weight:700;font-size:23px;line-height:1.55}
 .btn,.chip,.iconbtn,input[type=text],textarea,.qa{background:var(--g-2);box-shadow:inset 0 1px 0 var(--edge),inset 0 0 0 .5px var(--edge-2)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 22px;border-radius:999px;font-size:16px;font-weight:600}
 .btn.solid{background:var(--label);color:var(--w0);box-shadow:0 6px 14px rgba(0,0,0,.14)}
-.btn.acc{background:var(--tint);color:var(--tint-ink);box-shadow:0 6px 14px rgba(140,95,20,.25)}
+.btn.acc{background:var(--tint);color:var(--tint-ink);box-shadow:0 6px 14px rgba(47,102,144,.25)}
 .btn.sm{min-height:36px;padding:0 15px;font-size:14px}
 .btn:disabled{opacity:.3}
 .iconbtn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--label-2);flex:none}
@@ -100,8 +100,8 @@ input::placeholder,textarea::placeholder{color:var(--label-3)}
 .orbbtn{width:min(54vw,210px);aspect-ratio:1;position:relative;display:grid;place-items:center;border-radius:50%}
 .orb3d{position:absolute;inset:0;display:block}
 .orbgl{position:absolute;inset:-6%;width:112%;height:112%;display:block}
-.orbfb{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.9),rgba(255,255,255,0) 40%),radial-gradient(circle at 50% 62%,#d8a95a,#8a5d14 74%)}
-.orbbtn .lbl{position:relative;font-weight:700;font-size:19px;color:#fff;text-shadow:0 1px 3px rgba(60,35,0,.35);text-align:center;line-height:1.35;pointer-events:none}
+.orbfb{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.9),rgba(255,255,255,0) 40%),radial-gradient(circle at 50% 62%,#7fa9d2,#2f5f88 74%)}
+.orbbtn .lbl{position:relative;font-weight:700;font-size:19px;color:#fff;text-shadow:0 1px 3px rgba(10,30,55,.35);text-align:center;line-height:1.35;pointer-events:none}
 .orbbtn .lbl small{display:block;font-size:12.5px;font-weight:500;opacity:.95}
 .count{font-weight:800;font-size:30px;font-variant-numeric:tabular-nums;letter-spacing:-.01em;display:inline-block}
 .qa-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -165,7 +165,7 @@ input::placeholder,textarea::placeholder{color:var(--label-3)}
 .big-stmt{font-family:var(--serif);font-weight:700;font-size:26px;line-height:1.6;text-align:center}
 .ring{width:64px;height:64px}
 .ring circle{fill:none;stroke-width:5;stroke-linecap:round}
-.note{border-radius:20px;padding:14px 16px;background:linear-gradient(160deg,rgba(176,124,40,.14),rgba(176,124,40,.05));font-size:14.5px;line-height:1.7;box-shadow:inset 0 1px 0 var(--edge)}
+.note{border-radius:20px;padding:14px 16px;background:linear-gradient(160deg,rgba(47,102,144,.13),rgba(47,102,144,.04));font-size:14.5px;line-height:1.7;box-shadow:inset 0 1px 0 var(--edge)}
 .scrim{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.22);animation:fade .25s both}
 @keyframes fade{from{opacity:0}}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:51;max-height:88vh;overflow:auto;border-radius:26px 26px 0 0;background:var(--g-strong);-webkit-backdrop-filter:blur(40px) saturate(160%);backdrop-filter:blur(40px) saturate(160%);
@@ -175,9 +175,9 @@ input::placeholder,textarea::placeholder{color:var(--label-3)}
 @media (min-width:640px){.sheet{left:50%;right:auto;width:560px;margin-left:-280px;bottom:20px;border-radius:26px}}
 .hapt{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;overflow:hidden}
 /* motion */
-.wave{position:fixed;border-radius:50%;pointer-events:none;z-index:45;box-shadow:inset 0 0 0 2px #d8a95a;transform:translate(-50%,-50%) scale(.7);opacity:.9;animation:ripple 1.4s var(--ease) forwards}
+.wave{position:fixed;border-radius:50%;pointer-events:none;z-index:45;box-shadow:inset 0 0 0 2px #7fa9d2;transform:translate(-50%,-50%) scale(.7);opacity:.9;animation:ripple 1.4s var(--ease) forwards}
 @keyframes ripple{to{transform:translate(-50%,-50%) scale(2.1);opacity:0}}
-.mote{position:fixed;border-radius:50%;background:#e2b56a;pointer-events:none;z-index:45;animation:mote var(--d,1.6s) cubic-bezier(.2,.7,.3,1) forwards}
+.mote{position:fixed;border-radius:50%;background:#9cc0e2;pointer-events:none;z-index:45;animation:mote var(--d,1.6s) cubic-bezier(.2,.7,.3,1) forwards}
 @keyframes mote{from{transform:translate(-50%,-50%);opacity:.9}to{transform:translate(calc(-50% + var(--x)),calc(-50% - var(--y))) scale(.3);opacity:0}}
 .plus{position:fixed;z-index:45;font-weight:800;font-size:18px;color:var(--tint);pointer-events:none;animation:plus .9s var(--ease) forwards}
 @keyframes plus{from{transform:translate(-50%,0);opacity:1}to{transform:translate(-50%,-38px);opacity:0}}
@@ -269,11 +269,11 @@ float fbm(vec2 p){float a=.5,r=0.;for(int i=0;i<4;i++){r+=a*n(p);p*=2.03;a*=.5;}
 void main(){vec2 p=v/(s*.9);p.x/=1.+q;p.y/=1.-q*.9;float r=length(p);float A=1.-smoothstep(1.-aa,1.,r);if(A<=0.)discard;
   float z=sqrt(max(0.,1.-r*r));vec3 N=normalize(vec3(p,z));vec2 fp=p*1.5+vec2(t*.04,-t*.05);float f=fbm(fp+fbm(fp*1.3+t*(.03+e*.25))*1.6+e*.6);
   N=normalize(N+vec3((f-.5)*.22*(.5+e),(fbm(fp.yx+3.1)-.5)*.22*(.5+e),0.));
-  vec3 deep=mix(vec3(.56,.38,.13),vec3(.50,.33,.10),dk),mid=mix(vec3(.88,.70,.40),vec3(.86,.66,.34),dk),lite=mix(vec3(.99,.93,.80),vec3(.98,.90,.74),dk);
+  vec3 deep=mix(vec3(.13,.29,.46),vec3(.16,.34,.55),dk),mid=mix(vec3(.42,.63,.83),vec3(.48,.70,.92),dk),lite=mix(vec3(.88,.94,.99),vec3(.84,.93,1.),dk);
   float g=clamp(p.y*.55+.5+(f-.5)*.7,0.,1.);vec3 base=mix(deep,mid,smoothstep(0.,.55,g));base=mix(base,lite,smoothstep(.55,1.,g)*.75);
   vec3 Ld=normalize(vec3(L,1.1));float dif=.62+.38*max(dot(N,Ld),0.);vec3 H=normalize(Ld+vec3(0.,0.,1.));
   float sp=pow(max(dot(N,H),0.),70.)*.55+pow(max(dot(N,H),0.),9.)*.12;float fr=pow(1.-z,2.6);
-  vec3 col=base*dif+vec3(1.)*sp+vec3(1.,.95,.82)*fr*.5;col+=vec3(1.,.9,.7)*pow(clamp(-p.y*.9+.1,0.,1.),3.)*.18*(1.-z*.4);col+=vec3(1.)*smoothstep(.985,1.,r)*.25;
+  vec3 col=base*dif+vec3(1.)*sp+vec3(.86,.94,1.)*fr*.5;col+=vec3(.8,.9,1.)*pow(clamp(-p.y*.9+.1,0.,1.),3.)*.18*(1.-z*.4);col+=vec3(1.)*smoothstep(.985,1.,r)*.25;
   gl_FragColor=vec4(col*A*al,A*al);}`;
 const ORBS=new Set();let orbRAF=0,orbLast=0;
 function makeOrb(host){const fb=()=>{const sp=document.createElement('span');sp.className='orbfb';host.appendChild(sp);return null};

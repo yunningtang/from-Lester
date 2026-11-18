@@ -1,0 +1,16 @@
+{
+ "name": "释放与显化",
+ "short_name": "释放显化",
+ "start_url": "./",
+ "display": "standalone",
+ "background_color": "#eef1ef",
+ "theme_color": "#1f8a63",
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any maskable"
+  }
+ ]
+}

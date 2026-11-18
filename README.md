@@ -55,3 +55,7 @@
 - **我的**：练习天数、肯定次数、感恩、已显化，最近记录，外观、触感、每日肯定目标
 
 修改 `manifest-tool/app.html` 后运行 `python3 tools/build_manifest.py`。
+
+## 释放与显化（合一版，推荐）
+
+`app/` 把“释放随身”和“显化随身”合成一个应用：顶部的分段开关在 **释放版**（绿色）和 **显化版**（灰蓝色）之间切换，记住上次使用的模式；两种模式各自保存数据，夜间模式共用。由 `python3 tools/build_app.py` 从 `release-tool/app.html` 和 `manifest-tool/app.html` 生成，修改任一工具后重新运行即可。
