@@ -269,7 +269,7 @@ float fbm(vec2 p){float a=.5,r=0.;for(int i=0;i<4;i++){r+=a*n(p);p*=2.03;a*=.5;}
 void main(){vec2 p=v/(s*.9);p.x/=1.+q;p.y/=1.-q*.9;float r=length(p);float A=1.-smoothstep(1.-aa,1.,r);if(A<=0.)discard;
   float z=sqrt(max(0.,1.-r*r));vec3 N=normalize(vec3(p,z));vec2 fp=p*1.5+vec2(t*.04,-t*.05);float f=fbm(fp+fbm(fp*1.3+t*(.03+e*.25))*1.6+e*.6);
   N=normalize(N+vec3((f-.5)*.22*(.5+e),(fbm(fp.yx+3.1)-.5)*.22*(.5+e),0.));
-  vec3 deep=mix(vec3(.42,.27,.08),vec3(.50,.33,.10),dk),mid=mix(vec3(.80,.60,.30),vec3(.86,.66,.34),dk),lite=mix(vec3(.99,.93,.80),vec3(.98,.90,.74),dk);
+  vec3 deep=mix(vec3(.56,.38,.13),vec3(.50,.33,.10),dk),mid=mix(vec3(.88,.70,.40),vec3(.86,.66,.34),dk),lite=mix(vec3(.99,.93,.80),vec3(.98,.90,.74),dk);
   float g=clamp(p.y*.55+.5+(f-.5)*.7,0.,1.);vec3 base=mix(deep,mid,smoothstep(0.,.55,g));base=mix(base,lite,smoothstep(.55,1.,g)*.75);
   vec3 Ld=normalize(vec3(L,1.1));float dif=.62+.38*max(dot(N,Ld),0.);vec3 H=normalize(Ld+vec3(0.,0.,1.));
   float sp=pow(max(dot(N,H),0.),70.)*.55+pow(max(dot(N,H),0.),9.)*.12;float fr=pow(1.-z,2.6);
@@ -413,7 +413,7 @@ function pickSheet(){sheet(`<h2>今天专注哪一个？</h2><div class="sect">$
 /* ---------- guided practice (full screen) ---------- */
 let P=null;const PN=['放下想要','看见它','已经完成','相反的念头','放手'];
 function openPractice(){const f=focus();if(!f)return;P={f,step:1,dir:1,rel:0,opp:new Set(),orel:0,grat:'',vis:0};
-  $('#layer').innerHTML=`<div class="fx" id="fx" role="dialog" aria-label="显化练习"><div class="fx-top"><button class="iconbtn" id="px" aria-label="关闭">${icon('close')}</button><div class="segs" id="psegs"></div><span class="cap" id="pname" style="width:4.5em;text-align:right"></span></div><div class="fx-body" id="pbody"></div><div class="fx-foot" id="pfoot"></div></div>`;
+  $('#layer').innerHTML=`<div class="fx" id="fx" role="dialog" aria-label="显化练习"><div class="fx-top"><button class="iconbtn" id="px" aria-label="关闭">${icon('close')}</button><div class="segs" id="psegs"></div><span class="cap" id="pname" style="min-width:5.5em;text-align:right;white-space:nowrap"></span></div><div class="fx-body" id="pbody"></div><div class="fx-foot" id="pfoot"></div></div>`;
   $('#px').onclick=closePractice;paintP()}
 function closePractice(){const fx=$('#fx');clearInterval(P&&P.timer);P=null;if(fx&&!CALM){fx.classList.add('out');setTimeout(()=>{$('#layer').innerHTML='';render()},260)}else{$('#layer').innerHTML='';render()}}
 function pgo(s){P.dir=s>=P.step?1:-1;P.step=s;clearInterval(P.timer);paintP()}
