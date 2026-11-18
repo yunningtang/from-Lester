@@ -1,0 +1,467 @@
+<title>显化随身</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&display=swap">
+<style>
+/* Layout: one phone column of frosted glass over a calm, slowly drifting warm-stone backdrop.
+   The amber orb is the one bold visual: tap it to affirm, it carries every step of the practice. */
+:root{
+  --w0:#f1f0ec; --w1:#e4d6bb; --w2:#d3ddd3; --w3:#e9e0cf; --w4:#d9d6cc;
+  --g:rgba(255,255,255,.44); --g-2:rgba(255,255,255,.34); --g-strong:rgba(250,249,246,.66); --edge:rgba(255,255,255,.78); --edge-2:rgba(255,255,255,.35);
+  --gshadow:0 1px 1px rgba(0,0,0,.03),0 8px 16px rgba(70,55,25,.07); --blur:blur(24px) saturate(170%);
+  --label:#17140f; --label-2:rgba(60,55,45,.72); --label-3:rgba(60,55,45,.5); --fill:rgba(120,110,95,.13); --fill-2:rgba(120,110,95,.08);
+  --tint:#8a5d14; --tint-ink:#ffffff; --tint-fill:rgba(160,110,30,.13); --cell-solid:#ffffff;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
+  --serif:"Noto Serif SC","Songti SC","STSong",serif;
+  --spring:cubic-bezier(.32,1.25,.5,1); --ease:cubic-bezier(.22,1,.36,1); color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --w0:#070605; --w1:#3a2c14; --w2:#16261d; --w3:#2a2114; --w4:#1a1915;
+  --g:rgba(255,255,255,.075); --g-2:rgba(255,255,255,.06); --g-strong:rgba(20,18,15,.66); --edge:rgba(255,255,255,.15); --edge-2:rgba(255,255,255,.06);
+  --gshadow:0 1px 1px rgba(0,0,0,.3),0 8px 18px rgba(0,0,0,.35);
+  --label:#f6f2ea; --label-2:rgba(240,232,220,.66); --label-3:rgba(240,232,220,.42); --fill:rgba(160,150,135,.2); --fill-2:rgba(160,150,135,.12);
+  --tint:#e3b766; --tint-ink:#1c1405; --tint-fill:rgba(227,183,102,.15); --cell-solid:#26231e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --w0:#070605; --w1:#3a2c14; --w2:#16261d; --w3:#2a2114; --w4:#1a1915;
+  --g:rgba(255,255,255,.075); --g-2:rgba(255,255,255,.06); --g-strong:rgba(20,18,15,.66); --edge:rgba(255,255,255,.15); --edge-2:rgba(255,255,255,.06);
+  --gshadow:0 1px 1px rgba(0,0,0,.3),0 8px 18px rgba(0,0,0,.35);
+  --label:#f6f2ea; --label-2:rgba(240,232,220,.66); --label-3:rgba(240,232,220,.42); --fill:rgba(160,150,135,.2); --fill-2:rgba(160,150,135,.12);
+  --tint:#e3b766; --tint-ink:#1c1405; --tint-fill:rgba(227,183,102,.15); --cell-solid:#26231e; color-scheme:dark}
+*{box-sizing:border-box}
+html{background:var(--w0)}
+body{margin:0;background:transparent;color:var(--label);font-family:var(--sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+input,textarea{-webkit-user-select:text;user-select:text}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;touch-action:manipulation}
+:focus-visible{outline:2px solid var(--tint);outline-offset:3px;border-radius:12px}
+h1,h2,h3,p{margin:0}
+h1{font-size:32px;font-weight:800;line-height:1.2;letter-spacing:-.01em;text-wrap:balance}
+h2{font-size:20px;font-weight:700;line-height:1.35;text-wrap:balance}
+.serif{font-family:var(--serif)}
+.meta{font-size:15px;color:var(--label-2)}
+.cap{font-size:13px;color:var(--label-3);line-height:1.55}
+.amb{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:var(--w0)}
+.amb i{position:absolute;border-radius:50%;filter:blur(60px);opacity:.8;will-change:transform}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .amb i{opacity:.45}}
+:root[data-theme="dark"] .amb i{opacity:.45}
+.amb i:nth-child(1){width:52vmax;height:52vmax;left:-18vmax;top:-16vmax;background:var(--w1);animation:d1 40s ease-in-out infinite alternate}
+.amb i:nth-child(2){width:46vmax;height:46vmax;right:-20vmax;top:22vmax;background:var(--w2);animation:d2 48s ease-in-out infinite alternate}
+.amb i:nth-child(3){width:44vmax;height:44vmax;left:-14vmax;bottom:-14vmax;background:var(--w3);animation:d3 54s ease-in-out infinite alternate}
+.amb i:nth-child(4){width:34vmax;height:34vmax;right:-8vmax;bottom:6vmax;background:var(--w4);animation:d1 62s ease-in-out infinite alternate-reverse}
+@keyframes d1{to{transform:translate(12vmax,10vmax) scale(1.1)}}@keyframes d2{to{transform:translate(-14vmax,12vmax) scale(.92)}}@keyframes d3{to{transform:translate(10vmax,-12vmax) scale(1.08)}}
+main{max-width:560px;margin:0 auto;padding-block:18px 128px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:26px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.split{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.sect{display:flex;flex-direction:column;gap:12px}
+.sect>h2{padding-left:4px}
+/* glass surfaces */
+.card,.list,.figs div,.meter,.tile,.fx-foot,.seg,.ping,.sheet{background:var(--g);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);box-shadow:inset 0 1px 0 var(--edge),inset 0 0 0 .5px var(--edge-2),var(--gshadow)}
+.card{border-radius:22px;padding:18px}
+.focus{background:linear-gradient(160deg,rgba(176,124,40,.16),rgba(176,124,40,.05));border-radius:28px;padding:20px;display:flex;flex-direction:column;gap:12px;-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);box-shadow:inset 0 1px 0 var(--edge),var(--gshadow)}
+.focus .stmt{font-family:var(--serif);font-weight:700;font-size:23px;line-height:1.55}
+.btn,.chip,.iconbtn,input[type=text],textarea,.qa{background:var(--g-2);box-shadow:inset 0 1px 0 var(--edge),inset 0 0 0 .5px var(--edge-2)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 22px;border-radius:999px;font-size:16px;font-weight:600}
+.btn.solid{background:var(--label);color:var(--w0);box-shadow:0 6px 14px rgba(0,0,0,.14)}
+.btn.acc{background:var(--tint);color:var(--tint-ink);box-shadow:0 6px 14px rgba(140,95,20,.25)}
+.btn.sm{min-height:36px;padding:0 15px;font-size:14px}
+.btn:disabled{opacity:.3}
+.iconbtn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--label-2);flex:none}
+.iconbtn svg{width:20px;height:20px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:8px 15px;border-radius:999px;font-size:14.5px;font-weight:600}
+.chip.on{background:var(--tint);color:var(--tint-ink);box-shadow:0 4px 10px rgba(0,0,0,.12)}
+input[type=text],textarea{width:100%;font:inherit;font-size:17px;color:var(--label);border:0;border-radius:14px;padding:12px 16px}
+textarea{min-height:84px;resize:vertical;line-height:1.6}
+input::placeholder,textarea::placeholder{color:var(--label-3)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13.5px;font-weight:600;color:var(--label-2);padding-left:4px}
+.tap{transition:transform .35s var(--spring),opacity .2s,background-color .25s,color .25s}
+.tap.down{transform:scale(.96);opacity:.75;transition:transform .1s ease,opacity .1s}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.top .r{display:flex;align-items:center;gap:8px}
+.streak{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:14px;color:var(--label-2)}
+.streak svg{width:16px;height:16px;color:#e07a1f}
+.bar{height:6px;border-radius:3px;background:var(--fill);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:3px;background:var(--tint);transition:width .8s var(--ease)}
+/* orb */
+.orbbox{display:flex;flex-direction:column;align-items:center;gap:10px;padding:4px 0}
+.orbbtn{width:min(54vw,210px);aspect-ratio:1;position:relative;display:grid;place-items:center;border-radius:50%}
+.orb3d{position:absolute;inset:0;display:block}
+.orbgl{position:absolute;inset:-6%;width:112%;height:112%;display:block}
+.orbfb{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.9),rgba(255,255,255,0) 40%),radial-gradient(circle at 50% 62%,#d8a95a,#8a5d14 74%)}
+.orbbtn .lbl{position:relative;font-weight:700;font-size:19px;color:#fff;text-shadow:0 1px 3px rgba(60,35,0,.35);text-align:center;line-height:1.35;pointer-events:none}
+.orbbtn .lbl small{display:block;font-size:12.5px;font-weight:500;opacity:.95}
+.count{font-weight:800;font-size:30px;font-variant-numeric:tabular-nums;letter-spacing:-.01em;display:inline-block}
+.qa-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.qa{border-radius:22px;padding:16px;text-align:left;display:flex;flex-direction:column;gap:3px;min-height:80px;-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
+.qa b{font-size:16.5px;font-weight:700}
+.qa small{font-size:12.5px;color:var(--label-2);line-height:1.5}
+.grat{display:flex;flex-direction:column;gap:8px}
+.grat .gi{display:flex;gap:10px;align-items:center}
+.grat .gi span{font-family:var(--serif);font-weight:700;color:var(--tint);width:1.2em;text-align:center}
+.quote{font-family:var(--serif);font-weight:500;font-size:19px;line-height:1.8}
+.tile{border-radius:22px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;text-align:left;width:100%}
+.tile .st{font-family:var(--serif);font-weight:700;font-size:18px;line-height:1.5}
+.badge{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--tint-fill);color:var(--tint);flex:none}
+.badge.ok{background:rgba(52,170,110,.16);color:#2b8a5a}
+.list{border-radius:22px;overflow:hidden;padding:4px 0}
+.list>*{display:flex;gap:12px;align-items:center;padding:11px 16px;width:100%;text-align:left}
+.list .grow{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.list small{font-size:12.5px;color:var(--label-2)}
+.time{font-variant-numeric:tabular-nums;font-size:13px;color:var(--label-3);flex:none;width:3.4em}
+.figs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.figs div{display:flex;flex-direction:column;border-radius:20px;padding:14px}
+.figs b{font-size:26px;font-weight:800;line-height:1.15;font-variant-numeric:tabular-nums}
+.figs span{font-size:12.5px;color:var(--label-2)}
+.pull{font-family:var(--serif);font-weight:500;font-size:17.5px;line-height:1.85;padding-left:18px;position:relative}
+.pull::before{content:"“";position:absolute;left:-2px;top:-6px;font-size:34px;line-height:1;color:var(--tint);font-family:var(--serif)}
+.steps{list-style:none;margin:0;padding:0;counter-reset:s;display:flex;flex-direction:column;gap:12px}
+.steps li{counter-increment:s;display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;line-height:1.7;font-size:15.5px}
+.steps li::before{content:counter(s);font-weight:800;font-size:18px;color:var(--tint)}
+.seg{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;padding:2px;border-radius:10px}
+.seg .thumb{position:absolute;top:2px;bottom:2px;left:2px;border-radius:8px;background:rgba(255,255,255,.85);box-shadow:inset 0 1px 0 #fff,0 3px 8px rgba(0,0,0,.12);transition:transform .45s var(--spring)}
+.seg button{position:relative;z-index:1;padding:7px 4px;font-size:13.5px;font-weight:600;border-radius:8px}
+.switch{position:relative;width:51px;height:31px;border-radius:999px;background:var(--fill);flex:none;transition:background .3s}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:transform .4s var(--spring)}
+.switch.on{background:#34c759}.switch.on::after{transform:translateX(20px)}
+.setrow{display:flex;justify-content:space-between;align-items:center;gap:12px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .seg .thumb,:root:not([data-theme="light"]) .tabs .pill{background:rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}}
+:root[data-theme="dark"] .seg .thumb,:root[data-theme="dark"] .tabs .pill{background:rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+/* tab bar */
+.dock{position:fixed;left:0;right:0;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;justify-content:center;padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px));pointer-events:none}
+.tabs{pointer-events:auto;position:relative;display:flex;padding:5px;border-radius:999px;width:100%;max-width:420px;background:var(--g-strong);-webkit-backdrop-filter:blur(28px) saturate(170%);backdrop-filter:blur(28px) saturate(170%);box-shadow:inset 0 1px 0 var(--edge),inset 0 0 0 .5px var(--edge-2),0 10px 24px rgba(0,0,0,.1)}
+.tabs .pill{position:absolute;top:5px;bottom:5px;left:5px;border-radius:999px;background:rgba(255,255,255,.72);box-shadow:inset 0 1px 0 #fff,0 2px 6px rgba(0,0,0,.08);transition:transform .45s var(--spring)}
+.tabs button{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 2px;border-radius:999px;font-size:11.5px;font-weight:600;color:var(--label-3);transition:color .3s}
+.tabs svg{width:22px;height:22px}
+.tabs .on{color:var(--tint)}
+/* full-screen practice + sheets */
+.fx{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;background:var(--g-strong);-webkit-backdrop-filter:blur(40px) saturate(160%);backdrop-filter:blur(40px) saturate(160%);animation:up .42s var(--ease) both}
+.fx.out{animation:downout .28s ease forwards}
+@keyframes up{from{transform:translateY(40px);opacity:0}}@keyframes downout{to{transform:translateY(40px);opacity:0}}
+.fx-top{display:flex;align-items:center;gap:12px;padding:calc(10px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+.segs{flex:1;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:5px}
+.segs i{height:4px;border-radius:2px;background:var(--fill);transition:background .5s}
+.segs i.on{background:var(--tint)}
+.fx-body{flex:1;overflow:auto;padding:10px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.fx-in{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.fx-in.fwd{animation:swapf .38s var(--ease) both}.fx-in.back{animation:swapb .38s var(--ease) both}
+@keyframes swapf{from{opacity:0;transform:translateX(26px)}}@keyframes swapb{from{opacity:0;transform:translateX(-26px)}}
+.fx-foot{display:flex;gap:10px;justify-content:space-between;align-items:center;border-radius:26px 26px 0 0;padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.stage{display:flex;flex-direction:column;align-items:center;gap:18px;padding:6px 0}
+.ball{width:230px;height:230px;position:relative}
+.say-big{font-family:var(--serif);font-weight:500;font-size:21px;line-height:1.8;text-align:center}
+.big-stmt{font-family:var(--serif);font-weight:700;font-size:26px;line-height:1.6;text-align:center}
+.ring{width:64px;height:64px}
+.ring circle{fill:none;stroke-width:5;stroke-linecap:round}
+.note{border-radius:20px;padding:14px 16px;background:linear-gradient(160deg,rgba(176,124,40,.14),rgba(176,124,40,.05));font-size:14.5px;line-height:1.7;box-shadow:inset 0 1px 0 var(--edge)}
+.scrim{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.22);animation:fade .25s both}
+@keyframes fade{from{opacity:0}}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:51;max-height:88vh;overflow:auto;border-radius:26px 26px 0 0;background:var(--g-strong);-webkit-backdrop-filter:blur(40px) saturate(160%);backdrop-filter:blur(40px) saturate(160%);
+  padding:10px max(18px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px;animation:up .42s var(--spring) both}
+.sheet.out{animation:downout .25s ease forwards}
+.sheet .grab{width:38px;height:5px;border-radius:3px;background:var(--fill);align-self:center;margin-bottom:4px}
+@media (min-width:640px){.sheet{left:50%;right:auto;width:560px;margin-left:-280px;bottom:20px;border-radius:26px}}
+.hapt{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;overflow:hidden}
+/* motion */
+.wave{position:fixed;border-radius:50%;pointer-events:none;z-index:45;box-shadow:inset 0 0 0 2px #d8a95a;transform:translate(-50%,-50%) scale(.7);opacity:.9;animation:ripple 1.4s var(--ease) forwards}
+@keyframes ripple{to{transform:translate(-50%,-50%) scale(2.1);opacity:0}}
+.mote{position:fixed;border-radius:50%;background:#e2b56a;pointer-events:none;z-index:45;animation:mote var(--d,1.6s) cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes mote{from{transform:translate(-50%,-50%);opacity:.9}to{transform:translate(calc(-50% + var(--x)),calc(-50% - var(--y))) scale(.3);opacity:0}}
+.plus{position:fixed;z-index:45;font-weight:800;font-size:18px;color:var(--tint);pointer-events:none;animation:plus .9s var(--ease) forwards}
+@keyframes plus{from{transform:translate(-50%,0);opacity:1}to{transform:translate(-50%,-38px);opacity:0}}
+.bump{animation:bump .45s var(--spring)}@keyframes bump{40%{transform:scale(1.3)}}
+.fadeswap{animation:fadeswap .5s ease}@keyframes fadeswap{from{opacity:0;transform:translateY(6px)}}
+main.tabin>*{animation:tabin .45s var(--ease) both}main.tabin>*:nth-child(2){animation-delay:.04s}main.tabin>*:nth-child(3){animation-delay:.08s}main.tabin>*:nth-child(n+4){animation-delay:.12s}
+@keyframes tabin{from{opacity:0;transform:translateY(12px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="amb" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<main id="main"></main>
+<div class="dock"><nav class="tabs" id="tabs" aria-label="主导航"></nav></div>
+<div id="layer"></div>
+
+<script>
+(function(){
+const QUOTES=/*QUOTES*/[];
+const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const store={get(k,d){try{const v=localStorage.getItem('mfs:'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('mfs:'+k,JSON.stringify(v))}catch(e){}}};
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today=()=>ymd(new Date());const hm=d=>String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+const uid=()=>'i'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const Qs=tag=>QUOTES.filter(q=>q.tag===tag);const qsrc=q=>`${esc(q.c)}《${esc(q.t)}》，第 ${q.p} 页`;
+const qline=(q,big)=>q?`<p class="pull" ${big?'':'style="font-size:16px"'}>${esc(q.q)}</p><p class="cap" style="padding-left:18px">${qsrc(q)}</p>`:'';
+
+/* ---------- content ---------- */
+// 相反的念头：莱斯特说阻碍显化的是“相反的潜意识念头”。底下多半是想要认同、控制或安全。
+const OPP=[{t:'不可能',w:'想要安全'},{t:'我不配',w:'想要被认同'},{t:'太难了，要很努力',w:'想要控制'},{t:'万一不行怎么办',w:'想要安全'},{t:'怎么还没来',w:'想要控制'},{t:'别人可以，我不行',w:'想要被认同'},{t:'我得想办法让它发生',w:'想要控制'},{t:'等有了它我才会快乐',w:'想要安全'}];
+const ICON={
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',
+  home:'<path d="M4 10.5 12 4l8 6.5V20h-5v-6H9v6H4z"/>',
+  star:'<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>',
+  repeat:'<path d="M17 2l3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12"/><path d="M7 22l-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/>',
+  book:'<path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/>',
+  me:'<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c1.2-3.6 4-5.5 7-5.5s5.8 1.9 7 5.5"/>',
+  close:'<path d="M6 6l12 12M18 6 6 18"/>',plus:'<path d="M12 5v14M5 12h14"/>',
+  flame:'<path d="M12 21c-3.9 0-6.5-2.6-6.5-6.1 0-3.2 2.3-5 3.6-7.4.4 1.7 1.3 2.7 2.4 3.2C11.3 7.6 12.6 4.6 15 3c-.2 3 2.2 4.8 3.2 7 .9 1.9 1.3 3.2 1.3 4.8C19.5 18.4 16 21 12 21z"/>'};
+const icon=(k,f)=>`<svg viewBox="0 0 24 24" fill="${f?'currentColor':'none'}" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${ICON[k]}</svg>`;
+
+/* ---------- state ---------- */
+let CFG=Object.assign({theme:'auto',haptic:true,target:50,beat:3},store.get('cfg',{}));
+let INT=store.get('int',[]);      // intentions
+let FOC=store.get('foc',null);     // focused intention id
+let SES=store.get('ses',[]);       // practice sessions
+let AFF=store.get('aff',{});       // {date:{id:n}}
+let GRA=store.get('gra',{});       // {date:[a,b,c]}
+let EVI=store.get('evi',[]);       // signs / evidence
+let OPL=store.get('opl',[]);       // opposite thoughts released
+let ACT=store.get('act',{});
+const save=()=>{['cfg','int','foc','ses','aff','gra','evi','opl','act'].forEach((k,i)=>store.set(k,[CFG,INT,FOC,SES,AFF,GRA,EVI,OPL,ACT][i]))};
+const touch=()=>{ACT[today()]=1};
+function streak(){let n=0;const d=new Date();if(!ACT[ymd(d)])d.setDate(d.getDate()-1);while(ACT[ymd(d)]){n++;d.setDate(d.getDate()-1)}return n}
+const focus=()=>INT.find(i=>i.id===FOC&&i.status!=='done')||INT.find(i=>i.status!=='done')||null;
+const affToday=id=>((AFF[today()]||{})[id])||0;
+const affAll=id=>Object.values(AFF).reduce((a,d)=>a+(d[id]||0),0);
+const daysOf=i=>Math.max(1,Math.floor((Date.now()-new Date(i.created).getTime())/864e5)+1);
+
+/* ---------- haptics, press, theme ---------- */
+const IOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+let HAPT=null;const HP={tick:8,tap:14,affirm:10,release:[18,40,10],success:[12,60,24]};
+function hap(k){if(!CFG.haptic)return;try{if(navigator.vibrate&&!IOS){navigator.vibrate(HP[k]||8);return}}catch(e){}
+  if(IOS){try{if(!HAPT){HAPT=document.createElement('label');HAPT.className='hapt';HAPT.setAttribute('aria-hidden','true');HAPT.innerHTML='<input type="checkbox" switch tabindex="-1">';document.body.appendChild(HAPT)}HAPT.click();if(k==='success'||k==='release')setTimeout(()=>HAPT.click(),90)}catch(e){}}}
+document.addEventListener('pointerdown',e=>{const t=e.target.closest('button,.qa,.tile');if(!t||t.disabled)return;t.classList.add('tap','down');
+  const up=()=>{t.classList.remove('down');removeEventListener('pointerup',up);removeEventListener('pointercancel',up)};addEventListener('pointerup',up);addEventListener('pointercancel',up)},{passive:true});
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(t&&!t.disabled&&!t.dataset.h)hap('tick')},true);
+const isDark=()=>CFG.theme==='dark'||(CFG.theme==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches);
+function applyTheme(){const r=document.documentElement;if(CFG.theme==='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',CFG.theme)}
+applyTheme();matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{applyTheme();render()});
+let AC=null;function chime(f){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f||528;
+  g.gain.setValueAtTime(.0001,AC.currentTime);g.gain.exponentialRampToValueAtTime(.04,AC.currentTime+.04);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+1.2);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+1.3)}catch(e){}}
+
+/* ---------- motion helpers ---------- */
+const CALM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function center(el){const r=el.getBoundingClientRect();return [r.left+r.width/2,r.top+r.height/2,r.width,r.height]}
+function wave(el,n,sc){if(CALM||!el)return;const [x,y,w]=center(el);for(let i=0;i<(n||1);i++){const s=document.createElement('span');s.className='wave';s.style.cssText=`left:${x}px;top:${y}px;width:${w*(sc||1)}px;height:${w*(sc||1)}px;animation-delay:${i*.18}s`;document.body.appendChild(s);s.addEventListener('animationend',()=>s.remove())}}
+function motes(el,n){if(CALM||!el)return;const [x,y,w,h]=center(el);for(let i=0;i<(n||8);i++){const s=document.createElement('span');s.className='mote';s.style.cssText=`left:${x+(Math.random()-.5)*w*.9}px;top:${y+(Math.random()-.3)*h*.4}px;--x:${(Math.random()-.5)*60}px;--y:${90+Math.random()*120}px;--d:${1.2+Math.random()*1.2}s;width:${4+Math.random()*5}px;height:${4+Math.random()*5}px`;document.body.appendChild(s);s.addEventListener('animationend',()=>s.remove())}}
+function plus(el,t){if(CALM||!el)return;const r=el.getBoundingClientRect(),s=document.createElement('span');s.className='plus';s.textContent=t||'+1';s.style.cssText=`left:${r.left+r.width/2}px;top:${r.top+10}px`;document.body.appendChild(s);s.addEventListener('animationend',()=>s.remove())}
+function bump(el){if(!el)return;el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump')}
+
+/* ---------- 3D orb (WebGL, spring physics) ---------- */
+const ORB_VS='attribute vec2 a;varying vec2 v;void main(){v=a;gl_Position=vec4(a,0.,1.);}';
+const ORB_FS=`precision mediump float;varying vec2 v;uniform float t,s,q,e,dk,al,aa;uniform vec2 L;
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+1.),f.x),f.y);}
+float fbm(vec2 p){float a=.5,r=0.;for(int i=0;i<4;i++){r+=a*n(p);p*=2.03;a*=.5;}return r;}
+void main(){vec2 p=v/(s*.9);p.x/=1.+q;p.y/=1.-q*.9;float r=length(p);float A=1.-smoothstep(1.-aa,1.,r);if(A<=0.)discard;
+  float z=sqrt(max(0.,1.-r*r));vec3 N=normalize(vec3(p,z));vec2 fp=p*1.5+vec2(t*.04,-t*.05);float f=fbm(fp+fbm(fp*1.3+t*(.03+e*.25))*1.6+e*.6);
+  N=normalize(N+vec3((f-.5)*.22*(.5+e),(fbm(fp.yx+3.1)-.5)*.22*(.5+e),0.));
+  vec3 deep=mix(vec3(.42,.27,.08),vec3(.50,.33,.10),dk),mid=mix(vec3(.80,.60,.30),vec3(.86,.66,.34),dk),lite=mix(vec3(.99,.93,.80),vec3(.98,.90,.74),dk);
+  float g=clamp(p.y*.55+.5+(f-.5)*.7,0.,1.);vec3 base=mix(deep,mid,smoothstep(0.,.55,g));base=mix(base,lite,smoothstep(.55,1.,g)*.75);
+  vec3 Ld=normalize(vec3(L,1.1));float dif=.62+.38*max(dot(N,Ld),0.);vec3 H=normalize(Ld+vec3(0.,0.,1.));
+  float sp=pow(max(dot(N,H),0.),70.)*.55+pow(max(dot(N,H),0.),9.)*.12;float fr=pow(1.-z,2.6);
+  vec3 col=base*dif+vec3(1.)*sp+vec3(1.,.95,.82)*fr*.5;col+=vec3(1.,.9,.7)*pow(clamp(-p.y*.9+.1,0.,1.),3.)*.18*(1.-z*.4);col+=vec3(1.)*smoothstep(.985,1.,r)*.25;
+  gl_FragColor=vec4(col*A*al,A*al);}`;
+const ORBS=new Set();let orbRAF=0,orbLast=0;
+function makeOrb(host){const fb=()=>{const sp=document.createElement('span');sp.className='orbfb';host.appendChild(sp);return null};
+  const cv=document.createElement('canvas');cv.className='orbgl';host.appendChild(cv);const gl=cv.getContext('webgl',{premultipliedAlpha:true,alpha:true,antialias:true});if(!gl){cv.remove();return fb()}
+  const sh=(t,src)=>{const o=gl.createShader(t);gl.shaderSource(o,src);gl.compileShader(o);return o};const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,ORB_VS));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,ORB_FS));gl.linkProgram(pr);
+  if(!gl.getProgramParameter(pr,gl.LINK_STATUS)){cv.remove();return fb()}
+  gl.useProgram(pr);gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const loc=gl.getAttribLocation(pr,'a');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);gl.enable(gl.BLEND);gl.blendFunc(gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
+  const U={};['t','s','q','e','dk','al','aa','L'].forEach(k=>U[k]=gl.getUniformLocation(pr,k));
+  const sc=+(host.dataset.scale||1);
+  const o={host,cv,gl,U,s:sc*.85,vs:0,target:sc,q:0,vq:0,e:0,al:0,alT:1,lx:-.7,ly:.85,lxT:-.7,lyT:.85,born:performance.now()/1000,
+    setTarget(x,a){o.target=x;if(a!=null)o.alT=a},pulse(k){if(CALM)return;o.vq+=(k||1)*2.4;o.e=Math.min(1.4,o.e+(k||1))},press(){if(CALM)return;o.vq-=.9;o.vs-=.35}};
+  o.rs=()=>{const d=Math.min(2,devicePixelRatio||1),w=Math.max(1,Math.round(cv.clientWidth*d)),h=Math.max(1,Math.round(cv.clientHeight*d));if(cv.width!==w||cv.height!==h){cv.width=w;cv.height=h}};
+  const mv=e=>{const r=cv.getBoundingClientRect();o.lxT=((e.clientX-r.left)/r.width-.5)*1.6;o.lyT=-((e.clientY-r.top)/r.height-.5)*1.6};
+  host.addEventListener('pointermove',mv,{passive:true});host.addEventListener('pointerdown',e=>{mv(e);o.press()},{passive:true});host.addEventListener('pointerleave',()=>{o.lxT=-.7;o.lyT=.85},{passive:true});
+  host._orb=o;ORBS.add(o);if(!orbRAF)orbRAF=requestAnimationFrame(orbTick);return o}
+function orbTick(now){now/=1000;const dt=Math.min(.05,orbLast?now-orbLast:.016);orbLast=now;const dk=isDark()?1:0;
+  for(const o of ORBS){if(!o.cv.isConnected){ORBS.delete(o);try{o.gl.getExtension('WEBGL_lose_context')?.loseContext()}catch(e){}continue}
+    const t=now-o.born,br=CALM?1:1+.022*Math.sin(t*.9);o.vs+=(70*(o.target*br-o.s)-11*o.vs)*dt;o.s+=o.vs*dt;o.vq+=(-210*o.q-8*o.vq)*dt;o.q+=o.vq*dt;o.q=Math.max(-.25,Math.min(.25,o.q));
+    o.e*=Math.exp(-dt*1.3);o.al+=(o.alT-o.al)*Math.min(1,dt*4);o.lx+=(o.lxT-o.lx)*Math.min(1,dt*5);o.ly+=(o.lyT-o.ly)*Math.min(1,dt*5);
+    o.rs();const g=o.gl,U=o.U;g.viewport(0,0,o.cv.width,o.cv.height);g.clearColor(0,0,0,0);g.clear(g.COLOR_BUFFER_BIT);
+    g.uniform1f(U.t,CALM?0:t);g.uniform1f(U.s,o.s);g.uniform1f(U.q,o.q);g.uniform1f(U.e,o.e);g.uniform1f(U.dk,dk);g.uniform1f(U.al,o.al);g.uniform1f(U.aa,3/Math.max(40,o.cv.width*o.s*.9));g.uniform2f(U.L,o.lx,o.ly);g.drawArrays(g.TRIANGLE_STRIP,0,4)}
+  orbRAF=ORBS.size?requestAnimationFrame(orbTick):0;if(!orbRAF)orbLast=0}
+function mountOrbs(root){(root||document).querySelectorAll('.orb3d:not(.on)').forEach(h=>{h.classList.add('on');makeOrb(h)})}
+const orbIn=sel=>{const h=$(sel);return h&&(h._orb||(h.querySelector('.orb3d')||{})._orb)};
+
+/* ---------- actions ---------- */
+function affirm(id,el){const d=AFF[today()]||(AFF[today()]={});d[id]=(d[id]||0)+1;touch();save();hap('affirm');const o=orbIn('#orb');if(o)o.pulse(.45);plus(el||$('#orb'));
+  const c=$('#acount');if(c){c.textContent=d[id];bump(c)}const b=$('#abar');if(b)b.style.width=Math.min(100,d[id]/CFG.target*100)+'%';
+  if(d[id]===CFG.target){chime(660);hap('success');wave($('#orb'),2,1)}}
+
+/* ---------- views ---------- */
+let TAB='home';const TABS=[['home','今天','home'],['wish','愿望','star'],['aff','肯定','repeat'],['way','原则','book'],['me','我的','me']];
+const V={};
+V.home=()=>{const n=new Date(),f=focus(),st=streak(),g=GRA[today()]||['','',''],hr=n.getHours(),hi=hr<11?'早上好':hr<14?'中午好':hr<18?'下午好':'晚上好';
+  const q=QUOTES.length?QUOTES[(n.getDate()*5+hr)%QUOTES.length]:null;const done=SES.some(s=>s.date===today()&&f&&s.iid===f.id);
+  return `<div class="top"><span class="meta">${n.getMonth()+1} 月 ${n.getDate()} 日 · ${hi}</span><span class="r"><span class="streak">${st?icon('flame',1)+'连续 '+st+' 天':''}</span><button class="iconbtn" id="themeq" aria-label="切换夜间模式">${icon(isDark()?'sun':'moon')}</button></span></div>
+  ${f?`<section class="focus"><div class="split"><span class="cap" style="font-weight:600">${esc(f.title)} · 第 ${daysOf(f)} 天</span>${INT.filter(i=>i.status!=='done').length>1?`<button class="btn sm" id="switch">换一个</button>`:''}</div>
+    <p class="stmt">${esc(f.statement)}</p>
+    <div class="row"><button class="btn ${done?'':'acc'}" id="practice">${done?'今天已练习 · 再来一次':'开始今天的显化 · 3 分钟'}</button></div></section>
+    <div class="orbbox"><button class="orbbtn" id="orb" data-h="1" aria-label="肯定一次"><span class="orb3d" data-scale=".9"></span><span class="lbl">点一下<small>默念一次，肯定一次</small></span></button>
+      <div class="row" style="justify-content:center;gap:8px"><span class="count" id="acount">${affToday(f.id)}</span><span class="meta">/ ${CFG.target} 次今天</span></div>
+      <div class="bar" style="width:min(60vw,240px)"><i id="abar" style="width:${Math.min(100,affToday(f.id)/CFG.target*100)}%"></i></div></div>`
+  :`<section class="focus"><h1 style="font-size:28px">你想显化什么？</h1><p class="meta">写下一件事，用“已经实现”的现在时说出来。</p>${qline(Qs('small')[0])}<div class="row"><button class="btn acc" id="new">写下第一件事</button></div></section>`}
+  <section class="qa-row"><button class="qa" id="oppq"><b>冒出相反的念头</b><small>“不可能”“我不配”……点这里放掉</small></button><button class="qa" id="eviq"><b>看到一个迹象</b><small>小小的进展、巧合，记下来</small></button></section>
+  <section class="sect"><h2>今天的三件感恩</h2><div class="card grat">${[0,1,2].map(i=>`<div class="gi"><span>${i+1}</span><input type="text" data-g="${i}" value="${esc(g[i]||'')}" placeholder="${['今天让我感激的一件事','一个人，或一句话','一件已经拥有的东西'][i]}" aria-label="感恩 ${i+1}"></div>`).join('')}</div></section>
+  ${q?`<button class="card" id="nextq" style="text-align:left;display:flex;flex-direction:column;gap:8px"><p class="quote">${esc(q.q)}</p><span class="cap">${qsrc(q)} · 点一下换一句</span></button>`:''}`};
+
+V.wish=()=>{const act=INT.filter(i=>i.status!=='done'),dn=INT.filter(i=>i.status==='done');
+  return `<div class="split"><h1>愿望</h1><button class="iconbtn" id="new" aria-label="写一个新愿望">${icon('plus')}</button></div>
+  <p class="meta">莱斯特的建议：先从小事做起。每实现一件，信念就更强一点。</p>
+  ${act.length?`<section class="sect">${act.map(i=>`<button class="tile" data-open="${i.id}"><span class="split"><span class="cap" style="font-weight:600">${esc(i.title)}${i.small?' · 小事':''}</span>${i.id===(focus()||{}).id?'<span class="badge">今天的焦点</span>':''}</span><span class="st">${esc(i.statement)}</span><span class="cap">第 ${daysOf(i)} 天 · 肯定 ${affAll(i.id)} 次 · 迹象 ${EVI.filter(e=>e.iid===i.id).length} 个</span></button>`).join('')}</section>`:'<div class="card"><p class="meta">还没有愿望。点右上角的 + 写下第一件。</p></div>'}
+  ${dn.length?`<section class="sect"><h2>已经显化</h2>${dn.map(i=>`<button class="tile" data-open="${i.id}"><span class="split"><span class="cap" style="font-weight:600">${esc(i.title)}</span><span class="badge ok">${i.doneAt}</span></span><span class="st">${esc(i.statement)}</span>${i.story?`<span class="cap">${esc(i.story)}</span>`:''}</button>`).join('')}</section>`:''}`};
+
+let BEAT=null;
+V.aff=()=>{const f=focus();if(!f)return `<h1>肯定</h1><div class="card"><p class="meta">先写下一个愿望，再来这里重复它。</p><div class="row" style="margin-top:10px"><button class="btn acc" id="new">写下愿望</button></div></div>`;
+  return `<h1>肯定</h1><p class="meta">一遍一遍、平平淡淡地默念同一句话，不用带情绪，也不用相信它。重复本身就在让它成为你的状态。</p>
+  <section class="focus"><span class="cap" style="font-weight:600">${esc(f.title)}</span><p class="stmt" id="astmt">${esc(f.statement)}</p></section>
+  <div class="orbbox"><button class="orbbtn" id="orb" data-h="1" aria-label="肯定一次"><span class="orb3d" data-scale=".95"></span><span class="lbl">${BEAT?'跟着节拍默念':'点一下'}<small>${BEAT?'每 '+CFG.beat+' 秒一次':'默念一次'}</small></span></button>
+    <div class="row" style="justify-content:center;gap:8px"><span class="count" id="acount">${affToday(f.id)}</span><span class="meta">/ ${CFG.target} 次今天 · 累计 ${affAll(f.id)}</span></div>
+    <div class="bar" style="width:min(60vw,240px)"><i id="abar" style="width:${Math.min(100,affToday(f.id)/CFG.target*100)}%"></i></div></div>
+  <div class="card" style="display:flex;flex-direction:column;gap:12px"><div class="setrow"><span><span style="font-weight:600">跟着节拍默念</span><br><span class="cap">打开后自动计数，你只要跟着轻响和轻震默念。</span></span><button class="switch ${BEAT?'on':''}" id="beat" role="switch" aria-checked="${!!BEAT}" aria-label="跟着节拍默念"></button></div>
+    ${seg('beat',[[2,'2 秒'],[3,'3 秒'],[5,'5 秒'],[8,'8 秒']])}</div>
+  <p class="cap" style="padding:0 4px">这种平淡、机械地重复肯定句的做法，来自 Sammy 常讲的思路：重复和坚持比技巧重要。</p>`};
+
+V.way=()=>`<h1>原则</h1><p class="meta">这个工具把三个来源放在一起：莱斯特在书里讲的显化，《秘密》的要点，和 Sammy 常讲的思路。莱斯特部分是原话，另外两部分是我用自己的话做的概括。</p>
+  <section class="sect"><h2>每天的练习怎么走</h2><div class="card"><ol class="steps">
+    <li><span><b>放下“想要”。</b>想要的感觉其实是“还没有”。先把它放掉，否则它会一直把愿望推到未来。</span></li>
+    <li><span><b>看见它。</b>像莱斯特想象那辆凯迪拉克一样：看见自己已经在里面，感受它，和它融为一体。</span></li>
+    <li><span><b>它已经完成了。</b>用现在时说出来，接受它已经是你的，并为此感恩。</span></li>
+    <li><span><b>放掉相反的念头。</b>“不可能”“我不配”这些念头，就是阻碍显化的东西。看见它，放掉它。</span></li>
+    <li><span><b>带着完成的感觉放手。</b>然后去过你的一天。觉察到相反的念头就放掉，看到迹象就记下，平时默念肯定句。</span></li></ol></div></section>
+  <section class="sect"><h2>莱斯特：创造你想要的</h2><div class="card" style="display:flex;flex-direction:column;gap:14px">${['hold','now','done','see','opp','small','faith'].map(t=>qline(Qs(t)[0],1)).join('')}</div></section>
+  <section class="sect"><h2>《秘密》的要点</h2><div class="card"><ol class="steps">
+    <li><span><b>请求。</b>清楚地知道你要什么，把它说出来。</span></li><li><span><b>相信。</b>表现得好像它已经是你的，不去怀疑。</span></li>
+    <li><span><b>接收。</b>现在就去感受拥有它时的好感觉。</span></li><li><span><b>感恩。</b>每天为已经拥有的和将要来的东西感恩。</span></li><li><span><b>想象。</b>经常在心里看见它已经实现的画面。</span></li></ol></div></section>
+  <section class="sect"><h2>Sammy 常讲的思路</h2><div class="card"><ol class="steps">
+    <li><span><b>先在内在发生。</b>一切先是内在的体验，然后才是外在的体验。</span></li><li><span><b>选择状态。</b>你想要的那个现实，是一个可以选择、可以住进去的状态。</span></li>
+    <li><span><b>坚持重复。</b>平淡、机械地重复肯定句，让自己一直停在想要的那个版本里。重复和一致比技巧重要。</span></li>
+    <li><span><b>不去确认不想要的。</b>外面暂时还没变时，不去认同它，只承认你选择的那个版本。</span></li></ol></div></section>
+  <section class="sect"><h2>莱斯特的提醒</h2><div class="card" style="display:flex;flex-direction:column;gap:14px">${qline(Qs('note')[0],1)}${Qs('want').map(q=>qline(q,1)).join('')}
+    <p class="cap">显化让梦里的日子好过一点；真正持久的幸福，在于放下“没有它”的感觉本身。这也是为什么每次练习都从放下“想要”开始。</p></div></section>`;
+
+V.me=()=>{const days=new Set(SES.map(s=>s.date)).size,aff=Object.values(AFF).reduce((a,d)=>a+Object.values(d).reduce((x,y)=>x+y,0),0),gra=Object.values(GRA).reduce((a,l)=>a+l.filter(Boolean).length,0),dn=INT.filter(i=>i.status==='done').length;
+  const tl=[...SES.map(s=>({d:s.date,t:s.time,k:'练习',x:(INT.find(i=>i.id===s.iid)||{}).title||''})),...EVI.map(e=>({d:e.date,t:e.time,k:'迹象',x:e.text})),...OPL.map(o=>({d:o.date,t:o.time,k:'放掉',x:o.thought}))].sort((a,b)=>(b.d+b.t).localeCompare(a.d+a.t)).slice(0,40);
+  return `<h1>我的</h1>
+  <section class="figs"><div><b>${days}</b><span>练习天数</span></div><div><b>${aff}</b><span>肯定次数</span></div><div><b>${gra}</b><span>感恩条数</span></div><div><b>${dn}</b><span>已经显化</span></div></section>
+  <section class="sect"><h2>最近</h2>${tl.length?`<div class="list">${tl.map(r=>`<div><span class="time">${r.d.slice(5)}<br>${r.t}</span><span class="grow"><span>${r.k}</span><small>${esc(r.x)}</small></span></div>`).join('')}</div>`:'<div class="card"><p class="meta">还没有记录。</p></div>'}</section>
+  <section class="sect"><h2>设置</h2><div class="card" style="display:flex;flex-direction:column;gap:14px">${seg('theme',[['auto','自动'],['light','浅色'],['dark','深色']])}
+    <div class="setrow"><span style="font-weight:600">触感反馈</span><button class="switch ${CFG.haptic?'on':''}" id="haptic" role="switch" aria-checked="${CFG.haptic}" aria-label="触感反馈"></button></div>
+    <div style="display:flex;flex-direction:column;gap:8px"><span style="font-weight:600">每天肯定次数目标</span>${seg('target',[[30,'30'],[50,'50'],[100,'100'],[200,'200']])}</div></div></section>
+  <div class="row"><button class="btn sm" id="copy">复制全部记录</button><span class="cap" id="msg"></span></div>
+  <p class="cap" style="padding:0 4px">所有数据只保存在这台设备的浏览器里。</p>`};
+const seg=(key,opts)=>{const idx=Math.max(0,opts.findIndex(o=>o[0]===CFG[key]));return `<div class="seg"><span class="thumb" style="width:calc((100% - 4px)/${opts.length});transform:translateX(${idx*100}%)"></span>${opts.map(([v,l])=>`<button data-set="${key}" data-v="${v}">${l}</button>`).join('')}</div>`};
+
+/* ---------- sheets ---------- */
+function sheet(html,bind){closeSheet(true);const sc=document.createElement('div'),sh=document.createElement('div');sc.className='scrim';sc.id='scrim';sh.className='sheet';sh.id='sheet';sh.setAttribute('role','dialog');
+  sh.innerHTML='<div class="grab"></div>'+html;sc.onclick=()=>closeSheet();document.body.append(sc,sh);if(bind)bind(sh)}
+function closeSheet(now){const s=$('#sheet'),c=$('#scrim');if(!s)return;if(now||CALM){s.remove();c&&c.remove();return}s.classList.add('out');c&&(c.style.opacity=0);setTimeout(()=>{s.remove();c&&c.remove()},240)}
+function editor(id){const i=INT.find(x=>x.id===id)||{title:'',statement:'',scene:'',small:false};const isNew=!id;
+  sheet(`<h2>${isNew?'写下一个愿望':'编辑愿望'}</h2>
+  <div class="field"><label for="ftitle">它是什么</label><input type="text" id="ftitle" value="${esc(i.title)}" placeholder="例如：新的工作"></div>
+  <div class="field"><label for="fstmt">用“已经实现”的现在时说出来</label><textarea id="fstmt" placeholder="例如：我每天都在一份喜欢的工作里，做得轻松又被欣赏。">${esc(i.statement)}</textarea><span class="cap" style="padding-left:4px">莱斯特：“我们必须把我们想要的东西放到现在。”不要写“我想要”“我将会”。</span></div>
+  <div class="field"><label for="fscene">实现那一刻的画面（可不填）</label><textarea id="fscene" placeholder="你在哪里，看见什么，听见什么，身体是什么感觉。">${esc(i.scene)}</textarea></div>
+  <div class="setrow"><span><span style="font-weight:600">这是一件小事</span><br><span class="cap">先从小事做起，信心会一次次建立起来。</span></span><button class="switch ${i.small?'on':''}" id="fsmall" role="switch" aria-checked="${!!i.small}" aria-label="这是一件小事"></button></div>
+  <div class="split">${isNew?'<span></span>':`<button class="btn sm" id="fdel" style="color:#c0392b">删除</button>`}<span class="row"><button class="btn" id="fcancel">取消</button><button class="btn acc" id="fsave">保存</button></span></div>
+  ${isNew?'':`<div class="card" style="display:flex;flex-direction:column;gap:10px"><b>它已经显化了？</b><textarea id="fstory" placeholder="它是怎么来的？记下来，下次信念会更强。">${esc(i.story||'')}</textarea><button class="btn ${i.status==='done'?'':'solid'}" id="fdone">${i.status==='done'?'改回进行中':'标记为已显化'}</button></div>`}`,sh=>{
+    let small=!!i.small;sh.querySelector('#fsmall').onclick=e=>{small=!small;e.currentTarget.classList.toggle('on',small);hap('tap')};
+    sh.querySelector('#fcancel').onclick=()=>closeSheet();
+    sh.querySelector('#fsave').onclick=()=>{const t=sh.querySelector('#ftitle').value.trim(),st=sh.querySelector('#fstmt').value.trim();if(!t||!st){sh.querySelector(t?'#fstmt':'#ftitle').focus();return}
+      if(isNew){const n={id:uid(),title:t,statement:st,scene:sh.querySelector('#fscene').value.trim(),small,created:today(),status:'active'};INT.push(n);FOC=n.id}else Object.assign(i,{title:t,statement:st,scene:sh.querySelector('#fscene').value.trim(),small});
+      touch();save();hap('success');closeSheet();render()};
+    const del=sh.querySelector('#fdel');if(del)del.onclick=()=>{if(del.dataset.sure){INT=INT.filter(x=>x.id!==i.id);save();closeSheet();render()}else{del.dataset.sure=1;del.textContent='再点一次删除'}};
+    const dn=sh.querySelector('#fdone');if(dn)dn.onclick=()=>{if(i.status==='done'){i.status='active';delete i.doneAt}else{i.status='done';i.doneAt=today();i.story=sh.querySelector('#fstory').value.trim();hap('success');chime(660)}save();closeSheet();render()}})}
+function oppSheet(){const f=focus();let picked=new Set(),rounds=0;
+  sheet(`<h2>冒出了哪个念头？</h2><p class="meta">莱斯特：“现在阻碍我们得到我们想要的东西的，是相反的潜意识念头。”看见它，放掉它。</p>
+  <div class="chips">${OPP.map((o,k)=>`<button class="chip" data-o="${k}" data-h="1">${o.t}</button>`).join('')}</div>
+  <input type="text" id="oown" placeholder="或者写下你自己的念头">
+  <div class="stage" style="padding:0"><div class="ball" id="oball" style="width:150px;height:150px"><span class="orb3d"></span></div><p class="say-big" id="ow" style="font-size:18px">选一个，然后放下它底下的想要。</p></div>
+  <div class="row" style="justify-content:space-between"><button class="btn" id="oclose">完成</button><button class="btn acc" id="olet" style="flex:1" disabled>放下了</button></div>`,sh=>{mountOrbs(sh);
+    sh.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{hap('tick');const k=+b.dataset.o;picked.has(k)?picked.delete(k):picked.add(k);b.classList.toggle('on',picked.has(k));upd()});
+    const own=sh.querySelector('#oown');own.oninput=upd;
+    function upd(){const ws=[...new Set([...picked].map(k=>OPP[k].w))];sh.querySelector('#olet').disabled=!(picked.size||own.value.trim());
+      sh.querySelector('#ow').textContent=ws.length?`底下是${ws.join('、')}。允许它浮现，然后让它离开。`:(own.value.trim()?'它底下想要的是什么？放下那个想要。':'选一个，然后放下它底下的想要。')}
+    sh.querySelector('#olet').onclick=()=>{rounds++;hap('release');const o=orbIn('#oball');if(o){o.pulse(1);o.setTarget(Math.max(.45,1-rounds*.14),Math.max(.45,1-rounds*.1))}motes($('#oball'),8);
+      const t=[...[...picked].map(k=>OPP[k].t),own.value.trim()].filter(Boolean).join('、');OPL.push({date:today(),time:hm(new Date()),iid:f&&f.id,thought:t});touch();save();
+      const w=sh.querySelector('#ow');w.classList.remove('fadeswap');void w.offsetWidth;w.classList.add('fadeswap');w.textContent=rounds<3?'还有剩下的吗？有的话，再放一次。':'回到它已经完成了的感觉。'};
+    sh.querySelector('#oclose').onclick=()=>{closeSheet();render()}})}
+function eviSheet(){const f=focus();sheet(`<h2>看到了什么迹象？</h2><p class="meta">小小的进展、巧合、一个消息……记下来。莱斯特说，每成功一次，信念就更强一些。</p>
+  ${INT.filter(i=>i.status!=='done').length>1?`<div class="chips">${INT.filter(i=>i.status!=='done').map(i=>`<button class="chip ${f&&i.id===f.id?'on':''}" data-ei="${i.id}">${esc(i.title)}</button>`).join('')}</div>`:''}
+  <textarea id="etext" placeholder="今天发生了什么？"></textarea><div class="split"><button class="btn" id="ecancel">取消</button><button class="btn acc" id="esave">记下来</button></div>`,sh=>{let iid=f&&f.id;
+    sh.querySelectorAll('[data-ei]').forEach(b=>b.onclick=()=>{iid=b.dataset.ei;sh.querySelectorAll('[data-ei]').forEach(x=>x.classList.toggle('on',x===b))});
+    sh.querySelector('#ecancel').onclick=()=>closeSheet();sh.querySelector('#esave').onclick=()=>{const t=sh.querySelector('#etext').value.trim();if(!t)return;EVI.push({date:today(),time:hm(new Date()),iid,text:t});touch();save();hap('success');closeSheet();render()}})}
+function pickSheet(){sheet(`<h2>今天专注哪一个？</h2><div class="sect">${INT.filter(i=>i.status!=='done').map(i=>`<button class="tile" data-pk="${i.id}"><span class="cap" style="font-weight:600">${esc(i.title)}</span><span class="st">${esc(i.statement)}</span></button>`).join('')}</div>`,
+  sh=>sh.querySelectorAll('[data-pk]').forEach(b=>b.onclick=()=>{FOC=b.dataset.pk;save();closeSheet();render()}))}
+
+/* ---------- guided practice (full screen) ---------- */
+let P=null;const PN=['放下想要','看见它','已经完成','相反的念头','放手'];
+function openPractice(){const f=focus();if(!f)return;P={f,step:1,dir:1,rel:0,opp:new Set(),orel:0,grat:'',vis:0};
+  $('#layer').innerHTML=`<div class="fx" id="fx" role="dialog" aria-label="显化练习"><div class="fx-top"><button class="iconbtn" id="px" aria-label="关闭">${icon('close')}</button><div class="segs" id="psegs"></div><span class="cap" id="pname" style="width:4.5em;text-align:right"></span></div><div class="fx-body" id="pbody"></div><div class="fx-foot" id="pfoot"></div></div>`;
+  $('#px').onclick=closePractice;paintP()}
+function closePractice(){const fx=$('#fx');clearInterval(P&&P.timer);P=null;if(fx&&!CALM){fx.classList.add('out');setTimeout(()=>{$('#layer').innerHTML='';render()},260)}else{$('#layer').innerHTML='';render()}}
+function pgo(s){P.dir=s>=P.step?1:-1;P.step=s;clearInterval(P.timer);paintP()}
+function paintP(){const f=P.f;let h='',b='',ft='';
+  if(P.step===1){h='先放下“想要”';b=`<p class="meta">想着「${esc(f.title)}」，感受一下“想要它”。那种感觉其实是在说：还没有。</p>
+    <div class="stage"><div class="ball" id="pball"><span class="orb3d"></span></div><p class="say-big" id="pw">允许“想要它”的感觉浮现，<br>然后让它离开。</p><p class="cap" id="pc">${P.rel?`已放下 ${P.rel} 次`:''}</p></div>
+    ${qline(Qs('want')[1]||Qs('want')[0])}`;ft=`<button class="btn acc" id="plet" style="flex:1">放下了</button><button class="btn" id="pnext" ${P.rel?'':'disabled'}>轻了，下一步</button>`}
+  if(P.step===2){h='看见它';b=`<p class="meta">闭上眼也可以。看见自己已经在里面：你在哪里，看见什么，听见什么，身体是什么感觉。和它融为一体。</p>
+    <div class="card"><p class="serif" style="font-size:18px;line-height:1.8">${esc(f.scene||f.statement)}</p></div>
+    <div class="stage"><div class="ball" id="pball" style="width:200px;height:200px"><span class="orb3d"></span></div>
+    <svg class="ring" viewBox="0 0 64 64" aria-label="一分钟"><circle cx="32" cy="32" r="27" stroke="var(--fill)"/><circle id="pring" cx="32" cy="32" r="27" stroke="var(--tint)" stroke-dasharray="169.6" stroke-dashoffset="169.6" transform="rotate(-90 32 32)" style="transition:stroke-dashoffset 1s linear"/></svg><p class="cap" id="ptime">一分钟，慢慢看</p></div>
+    ${qline(Qs('see')[0])}`;ft=`<button class="btn" data-pb="1">上一步</button><button class="btn acc" id="pnext">我看见了</button>`}
+  if(P.step===3){h='它已经完成了';b=`<div class="stage" style="padding-top:10px"><div class="ball" id="pball" style="width:160px;height:160px"><span class="orb3d"></span></div><p class="big-stmt">${esc(f.statement)}</p></div>
+    <div class="field"><label for="pgrat">因为它已经实现，我感谢……</label><textarea id="pgrat" placeholder="为它的到来感恩，就像它已经在这里。">${esc(P.grat)}</textarea></div>${qline(Qs('done')[0])}`;
+    ft=`<button class="btn" data-pb="2">上一步</button><button class="btn acc" id="pnext">它已经是我的了</button>`}
+  if(P.step===4){h='有相反的念头吗？';b=`<p class="meta">读着那句话的时候，心里有没有冒出这些？有就点上，然后放掉。没有就直接下一步。</p>
+    <div class="chips">${OPP.map((o,k)=>`<button class="chip ${P.opp.has(k)?'on':''}" data-o="${k}" data-h="1">${o.t}</button>`).join('')}</div>
+    <div class="stage"><div class="ball" id="pball" style="width:170px;height:170px"><span class="orb3d"></span></div><p class="say-big" id="pw" style="font-size:18px">${P.opp.size?`底下是${[...new Set([...P.opp].map(k=>OPP[k].w))].join('、')}。让它离开。`:'选出冒出来的念头。'}</p><p class="cap" id="pc">${P.orel?`已放下 ${P.orel} 次`:''}</p></div>${qline(Qs('opp')[0])}`;
+    ft=`<button class="btn" id="plet" ${P.opp.size?'':'disabled'}>放下了</button><button class="btn acc" id="pnext">${P.opp.size?'下一步':'没有，下一步'}</button>`}
+  if(P.step===5){h='带着完成的感觉放手';b=`<div class="stage"><div class="ball" id="pball"><span class="orb3d"></span></div><p class="say-big" id="pw">它已经完成了。<br>现在，把它交出去。</p></div>${qline(Qs('hold')[0])}`;
+    ft=`<button class="btn" data-pb="4">上一步</button><button class="btn acc" id="pnext">放手</button>`}
+  if(P.step===6){const days=new Set(SES.filter(s=>s.iid===f.id).map(s=>s.date)).size;h='今天的练习完成了';b=`<div class="stage"><div class="ball" id="pball" style="width:150px;height:150px"><span class="orb3d"></span></div>
+    <p class="big-stmt" style="font-size:22px">${esc(f.statement)}</p><p class="meta" style="text-align:center">「${esc(f.title)}」已练习 ${days} 天</p></div>
+    <div class="note"><b>今天剩下的时间</b><br>觉察到相反的念头，就回主页点“冒出相反的念头”放掉；看到迹象就记下；空下来时点那颗球默念肯定句。</div>`;
+    ft=`<span></span><button class="btn solid" id="pclose">回到今天</button>`}
+  $('#psegs').innerHTML=[1,2,3,4,5].map(k=>`<i class="${k<=P.step?'on':''}"></i>`).join('');$('#pname').textContent=PN[P.step-1]||'完成';
+  const bd=$('#pbody');bd.innerHTML=`<div class="fx-in ${P.dir>0?'fwd':'back'}"><h1>${h}</h1>${b}</div>`;bd.scrollTop=0;$('#pfoot').innerHTML=ft;mountOrbs(bd);bindP()}
+function bindP(){const on=(id,fn)=>{const e=$(id);if(e)e.onclick=fn};const o=()=>orbIn('#pball');
+  $$('[data-pb]').forEach(b=>b.onclick=()=>pgo(+b.dataset.pb));on('#pclose',closePractice);
+  if(P.step===1){on('#plet',()=>{P.rel++;hap('release');const ob=o();if(ob){ob.pulse(1);ob.setTarget(Math.max(.5,1-P.rel*.12),Math.max(.5,1-P.rel*.08))}motes($('#pball'),8);
+      const w=$('#pw');w.classList.remove('fadeswap');void w.offsetWidth;w.classList.add('fadeswap');w.innerHTML=P.rel<3?'还有剩下的吗？<br>有的话，再放一次。':'想要轻了，<br>它才能来到现在。';$('#pc').textContent=`已放下 ${P.rel} 次`;$('#pnext').disabled=false});
+    on('#pnext',()=>pgo(2))}
+  if(P.step===2){let s=P.vis;const ring=$('#pring'),tt=$('#ptime');const set=()=>{ring.style.strokeDashoffset=169.6*(1-Math.min(1,s/60));tt.textContent=s>=60?'一分钟到了，可以继续':`${60-s} 秒`};set();
+    P.timer=setInterval(()=>{s++;P.vis=s;set();if(s===60){clearInterval(P.timer);chime(528);hap('tap')}},1000);on('#pnext',()=>pgo(3))}
+  if(P.step===3){const g=$('#pgrat');g.oninput=()=>P.grat=g.value;on('#pnext',()=>{hap('success');const ob=o();if(ob)ob.pulse(.8);wave($('#pball'),2,1);
+      if(P.grat.trim()){const l=GRA[today()]||(GRA[today()]=['','','']);const k=l.findIndex(x=>!x);if(k>=0)l[k]=P.grat.trim();else l.push(P.grat.trim())}setTimeout(()=>pgo(4),CALM?0:450)})}
+  if(P.step===4){$$('[data-o]').forEach(b=>b.onclick=()=>{hap('tick');const k=+b.dataset.o;P.opp.has(k)?P.opp.delete(k):P.opp.add(k);b.classList.toggle('on',P.opp.has(k));
+      $('#plet').disabled=!P.opp.size;$('#pnext').textContent=P.opp.size?'下一步':'没有，下一步';$('#pw').textContent=P.opp.size?`底下是${[...new Set([...P.opp].map(k=>OPP[k].w))].join('、')}。让它离开。`:'选出冒出来的念头。'});
+    on('#plet',()=>{P.orel++;hap('release');const ob=o();if(ob){ob.pulse(1);ob.setTarget(Math.max(.5,1-P.orel*.12))}motes($('#pball'),8);$('#pc').textContent=`已放下 ${P.orel} 次`;
+      OPL.push({date:today(),time:hm(new Date()),iid:P.f.id,thought:[...P.opp].map(k=>OPP[k].t).join('、')})});on('#pnext',()=>pgo(5))}
+  if(P.step===5){on('#pnext',()=>{hap('success');chime(660);const ob=o();if(ob){ob.pulse(.6);ob.setTarget(.15,0)}motes($('#pball'),14);wave($('#pball'),2,1);
+      SES.push({date:today(),time:hm(new Date()),iid:P.f.id,rel:P.rel,opp:P.orel,vis:P.vis});touch();save();setTimeout(()=>pgo(6),CALM?0:1100)})}}
+
+/* ---------- render ---------- */
+function render(anim){const m=$('#main');m.innerHTML=V[TAB]();m.classList.remove('tabin');if(anim===true&&!CALM){void m.offsetWidth;m.classList.add('tabin')}mountOrbs(m);
+  const ti=TABS.findIndex(x=>x[0]===TAB);$('#tabs').innerHTML=`<span class="pill" style="width:calc((100% - 10px)/${TABS.length});transform:translateX(${ti*100}%)"></span>`+TABS.map(([k,t,i])=>`<button data-tab="${k}" data-h="1" class="${TAB===k?'on':''}" aria-current="${TAB===k}">${icon(i)}<span>${t}</span></button>`).join('');
+  $$('[data-tab]').forEach(b=>b.onclick=()=>{if(TAB===b.dataset.tab)return;hap('tick');$('#tabs .pill').style.transform=`translateX(${TABS.findIndex(x=>x[0]===b.dataset.tab)*100}%)`;TAB=b.dataset.tab;if(TAB!=='aff'&&BEAT){clearInterval(BEAT);BEAT=null}setTimeout(()=>{render(true);scrollTo(0,0)},CALM?0:120)});
+  const on=(id,fn)=>{const e=$(id);if(e)e.onclick=fn};const f=focus();
+  on('#themeq',()=>{CFG.theme=isDark()?'light':'dark';save();applyTheme();render()});
+  on('#new',()=>editor());on('#switch',pickSheet);on('#practice',()=>{const ob=orbIn('#orb');if(ob)ob.pulse(.6);openPractice()});on('#oppq',oppSheet);on('#eviq',eviSheet);
+  on('#orb',()=>{if(f&&!BEAT)affirm(f.id)});
+  $$('[data-g]').forEach(i=>i.oninput=()=>{const l=GRA[today()]||(GRA[today()]=['','','']);l[+i.dataset.g]=i.value;touch();save()});
+  let qi=0;on('#nextq',()=>{if(!QUOTES.length)return;qi=(qi+1+Math.floor(Math.random()*QUOTES.length))%QUOTES.length;const q=QUOTES[qi];$('#nextq').innerHTML=`<p class="quote">${esc(q.q)}</p><span class="cap">${qsrc(q)} · 点一下换一句</span>`});
+  $$('[data-open]').forEach(b=>b.onclick=()=>editor(b.dataset.open));
+  on('#beat',()=>{if(BEAT){clearInterval(BEAT);BEAT=null}else if(f){BEAT=setInterval(()=>{if(TAB!=='aff'||$('#fx')){return}affirm(f.id,$('#orb'));chime(440)},CFG.beat*1000)}render()});
+  $$('[data-set]').forEach(b=>b.onclick=()=>{const k=b.dataset.set,raw=b.dataset.v,v=isNaN(+raw)?raw:+raw;CFG[k]=v;save();if(k==='theme')applyTheme();
+    if(k==='beat'&&BEAT){clearInterval(BEAT);BEAT=setInterval(()=>{if(TAB!=='aff'||$('#fx'))return;affirm(f.id,$('#orb'));chime(440)},CFG.beat*1000)}
+    const sg=b.closest('.seg');if(sg){const opts=[...sg.querySelectorAll('button')];sg.querySelector('.thumb').style.transform=`translateX(${opts.indexOf(b)*100}%)`;setTimeout(render,260)}else render()});
+  on('#haptic',()=>{CFG.haptic=!CFG.haptic;save();const e=$('#haptic');e.classList.toggle('on',CFG.haptic);e.setAttribute('aria-checked',CFG.haptic);if(CFG.haptic)hap('tap')});
+  on('#copy',()=>{const txt=JSON.stringify({INT,SES,AFF,GRA,EVI,OPL},null,1),m=$('#msg');(navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>m.textContent='已复制').catch(()=>{m.textContent='无法自动复制，请手动复制下方内容';const t=document.createElement('textarea');t.value=txt;m.after(t);t.select()})});
+}
+render(true);
+if('serviceWorker' in navigator&&location.protocol==='https:'&&!/claude/.test(location.host)){try{navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}}
+})();
+</script>

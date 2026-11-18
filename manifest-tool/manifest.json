@@ -1,0 +1,16 @@
+{
+ "name": "显化随身",
+ "short_name": "显化",
+ "start_url": "./",
+ "display": "standalone",
+ "background_color": "#f1f0ec",
+ "theme_color": "#8a5d14",
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any maskable"
+  }
+ ]
+}
